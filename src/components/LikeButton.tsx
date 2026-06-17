@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md"
 
 export default function LikeButton({ recipeId, initialCount = 0, initialLiked = false }: { recipeId: bigint | number; initialCount?: number; initialLiked?: boolean }) {
   const { data: session } = useSession()
@@ -41,7 +42,7 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
         liked ? "text-red-600" : "text-stone-500 hover:text-red-600"
       }`}
     >
-      <span>{liked ? "❤️" : "🤍"}</span>
+      <span>{liked ? <MdFavorite /> : <MdFavoriteBorder />}</span>
       <span>{count}</span>
     </button>
   )

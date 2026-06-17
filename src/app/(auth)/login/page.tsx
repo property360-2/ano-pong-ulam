@@ -4,6 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { MdRestaurant } from "react-icons/md"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -38,7 +39,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <Link href="/" className="block text-center mb-8 text-2xl">
-          🍲 <span className="font-bold">Ano Pong <span className="text-red-600">Ulam?</span></span>
+          <MdRestaurant className="inline-block" /> <span className="font-bold">Ano Pong <span className="text-red-600">Ulam?</span></span>
         </Link>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">

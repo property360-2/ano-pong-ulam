@@ -6,6 +6,7 @@ import SaveButton from "@/components/SaveButton"
 import FollowButton from "@/components/FollowButton"
 import CommentForm from "@/components/CommentForm"
 import { auth } from "@/lib/auth"
+import { MdRestaurant, MdLocationOn, MdLightbulb } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
@@ -76,7 +77,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
             />
           ) : (
             <div className="w-full h-64 md:h-96 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl">
-              🍲
+              <MdRestaurant />
             </div>
           )}
 
@@ -86,8 +87,8 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                 {recipe.category}
               </span>
               {recipe.region && (
-                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded">
-                  📍 {recipe.region}
+                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded inline-flex items-center gap-0.5">
+                  <MdLocationOn /> {recipe.region}
                 </span>
               )}
               {recipe.difficulty && (
@@ -159,8 +160,8 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                       <div>
                         <p className="text-sm">{step.instruction}</p>
                         {tips?.[`step_${step.number}`] && (
-                          <p className="text-xs text-amber-700 mt-1">
-                            💡 {tips[`step_${step.number}`]}
+                          <p className="text-xs text-amber-700 mt-1 inline-flex items-center gap-0.5">
+                            <MdLightbulb /> {tips[`step_${step.number}`]}
                           </p>
                         )}
                       </div>

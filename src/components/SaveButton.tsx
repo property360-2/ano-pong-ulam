@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { MdBookmark, MdBookmarkBorder } from "react-icons/md"
 
 export default function SaveButton({ recipeId, initialSaved = false }: { recipeId: bigint | number; initialSaved?: boolean }) {
   const { data: session } = useSession()
@@ -39,7 +40,7 @@ export default function SaveButton({ recipeId, initialSaved = false }: { recipeI
         saved ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
       }`}
     >
-      <span>{saved ? "📖" : "🔖"}</span>
+      <span>{saved ? <MdBookmark /> : <MdBookmarkBorder />}</span>
       <span>{saved ? "Saved" : "Save"}</span>
     </button>
   )

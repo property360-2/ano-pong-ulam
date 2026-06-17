@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
+import { MdEmojiEvents, MdPeople, MdWorkspacePremium } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
@@ -19,7 +20,7 @@ export default async function ChallengesPage() {
 
         {challenges.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
-            <span className="text-5xl block mb-4">🏆</span>
+            <span className="text-5xl block mb-4"><MdEmojiEvents /></span>
             <h2 className="text-xl font-semibold mb-2">No active challenges</h2>
             <p className="text-stone-500">Check back soon for the next cook-along!</p>
           </div>
@@ -60,8 +61,8 @@ export default async function ChallengesPage() {
                           {" — "}
                           {challenge.endDate.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
-                        <span>👥 {challenge._count.entries} entries</span>
-                        {challenge.prize && <span>🏅 {challenge.prize}</span>}
+                        <span className="inline-flex items-center gap-0.5"><MdPeople /> {challenge._count.entries} entries</span>
+                        {challenge.prize && <span className="inline-flex items-center gap-0.5"><MdWorkspacePremium /> {challenge.prize}</span>}
                       </div>
                     </div>
                   </div>

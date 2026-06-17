@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
+import { MdRestaurant } from "react-icons/md"
 
 export default function Header() {
   const { data: session } = useSession()
@@ -10,7 +11,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-stone-200">
       <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🍲</span>
+          <MdRestaurant className="text-2xl" />
           <span className="font-bold text-lg tracking-tight">
             Ano Pong <span className="text-red-600">Ulam?</span>
           </span>

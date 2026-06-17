@@ -1,16 +1,17 @@
 import Link from "next/link"
 import { auth } from "@/lib/auth"
 import Header from "@/components/Header"
+import { MdFastfood, MdEmojiFoodBeverage, MdWbSunny, MdCelebration, MdEco, MdCake } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
 const CATEGORIES = [
-  { name: "Ulam", emoji: "🍖", slug: "ulam", desc: "Main dishes" },
-  { name: "Merienda", emoji: "🥟", slug: "merienda", desc: "Snacks & treats" },
-  { name: "Pang-almusal", emoji: "🌅", slug: "breakfast", desc: "Morning meals" },
-  { name: "Pampasko", emoji: "🎄", slug: "fiesta", desc: "Festive dishes" },
-  { name: "Lutong Gulay", emoji: "🥬", slug: "vegetable", desc: "Veggie dishes" },
-  { name: "Dessert", emoji: "🍰", slug: "dessert", desc: "Matatamis" },
+  { name: "Ulam", slug: "ulam", desc: "Main dishes", icon: <MdFastfood /> },
+  { name: "Merienda", slug: "merienda", desc: "Snacks & treats", icon: <MdEmojiFoodBeverage /> },
+  { name: "Pang-almusal", slug: "breakfast", desc: "Morning meals", icon: <MdWbSunny /> },
+  { name: "Pampasko", slug: "fiesta", desc: "Festive dishes", icon: <MdCelebration /> },
+  { name: "Lutong Gulay", slug: "vegetable", desc: "Veggie dishes", icon: <MdEco /> },
+  { name: "Dessert", slug: "dessert", desc: "Matatamis", icon: <MdCake /> },
 ]
 
 export default async function HomePage() {
@@ -56,7 +57,7 @@ export default async function HomePage() {
                   href={`/recipes?category=${cat.slug}`}
                   className="bg-white rounded-xl p-6 border border-stone-200 hover:border-red-300 hover:shadow-sm transition-all"
                 >
-                  <span className="text-3xl block mb-2">{cat.emoji}</span>
+                  <span className="text-3xl block mb-2">{cat.icon}</span>
                   <h3 className="font-semibold text-stone-900">{cat.name}</h3>
                   <p className="text-sm text-stone-500">{cat.desc}</p>
                 </Link>

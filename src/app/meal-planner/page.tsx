@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { MdCalendarMonth, MdRestaurant } from "react-icons/md"
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 const MEALS = ["breakfast", "lunch", "dinner"] as const
@@ -38,7 +39,7 @@ export default function MealPlannerPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
-          <span className="text-5xl block mb-4">📅</span>
+          <span className="text-5xl block mb-4"><MdCalendarMonth /></span>
           <h1 className="text-xl font-bold mb-2">Sign in to plan meals</h1>
           <Link
             href="/login"
@@ -90,8 +91,8 @@ export default function MealPlannerPage() {
     <div className="min-h-screen bg-stone-50">
       <header className="bg-white border-b border-stone-200">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="font-bold text-lg">
-            🍲 Ano Pong <span className="text-red-600">Ulam?</span>
+          <Link href="/" className="font-bold text-lg inline-flex items-center gap-1">
+            <MdRestaurant /> Ano Pong <span className="text-red-600">Ulam?</span>
           </Link>
           <nav className="flex items-center gap-4 text-sm">
             <Link href="/recipes" className="hover:text-red-600">Recipes</Link>

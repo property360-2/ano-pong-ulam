@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import { MdLock, MdRestaurant, MdClose, MdLightbulb } from "react-icons/md"
 
 interface Ingredient {
   name: string
@@ -32,7 +33,7 @@ export default function NewRecipePage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
-          <span className="text-5xl block mb-4">🔒</span>
+          <span className="text-5xl block mb-4"><MdLock /></span>
           <h1 className="text-xl font-bold mb-2">Sign in to share a recipe</h1>
           <p className="text-stone-500 mb-6">
             You need an account to share recipes with the community.
@@ -129,8 +130,8 @@ export default function NewRecipePage() {
     <div className="min-h-screen bg-stone-50">
       <header className="bg-white border-b border-stone-200">
         <div className="mx-auto max-w-3xl px-4 h-16 flex items-center">
-          <Link href="/" className="font-bold text-lg">
-            🍲 Ano Pong <span className="text-red-600">Ulam?</span>
+          <Link href="/" className="font-bold text-lg inline-flex items-center gap-1">
+            <MdRestaurant /> Ano Pong <span className="text-red-600">Ulam?</span>
           </Link>
         </div>
       </header>
@@ -333,9 +334,9 @@ export default function NewRecipePage() {
                   <button
                     type="button"
                     onClick={() => removeIngredient(i)}
-                    className="text-stone-400 hover:text-red-600 text-sm mt-2"
+                    className="text-stone-400 hover:text-red-600 mt-2"
                   >
-                    ✕
+                    <MdClose />
                   </button>
                 )}
               </div>
@@ -367,21 +368,24 @@ export default function NewRecipePage() {
                     rows={2}
                     className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
-                  <input
-                    type="text"
-                    placeholder="💡 Tip for this step (optional)"
-                    value={step.tips}
-                    onChange={(e) => updateStep(i, "tips", e.target.value)}
-                    className="w-full border border-stone-200 rounded-lg px-3 py-1.5 text-xs text-stone-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
+                  <div className="relative">
+                    <MdLightbulb className="absolute left-2 top-1/2 -translate-y-1/2 text-stone-400 text-sm" />
+                    <input
+                      type="text"
+                      placeholder="Tip for this step (optional)"
+                      value={step.tips}
+                      onChange={(e) => updateStep(i, "tips", e.target.value)}
+                      className="w-full border border-stone-200 rounded-lg pl-7 pr-3 py-1.5 text-xs text-stone-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                  </div>
                 </div>
                 {steps.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeStep(i)}
-                    className="text-stone-400 hover:text-red-600 text-sm mt-2"
+                    className="text-stone-400 hover:text-red-600 mt-2"
                   >
-                    ✕
+                    <MdClose />
                   </button>
                 )}
               </div>

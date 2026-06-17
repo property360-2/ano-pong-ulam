@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
+import { MdPeople, MdWorkspacePremium, MdCameraAlt, MdStar } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
@@ -49,8 +50,8 @@ export default async function ChallengeDetailPage(props: { params: Params }) {
                     month: "long", day: "numeric", year: "numeric",
                   })}
                 </span>
-                <span>👥 {challenge._count.entries} entries</span>
-                {challenge.prize && <span>🏅 {challenge.prize}</span>}
+                <span className="inline-flex items-center gap-0.5"><MdPeople /> {challenge._count.entries} entries</span>
+                {challenge.prize && <span className="inline-flex items-center gap-0.5"><MdWorkspacePremium /> {challenge.prize}</span>}
                 {isActive && (
                   <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded font-medium">
                     Active
@@ -72,7 +73,7 @@ export default async function ChallengeDetailPage(props: { params: Params }) {
 
         {challenge.entries.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <span className="text-4xl block mb-3">📸</span>
+            <span className="text-4xl block mb-3"><MdCameraAlt /></span>
             <p className="text-stone-500">No entries yet. Be the first to join!</p>
           </div>
         ) : (
@@ -89,7 +90,7 @@ export default async function ChallengeDetailPage(props: { params: Params }) {
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">@{entry.user.username}</span>
-                    <span className="text-sm text-amber-600 font-bold">★ {entry.voteCount}</span>
+                    <span className="text-sm text-amber-600 font-bold inline-flex items-center gap-0.5"><MdStar /> {entry.voteCount}</span>
                   </div>
                   {entry.caption && <p className="text-sm text-stone-600">{entry.caption}</p>}
                   {entry.recipe && (

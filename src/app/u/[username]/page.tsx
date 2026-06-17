@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
 import RecipeCard from "@/components/RecipeCard"
+import { MdLocationOn } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
@@ -44,7 +45,7 @@ export default async function UserProfilePage(props: { params: Params }) {
                 <span><strong className="text-stone-900">{user.recipes.length}</strong> recipes</span>
                 <span><strong className="text-stone-900">{user.followers.length}</strong> followers</span>
                 <span><strong className="text-stone-900">{user.following.length}</strong> following</span>
-                {user.region && <span>📍 {user.region}</span>}
+                {user.region && <span className="inline-flex items-center gap-0.5"><MdLocationOn /> {user.region}</span>}
               </div>
             </div>
           </div>

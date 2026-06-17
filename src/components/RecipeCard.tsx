@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { MdRestaurant, MdTimer, MdLocationOn } from "react-icons/md"
 
 type Recipe = {
   id: bigint
@@ -31,7 +32,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
         </div>
       ) : (
         <div className="aspect-video bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-4xl">
-          🍲
+          <MdRestaurant />
         </div>
       )}
       <div className="p-4">
@@ -51,8 +52,8 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
         )}
         <div className="flex items-center gap-3 mt-3 text-xs text-stone-400">
           {recipe.author && <span>by @{recipe.author.username}</span>}
-          {recipe.cookTime && <span>⏱ {recipe.cookTime}min</span>}
-          {recipe.region && <span>📍 {recipe.region}</span>}
+          {recipe.cookTime && <span className="inline-flex items-center gap-0.5"><MdTimer /> {recipe.cookTime}min</span>}
+          {recipe.region && <span className="inline-flex items-center gap-0.5"><MdLocationOn /> {recipe.region}</span>}
         </div>
       </div>
     </Link>
