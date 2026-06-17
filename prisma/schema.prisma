@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CookingLevel {
+  beginner
+  home_cook
+  lola_tier
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+enum SourceType {
+  heirloom
+  community
+  tested
+  regional
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  username     String        @unique
+  displayName  String?
+  bio          String?
+  avatarUrl    String?
+  region       String?
+  cookingLevel CookingLevel?
+  passwordHash String?
+  isOnboarded  Boolean       @default(false)
+
+  accounts Account[]
+  sessions Session[]
+
+  recipes          Recipe[]
+  collections      Collection[]
+  likes            RecipeLike[]
+  saves            RecipeSave[]
+  comments         Comment[]
+  challengeEntries ChallengeEntry[]
+
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
+
+  mealPlans MealPlan[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+}
+
+model Recipe {
+  id          BigInt     @id @default(autoincrement())
+  slug        String     @unique
+  title       String
+  description String?
+  story       String?
+  category    String
+  region      String?
+  difficulty  Difficulty?
+  prepTime    Int?
+  cookTime    Int?
+  servings    Int        @default(4)
+  ingredients Json
+  steps       Json
+  tips        Json?
+  tags        String[]
+  heroImage   String?
+  sourceType  SourceType @default(community)
+  authorId    String?
+  isPublished Boolean    @default(true)
+  isFeatured  Boolean    @default(false)
+  viewCount   Int        @default(0)
+  cookCount   Int        @default(0)
+
+  author    User?           @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  likes     RecipeLike[]
+  saves     RecipeSave[]
+  comments  Comment[]
+  activities Activity[]
+  challengeEntries ChallengeEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([category])
+  @@index([region])
+  @@index([isFeatured, createdAt])
+}
+
+model Collection {
+  id          BigInt   @id @default(autoincrement())
+  userId      String
+  name        String
+  description String?
+  emoji       String   @default("📁")
+  recipeIds   BigInt[]
+  isPublic    Boolean  @default(false)
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  saves RecipeSave[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model RecipeLike {
+  userId    String
+  recipeId  BigInt
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+}
+
+model RecipeSave {
+  userId       String
+  recipeId     BigInt
+  collectionId BigInt?
+  createdAt    DateTime @default(now())
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe     Recipe      @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  collection Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+
+  @@id([userId, recipeId])
+}
+
+model Comment {
+  id        BigInt    @id @default(autoincrement())
+  recipeId  BigInt
+  userId    String
+  parentId  BigInt?
+  content   String
+  mediaUrl  String?
+
+  recipe  Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recipeId, createdAt])
+}
+
+model Activity {
+  id                BigInt  @id @default(autoincrement())
+  userId            String
+  type              String
+  targetRecipeId    BigInt?
+  targetUserId      String?
+  targetChallengeId BigInt?
+  metadata          Json?
+
+  recipe Recipe? @relation(fields: [targetRecipeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+model Challenge {
+  id          BigInt   @id @default(autoincrement())
+  title       String
+  description String?
+  emoji       String   @default("🍲")
+  startDate   DateTime
+  endDate     DateTime
+  themeTags   String[]
+  prize       String?
+  isActive    Boolean  @default(true)
+  createdBy   String?
+
+  entries ChallengeEntry[]
+
+  createdAt DateTime @default(now())
+
+  @@index([startDate, endDate])
+}
+
+model ChallengeEntry {
+  id          BigInt  @id @default(autoincrement())
+  challengeId BigInt
+  userId      String
+  recipeId    BigInt?
+  photoUrl    String  @default("")
+  caption     String?
+  voteCount   Int     @default(0)
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe?   @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+
+  @@unique([challengeId, userId])
+}
+
+model MealPlan {
+  id            BigInt   @id @default(autoincrement())
+  userId        String
+  weekStartDate DateTime
+  plan          Json
+  groceryList   Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStartDate])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id              BigInt   @id @default(autoincrement())
+  userId          String
+  type            String
+  actorId         String?
+  targetRecipeId  BigInt?
+  targetCommentId BigInt?
+  message         String
+  isRead          Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead, createdAt])
+}
