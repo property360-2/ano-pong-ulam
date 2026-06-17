@@ -28,6 +28,8 @@ export default function NewRecipePage() {
     { name: "", amount: "", unit: "", notes: "" },
   ])
   const [steps, setSteps] = useState<Step[]>([{ instruction: "", tips: "" }])
+  const [heroFile, setHeroFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   if (!session) {
     return (
@@ -83,29 +85,55 @@ export default function NewRecipePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    // NOTE: Save the form reference BEFORE any async call — React nulls out e.currentTarget after the handler returns
+    const form = e.currentTarget
     setSubmitting(true)
+    setUploading(true)
     setError("")
 
-    const form = new FormData(e.currentTarget)
-
-    const data = {
-      title: form.get("title") as string,
-      description: form.get("description") as string,
-      story: form.get("story") as string,
-      category: form.get("category") as string,
-      region: form.get("region") as string,
-      difficulty: form.get("difficulty") as string,
-      prepTime: parseInt(form.get("prepTime") as string) || 0,
-      cookTime: parseInt(form.get("cookTime") as string) || 0,
-      servings: parseInt(form.get("servings") as string) || 4,
-      ingredients: ingredients.filter((i) => i.name && i.amount),
-      steps: steps
-        .filter((s) => s.instruction)
-        .map((s, idx) => ({ number: idx + 1, instruction: s.instruction, tips: s.tips || undefined })),
-      tags: (form.get("tags") as string).split(",").map((t) => t.trim()).filter(Boolean),
-    }
-
     try {
+      let heroImage = ""
+
+      // NOTE: Upload hero image first if the user selected one
+      if (heroFile) {
+        const uploadForm = new FormData()
+        uploadForm.set("file", heroFile)
+        uploadForm.set("folder", "recipe-images")
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadForm,
+        })
+
+        if (!uploadRes.ok) {
+          const uploadErr = await uploadRes.json()
+          throw new Error(uploadErr.error || "Failed to upload image")
+        }
+
+        const { url } = await uploadRes.json()
+        heroImage = url
+      }
+
+      const formData = new FormData(form)
+
+      const data = {
+        title: formData.get("title") as string,
+        description: formData.get("description") as string,
+        story: formData.get("story") as string,
+        category: formData.get("category") as string,
+        region: formData.get("region") as string,
+        difficulty: formData.get("difficulty") as string,
+        prepTime: parseInt(formData.get("prepTime") as string) || 0,
+        cookTime: parseInt(formData.get("cookTime") as string) || 0,
+        servings: parseInt(formData.get("servings") as string) || 4,
+        heroImage,
+        ingredients: ingredients.filter((i) => i.name && i.amount),
+        steps: steps
+          .filter((s) => s.instruction)
+          .map((s, idx) => ({ number: idx + 1, instruction: s.instruction, tips: s.tips || undefined })),
+        tags: (formData.get("tags") as string).split(",").map((t) => t.trim()).filter(Boolean),
+      }
+
       const res = await fetch("/api/recipes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -123,6 +151,7 @@ export default function NewRecipePage() {
       setError(err instanceof Error ? err.message : "Something went wrong")
     } finally {
       setSubmitting(false)
+      setUploading(false)
     }
   }
 
@@ -171,6 +200,18 @@ export default function NewRecipePage() {
                 placeholder="A comforting sour soup perfect for rainy days..."
                 className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
+            </div>
+
+            <div>
+              <label htmlFor="heroImage" className="block text-sm font-medium mb-1">Hero Image</label>
+              <input
+                id="heroImage"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={(e) => setHeroFile(e.target.files?.[0] || null)}
+                className="w-full text-sm text-stone-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+              />
+              <p className="text-xs text-stone-400 mt-1">Optional. Max 5MB. JPEG, PNG, WebP, or GIF.</p>
             </div>
 
             <div>
@@ -404,7 +445,7 @@ export default function NewRecipePage() {
               disabled={submitting}
               className="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
             >
-              {submitting ? "Publishing..." : "Publish Recipe"}
+              {uploading ? "Uploading image..." : submitting ? "Publishing..." : "Publish Recipe"}
             </button>
           </div>
         </form>

@@ -33,6 +33,7 @@ export async function POST(req: Request) {
       ingredients,
       steps,
       tags,
+      heroImage,
     } = body
 
     if (!title || !category || !ingredients?.length || !steps?.length) {
@@ -60,6 +61,7 @@ export async function POST(req: Request) {
         ingredients,
         steps,
         tags: tags || [],
+        heroImage: heroImage || null,
         authorId: session.user.id,
         sourceType: "community",
       },

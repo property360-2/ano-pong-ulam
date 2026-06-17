@@ -92,13 +92,14 @@
 
 ---
 
-## ⬜ Photo Upload
+## ✅ Photo Upload
 
-- [ ] Configure UploadThing or similar
-- [ ] File upload API endpoint
-- [ ] Upload UI on recipe create/edit form
-- [ ] Display hero images in cards and detail pages
-- [ ] User avatar upload
+- ✅ Supabase Storage configured (bucket `recipe-images`, public, 5MB limit)
+- ✅ Upload API endpoint (`/api/upload`) with file type/size validation
+- ✅ Upload UI on recipe create form (file input in Basic Info section)
+- ✅ Recipe card & detail pages display hero images when available
+- ⬜ User avatar upload (bucket and folder ready, needs profile settings UI)
+- ⬜ Recipe edit page (needs image upload too)
 
 ---
 
