@@ -202,7 +202,7 @@
 ## 🟢 Low Priority / Backlog
 
 - [ ] Error boundaries
-- [ ] Forgot password / reset flow
+- [x] Forgot password / reset flow (signed-token approach, no DB migration needed)
 - [ ] Account deletion
 - [ ] Admin dashboard + moderation tools
 - [ ] Dark mode
