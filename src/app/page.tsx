@@ -33,13 +33,13 @@ export default async function HomePage() {
             <div className="flex gap-3 justify-center">
               <Link
                 href="/recipes"
-                className="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
               >
                 Browse Recipes
               </Link>
               <Link
                 href="/recipes/new"
-                className="bg-white text-stone-800 px-6 py-3 rounded-lg font-medium border border-stone-300 hover:bg-stone-50 transition-colors"
+                className="bg-white text-stone-800 px-6 py-3 rounded-full font-medium border border-stone-300 hover:bg-stone-50 transition-colors"
               >
                 Share Your Recipe
               </Link>
@@ -75,14 +75,14 @@ export default async function HomePage() {
             {session?.user ? (
               <Link
                 href="/recipes/new"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
               >
                 Share Your First Recipe
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
               >
                 Sign In to Share
               </Link>

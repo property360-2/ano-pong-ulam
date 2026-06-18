@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { MdRestaurant, MdCheck, MdMail } from "react-icons/md"
+import Image from "next/image"
+import { MdCheck } from "react-icons/md"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -39,8 +40,9 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <Link href="/" className="block text-center mb-8 text-2xl">
-          <MdRestaurant className="inline-block" /> <span className="font-bold">Ano Pong <span className="text-red-600">Ulam?</span></span>
+        <Link href="/" className="block text-center mb-8">
+          <Image src="/logo-no-bg.png" alt="" width={96} height={96} className="inline-block mb-2" />
+          <div className="font-bold text-2xl">Ano Pong <span className="text-amber-600">Ulam?</span></div>
         </Link>
 
         {sent ? (
@@ -70,24 +72,21 @@ export default function ForgotPasswordPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-              <div className="relative">
-                <MdMail className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full border border-stone-300 rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
             </div>
 
             <button
               type="submit"
               disabled={loading || !email.trim()}
-              className="w-full bg-red-600 text-white py-2.5 rounded-xl font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+              className="w-full bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>

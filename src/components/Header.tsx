@@ -44,7 +44,7 @@ export default function Header() {
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
-              <Image src="/logo-removebg-preview.png" alt="" width={28} height={28} className="rounded" />
+              <Image src="/logo-no-bg.png" alt="" width={36} height={36} className="rounded" />
               <span className="font-bold text-lg tracking-tight">
                 Ano Pong <span className="text-red-600">Ulam?</span>
               </span>

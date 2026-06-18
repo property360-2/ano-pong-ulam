@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
+import Image from "next/image"
 import Link from "next/link"
-import { MdPerson, MdSettings, MdLogout, MdArrowDropDown, MdRestaurant } from "react-icons/md"
+import { MdPerson, MdSettings, MdLogout, MdArrowDropDown } from "react-icons/md"
 
 export default function UserMenu() {
   const { data: session } = useSession()
@@ -22,7 +23,7 @@ export default function UserMenu() {
 
   if (!session?.user) return null
 
-  const initial = (session.user.name || "U")[0].toUpperCase()
+  const avatarUrl = session.user.avatarUrl
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -30,9 +31,21 @@ export default function UserMenu() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 text-sm text-stone-700 hover:text-amber-600 transition-colors"
       >
-        <span className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">
-          {initial}
-        </span>
+        {avatarUrl ? (
+          <div className="w-8 h-8 rounded-full overflow-hidden">
+            <Image
+              src={avatarUrl}
+              alt=""
+              width={32}
+              height={32}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <span className="w-8 h-8 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center">
+            <MdPerson className="text-lg" />
+          </span>
+        )}
         <MdArrowDropDown className={`text-lg transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 

@@ -59,8 +59,8 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <Link href="/" className="block text-center mb-8">
-          <Image src="/logo-removebg-preview.png" alt="" width={40} height={40} className="inline-block align-middle mr-2" />
-          <span className="font-bold text-2xl align-middle">Ano Pong <span className="text-amber-600">Ulam?</span></span>
+          <Image src="/logo-no-bg.png" alt="" width={96} height={96} className="inline-block mb-2" />
+          <div className="font-bold text-2xl">Ano Pong <span className="text-amber-600">Ulam?</span></div>
         </Link>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
