@@ -32,8 +32,12 @@ export default async function UserProfilePage(props: { params: Params }) {
       <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-8">
         <div className="bg-white rounded-xl border border-stone-200 p-6 md:p-8 mb-8">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-2xl font-bold text-amber-600 flex-shrink-0">
-              {user.displayName?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
+            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-2xl font-bold text-amber-600 flex-shrink-0 overflow-hidden">
+              {user.avatarUrl ? (
+                <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                user.displayName?.[0]?.toUpperCase() || user.username[0].toUpperCase()
+              )}
             </div>
             <div>
               <h1 className="text-2xl font-bold">

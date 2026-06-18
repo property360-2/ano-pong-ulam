@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { MdLock, MdCameraAlt } from "react-icons/md"
 import Header from "@/components/Header"
-import DropZone from "@/components/DropZone"
 
 type UserProfile = {
   username: string
@@ -27,6 +27,11 @@ export default function SettingsPage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
 
+  const avatarPreview = useMemo(() => {
+    if (avatarFile) return URL.createObjectURL(avatarFile)
+    return null
+  }, [avatarFile])
+
   useEffect(() => {
     if (!session) return
     fetch("/api/user/profile")
@@ -44,6 +49,7 @@ export default function SettingsPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const form = e.currentTarget
     setSaving(true)
     setError("")
     setSuccess(false)
@@ -70,7 +76,6 @@ export default function SettingsPage() {
         avatarUrl = url
       }
 
-      const form = e.currentTarget
       const formData = new FormData(form)
 
       const res = await fetch("/api/user/profile", {
@@ -109,7 +114,7 @@ export default function SettingsPage() {
             <h1 className="text-xl font-bold mb-2">Sign in to manage settings</h1>
             <Link
               href="/login"
-              className="inline-block bg-brand text-white px-6 py-3 rounded-xl font-medium hover:bg-brand-dark transition-colors"
+              className="inline-block bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors"
             >
               Sign In
             </Link>
@@ -152,12 +157,28 @@ export default function SettingsPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1">Username</label>
-              <p className="text-sm text-stone-500">@{profile?.username}</p>
+              <div className="relative">
+                <MdLock className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300 text-sm" />
+                <input
+                  type="text"
+                  value={`@${profile?.username || ""}`}
+                  disabled
+                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2 pl-9 text-sm text-stone-500 cursor-not-allowed"
+                />
+              </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-              <p className="text-sm text-stone-500">{profile?.email}</p>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <div className="relative">
+                <MdLock className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300 text-sm" />
+                <input
+                  type="text"
+                  value={profile?.email || ""}
+                  disabled
+                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2 pl-9 text-sm text-stone-500 cursor-not-allowed"
+                />
+              </div>
             </div>
 
             <div>
@@ -175,85 +196,99 @@ export default function SettingsPage() {
             <div>
               <label className="block text-sm font-medium mb-1">Avatar</label>
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center text-xl font-bold text-amber-600 flex-shrink-0 overflow-hidden">
-                  {profile?.avatarUrl && !avatarFile ? (
+                <label className="relative w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center text-xl font-bold text-amber-600 flex-shrink-0 overflow-hidden hover:ring-2 hover:ring-amber-500 transition-all group cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
+                  ) : profile?.avatarUrl ? (
                     <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
                     (profile?.displayName?.[0] || profile?.username[0] || "?").toUpperCase()
                   )}
-                </div>
-                <div className="flex-1">
-                  <DropZone onFile={setAvatarFile} currentImage={null} hint="Max 5MB. JPEG, PNG, WebP, or GIF." />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MdCameraAlt className="text-white text-lg" />
+                  </div>
+                </label>
+                <div className="text-xs text-stone-400">
+                  <p>Click the avatar to upload a photo</p>
+                  <p>Max 5MB. JPEG, PNG, WebP, or GIF.</p>
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
-            <h2 className="text-lg font-bold">About You</h2>
+          <section className="bg-white rounded-xl border border-stone-200 p-6">
+            <h2 className="text-lg font-bold mb-4">About You</h2>
 
-            <div>
-              <label htmlFor="bio" className="block text-sm font-medium mb-1">Bio</label>
-              <textarea
-                id="bio"
-                name="bio"
-                rows={3}
-                defaultValue={profile?.bio || ""}
-                placeholder="Tell the community about yourself..."
-                className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="bio" className="block text-sm font-medium mb-1">Bio</label>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  rows={3}
+                  defaultValue={profile?.bio || ""}
+                  placeholder="Tell the community about yourself..."
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="region" className="block text-sm font-medium mb-1">Region</label>
+                <select
+                  id="region"
+                  name="region"
+                  defaultValue={profile?.region || ""}
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                >
+                  <option value="">Prefer not to say</option>
+                  <option value="tagalog">Tagalog</option>
+                  <option value="bicol">Bicol</option>
+                  <option value="ilocano">Ilocano</option>
+                  <option value="kapampangan">Kapampangan</option>
+                  <option value="visayas">Visayas</option>
+                  <option value="mindanao">Mindanao</option>
+                  <option value="diaspora">Diaspora / International</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="cookingLevel" className="block text-sm font-medium mb-1">Cooking Level</label>
+                <select
+                  id="cookingLevel"
+                  name="cookingLevel"
+                  defaultValue={profile?.cookingLevel || ""}
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                >
+                  <option value="">Select level</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="home_cook">Home Cook</option>
+                  <option value="lola_tier">Lola Tier</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="region" className="block text-sm font-medium mb-1">Region</label>
-              <select
-                id="region"
-                name="region"
-                defaultValue={profile?.region || ""}
-                className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-stone-100">
+              <Link
+                href="/"
+                className="px-6 py-3 text-sm font-medium text-stone-600 hover:text-stone-900"
               >
-                <option value="">Prefer not to say</option>
-                <option value="tagalog">Tagalog</option>
-                <option value="bicol">Bicol</option>
-                <option value="ilocano">Ilocano</option>
-                <option value="kapampangan">Kapampangan</option>
-                <option value="visayas">Visayas</option>
-                <option value="mindanao">Mindanao</option>
-                <option value="diaspora">Diaspora / International</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="cookingLevel" className="block text-sm font-medium mb-1">Cooking Level</label>
-              <select
-                id="cookingLevel"
-                name="cookingLevel"
-                defaultValue={profile?.cookingLevel || ""}
-                className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                Cancel
+              </Link>
+              <button
+                type="submit"
+                disabled={saving}
+                className="bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
               >
-                <option value="">Select level</option>
-                <option value="beginner">Beginner</option>
-                <option value="home_cook">Home Cook</option>
-                <option value="lola_tier">Lola Tier</option>
-              </select>
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
             </div>
           </section>
-
-          <div className="flex justify-end gap-3">
-            <Link
-              href="/"
-              className="px-6 py-3 text-sm font-medium text-stone-600 hover:text-stone-900"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="bg-brand text-white px-6 py-3 rounded-xl font-medium hover:bg-brand-dark disabled:opacity-50 transition-colors"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
         </form>
       </main>
     </>

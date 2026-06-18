@@ -73,9 +73,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // NOTE: Generate a unique, non-guessable filename scoped to the user
+    // NOTE: Generate a unique, non-guessable filename scoped to the user and folder
     const ext = file.name.split(".").pop() || "jpg"
-    const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
+    const fileName = `${folder}/${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = new Uint8Array(arrayBuffer)
