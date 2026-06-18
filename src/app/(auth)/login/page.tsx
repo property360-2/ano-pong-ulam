@@ -4,7 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { MdRestaurant } from "react-icons/md"
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -38,8 +38,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <Link href="/" className="block text-center mb-8 text-2xl">
-          <MdRestaurant className="inline-block" /> <span className="font-bold">Ano Pong <span className="text-amber-600">Ulam?</span></span>
+        <Link href="/" className="block text-center mb-8">
+          <Image src="/logo-removebg-preview.png" alt="" width={40} height={40} className="inline-block align-middle mr-2" />
+          <span className="font-bold text-2xl align-middle">Ano Pong <span className="text-amber-600">Ulam?</span></span>
         </Link>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
