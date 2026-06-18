@@ -51,9 +51,13 @@ export default function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
-              <NavLink href="/recipes">Recipes</NavLink>
-              <NavLink href="/challenges">Challenges</NavLink>
-              <NavLink href="/collections">Collections</NavLink>
+              {session?.user && (
+                <>
+                  <NavLink href="/recipes">Recipes</NavLink>
+                  <NavLink href="/challenges">Challenges</NavLink>
+                  <NavLink href="/collections">Collections</NavLink>
+                </>
+              )}
             </nav>
           </div>
 
@@ -107,22 +111,21 @@ export default function Header() {
                 <NavLink href="/" onClick={closeMenu}>Home</NavLink>
               </div>
 
-              {!isNewRecipe && (
-                <Link
-                  href="/recipes/new"
-                  onClick={closeMenu}
-                  className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2"
-                >
-                  <MdAdd className="text-base" />
-                  Share Recipe
-                </Link>
-              )}
-              <NavLink href="/recipes" onClick={closeMenu}>Recipes</NavLink>
-              <NavLink href="/challenges" onClick={closeMenu}>Challenges</NavLink>
-              <NavLink href="/collections" onClick={closeMenu}>Collections</NavLink>
-
               {session?.user ? (
                 <>
+                  {!isNewRecipe && (
+                    <Link
+                      href="/recipes/new"
+                      onClick={closeMenu}
+                      className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2"
+                    >
+                      <MdAdd className="text-base" />
+                      Share Recipe
+                    </Link>
+                  )}
+                  <NavLink href="/recipes" onClick={closeMenu}>Recipes</NavLink>
+                  <NavLink href="/challenges" onClick={closeMenu}>Challenges</NavLink>
+                  <NavLink href="/collections" onClick={closeMenu}>Collections</NavLink>
                   <div className="mt-3 pt-3 border-t border-stone-100" />
                   <NavLink href="/notifications" onClick={closeMenu}>Notifications</NavLink>
                   <NavLink href={`/u/${session.user.name}`} onClick={closeMenu}>Profile</NavLink>

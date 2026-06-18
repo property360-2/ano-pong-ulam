@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { MdLock, MdAdd, MdEdit, MdDelete, MdArrowBack, MdCollectionsBookmark } from "react-icons/md"
+import { MdLock, MdAdd, MdEdit, MdDelete, MdCollectionsBookmark } from "react-icons/md"
 import Header from "@/components/Header"
+import PageHeader from "@/components/PageHeader"
 import { useToast } from "@/lib/toast"
 
 interface CollectionItem {
@@ -118,27 +119,19 @@ export default function CollectionsPage() {
   return (
     <>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="text-stone-500 hover:text-amber-600 transition-colors"
-            >
-              <MdArrowBack className="text-xl" />
-            </Link>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <MdCollectionsBookmark className="text-amber-600" />
-              My Collections
-            </h1>
-          </div>
+        <main className="max-w-4xl mx-auto px-4 pt-10 pb-12">
+        <PageHeader
+          title="My Collections"
+          icon={<MdCollectionsBookmark />}
+          backHref="/"
+        >
           <button
             onClick={() => setShowCreate(true)}
-            className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
+            className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm ml-4"
           >
             <MdAdd /> New Collection
           </button>
-        </div>
+        </PageHeader>
 
         {showCreate && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
@@ -176,71 +169,72 @@ export default function CollectionsPage() {
         {loading ? (
           <p className="text-stone-400 text-center py-12">Loading collections...</p>
         ) : collections.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-stone-400 mb-4">No collections yet</p>
+          <div className="text-center py-16">
+            <MdCollectionsBookmark className="text-6xl text-stone-200 mx-auto mb-4" />
+            <p className="text-stone-500 mb-2">No collections yet</p>
+            <p className="text-sm text-stone-400 mb-6">Create a collection to save and organize your favorite recipes.</p>
             <button
               onClick={() => setShowCreate(true)}
-              className="text-amber-600 text-sm font-medium hover:underline"
+              className="bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
             >
-              Create your first collection
+              Create Your First Collection
             </button>
           </div>
         ) : (
           <div className="grid gap-4">
             {collections.map((c) => (
-              <div
-                key={c.id}
-                className="flex items-center justify-between bg-white border border-stone-200 rounded-2xl p-4 hover:shadow-card-hover transition-shadow"
-              >
-                {editingId === c.id ? (
-                  <div className="flex-1 flex items-center gap-2 mr-4">
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      maxLength={50}
-                      autoFocus
-                      className="flex-1 border border-stone-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") renameCollection(c.id)
-                        if (e.key === "Escape") setEditingId(null)
-                      }}
-                    />
-                    <button onClick={() => renameCollection(c.id)} className="text-sm text-amber-600 font-medium hover:underline">Save</button>
-                    <button onClick={() => setEditingId(null)} className="text-sm text-stone-400 hover:underline">Cancel</button>
-                  </div>
-                ) : (
-                  <Link
-                    href={`/collections/${c.id}`}
-                    className="flex-1 flex items-center gap-3 min-w-0"
-                  >
-                    <span className="text-2xl">{c.emoji}</span>
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{c.name}</p>
-                      <p className="text-sm text-stone-400">{c.recipeCount} recipe{c.recipeCount !== 1 ? "s" : ""}</p>
+                <div
+                  key={c.id}
+                  className="flex items-center justify-between bg-white border border-stone-200 rounded-2xl p-5 hover:shadow-card-hover transition-shadow"
+                >
+                  {editingId === c.id ? (
+                    <div className="flex-1 flex items-center gap-2 mr-4">
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        maxLength={50}
+                        autoFocus
+                        className="flex-1 border border-stone-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") renameCollection(c.id)
+                          if (e.key === "Escape") setEditingId(null)
+                        }}
+                      />
+                      <button onClick={() => renameCollection(c.id)} className="text-sm text-amber-600 font-medium hover:underline">Save</button>
+                      <button onClick={() => setEditingId(null)} className="text-sm text-stone-400 hover:underline">Cancel</button>
                     </div>
-                  </Link>
-                )}
+                  ) : (
+                    <Link
+                      href={`/collections/${c.id}`}
+                      className="flex-1 min-w-0"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{c.name}</p>
+                        <p className="text-sm text-stone-400">{c.recipeCount} recipe{c.recipeCount !== 1 ? "s" : ""}</p>
+                      </div>
+                    </Link>
+                  )}
 
-                {editingId !== c.id && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => { setEditingId(c.id); setEditName(c.name) }}
-                      className="p-2 text-stone-400 hover:text-amber-600 transition-colors rounded-lg hover:bg-stone-100"
-                      title="Rename"
-                    >
-                      <MdEdit />
-                    </button>
-                    <button
-                      onClick={() => deleteCollection(c.id)}
-                      className="p-2 text-stone-400 hover:text-red-600 transition-colors rounded-lg hover:bg-stone-100"
-                      title="Delete"
-                    >
-                      <MdDelete />
-                    </button>
-                  </div>
-                )}
-              </div>
+                  {editingId !== c.id && (
+                    <div className="flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => { setEditingId(c.id); setEditName(c.name) }}
+                        className="p-2 text-stone-400 hover:text-amber-600 transition-colors rounded-lg hover:bg-stone-100"
+                        title="Rename"
+                      >
+                        <MdEdit />
+                      </button>
+                      <button
+                        onClick={() => deleteCollection(c.id)}
+                        className="p-2 text-stone-400 hover:text-red-600 transition-colors rounded-lg hover:bg-stone-100"
+                        title="Delete"
+                      >
+                        <MdDelete />
+                      </button>
+                    </div>
+                  )}
+                </div>
             ))}
           </div>
         )}

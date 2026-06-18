@@ -7,6 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { MdLock, MdArrowBack, MdDelete, MdEdit, MdRestaurant } from "react-icons/md"
 import Header from "@/components/Header"
+import PageHeader from "@/components/PageHeader"
 import { useToast } from "@/lib/toast"
 
 interface RecipeItem {
@@ -35,7 +36,6 @@ export default function CollectionDetailPage() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState("")
-  const [editEmoji, setEditEmoji] = useState("")
 
   useEffect(() => {
     if (session) fetchCollection()
@@ -64,11 +64,11 @@ export default function CollectionDetailPage() {
       const res = await fetch(`/api/collections/${params.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editName.trim(), emoji: editEmoji }),
+        body: JSON.stringify({ name: editName.trim() }),
       })
       if (res.ok) {
         const updated = await res.json()
-        setCollection((prev) => prev ? { ...prev, name: updated.name, emoji: updated.emoji } : prev)
+        setCollection((prev) => prev ? { ...prev, name: updated.name } : prev)
         setEditing(false)
         toast.success("Collection updated")
       }
@@ -130,50 +130,48 @@ export default function CollectionDetailPage() {
   return (
     <>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-2">
-          <Link
-            href="/collections"
-            className="text-stone-500 hover:text-amber-600 transition-colors"
-          >
-            <MdArrowBack className="text-xl" />
-          </Link>
-        </div>
-
+      <main className="max-w-4xl mx-auto px-4 pt-10 pb-12">
         {editing ? (
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-3">
-              <input
-                type="text"
-                value={editEmoji}
-                onChange={(e) => setEditEmoji(e.target.value)}
-                maxLength={2}
-                className="w-12 text-center text-2xl border border-stone-300 rounded-lg py-1"
-              />
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                maxLength={50}
-                autoFocus
-                className="flex-1 text-2xl font-bold border border-stone-300 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              />
+          <>
+            <div className="mb-6">
+              <Link
+                href="/collections"
+                className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+              >
+                <MdArrowBack className="text-lg" />
+                Back to Collections
+              </Link>
             </div>
-            <div className="flex gap-2">
-              <button onClick={saveChanges} className="bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Save</button>
-              <button onClick={() => setEditing(false)} className="text-stone-500 px-4 py-1.5 rounded-lg text-sm hover:bg-stone-100 transition-colors">Cancel</button>
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  maxLength={50}
+                  autoFocus
+                  className="w-full text-lg font-bold border border-stone-300 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={saveChanges} className="bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Save</button>
+                <button onClick={() => setEditing(false)} className="text-stone-500 px-4 py-1.5 rounded-lg text-sm hover:bg-stone-100 transition-colors">Cancel</button>
+              </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold flex items-center gap-3">
-              <span>{collection.emoji}</span>
-              {collection.name}
-              <span className="text-base font-normal text-stone-400">({collection.recipeCount} recipe{collection.recipeCount !== 1 ? "s" : ""})</span>
-            </h1>
-            <div className="flex items-center gap-1">
+          <PageHeader
+            title={
+              <span className="flex items-center gap-3">
+                <span>{collection.name}</span>
+                <span className="text-base font-normal text-stone-400">({collection.recipeCount} recipe{collection.recipeCount !== 1 ? "s" : ""})</span>
+              </span>
+            }
+            backHref="/collections"
+          >
+            <div className="flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity">
               <button
-                onClick={() => { setEditing(true); setEditName(collection.name); setEditEmoji(collection.emoji) }}
+                onClick={() => { setEditing(true); setEditName(collection.name) }}
                 className="p-2 text-stone-400 hover:text-amber-600 transition-colors rounded-lg hover:bg-stone-100"
                 title="Edit"
               >
@@ -187,18 +185,19 @@ export default function CollectionDetailPage() {
                 <MdDelete />
               </button>
             </div>
-          </div>
+          </PageHeader>
         )}
 
         {collection.recipes.length === 0 ? (
-          <div className="text-center py-12">
-            <MdRestaurant className="text-5xl text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-400 mb-4">No recipes in this collection yet</p>
+          <div className="text-center py-16">
+            <MdRestaurant className="text-6xl text-stone-200 mx-auto mb-4" />
+            <p className="text-stone-500 mb-2">This collection is empty</p>
+            <p className="text-sm text-stone-400 mb-6">Browse recipes and save your favorites to this collection.</p>
             <Link
               href="/recipes"
-              className="text-amber-600 text-sm font-medium hover:underline"
+              className="inline-block bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
             >
-              Browse recipes
+              Browse Recipes
             </Link>
           </div>
         ) : (

@@ -1,21 +1,33 @@
 import Link from "next/link"
 import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
+import RecipeCard from "@/components/RecipeCard"
 import { MdFastfood, MdEmojiFoodBeverage, MdWbSunny, MdCelebration, MdEco, MdCake } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
 
 const CATEGORIES = [
-  { name: "Ulam", slug: "ulam", desc: "Main dishes", icon: <MdFastfood /> },
-  { name: "Merienda", slug: "merienda", desc: "Snacks & treats", icon: <MdEmojiFoodBeverage /> },
-  { name: "Pang-almusal", slug: "breakfast", desc: "Morning meals", icon: <MdWbSunny /> },
-  { name: "Pampasko", slug: "fiesta", desc: "Festive dishes", icon: <MdCelebration /> },
-  { name: "Lutong Gulay", slug: "vegetable", desc: "Veggie dishes", icon: <MdEco /> },
-  { name: "Dessert", slug: "dessert", desc: "Matatamis", icon: <MdCake /> },
+  { name: "Ulam", slug: "ulam", desc: "The star of every meal. Kung walang ulam, hindi buo ang kainan.", icon: <MdFastfood /> },
+  { name: "Merienda", slug: "merienda", desc: "Mga panghapong cravings na hitik sa sarap — turon, puto, atbp.", icon: <MdEmojiFoodBeverage /> },
+  { name: "Pang-almusal", slug: "breakfast", desc: "Simulan ang araw nang busog. Tosino, sinangag, itlog — name it.", icon: <MdWbSunny /> },
+  { name: "Pampasko", slug: "fiesta", desc: "The dishes that only come out during handaan, sa binyag, kasal, at Pasko.", icon: <MdCelebration /> },
+  { name: "Lutong Gulay", slug: "vegetable", desc: "Pinoy gulay dishes na kahit ang bata, uulit.", icon: <MdEco /> },
+  { name: "Matatamis", slug: "dessert", desc: "Handa na ang panghimagas? Leche flan, ube halaya, at iba pa.", icon: <MdCake /> },
 ]
 
 export default async function HomePage() {
   const session = await auth()
+
+  const latestRecipes = await prisma.recipe.findMany({
+    where: { isPublished: true },
+    orderBy: { createdAt: "desc" },
+    take: 4,
+    include: {
+      author: { select: { username: true } },
+      _count: { select: { likes: true, comments: true } },
+    },
+  })
 
   return (
     <>
@@ -23,25 +35,26 @@ export default async function HomePage() {
       <main className="flex-1">
         <section className="bg-gradient-to-b from-red-50 to-stone-50 py-20 px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Ano pong{" "}
-              <span className="text-amber-600">ulam?</span>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+              Ang recipe ng{" "}
+              <span className="text-amber-600">lola</span>
+              {" "}mo, deserve niyang ma-share sa mundo.
             </h1>
-            <p className="text-lg text-stone-600 mb-8 max-w-xl mx-auto">
-              Filipino family recipes — shared by lolas, titas, and home cooks. Discover, cook, and share the dishes that bring us together.
+            <p className="text-lg text-stone-600 mb-8 max-w-xl mx-auto leading-relaxed">
+              <span className="font-semibold">Ano Pong Ulam?</span> is where Filipino heirloom recipes live forever. Isulat mo ang kuwento ng inyong kusina — the secret adobo ng nanay mo, ang pancit na laging hinihingi sa fiesta, ang dessert na namimiss mo tuwing uuwi ka. Mula sa ating mga kusina, patungo sa bawat mesa.
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               <Link
-                href="/recipes"
+                href={session?.user ? "/recipes" : "/login"}
                 className="bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
               >
-                Browse Recipes
+                Halungkat ng Recipes
               </Link>
               <Link
-                href="/recipes/new"
-                className="bg-white text-stone-800 px-6 py-3 rounded-full font-medium border border-stone-300 hover:bg-stone-50 transition-colors"
+                href={session?.user ? "/recipes/new" : "/login"}
+                className="bg-white text-red-600 px-6 py-3 rounded-full font-medium border border-red-300 hover:bg-red-50 transition-colors"
               >
-                Share Your Recipe
+                Ibahagi ang Recipe Mo
               </Link>
             </div>
           </div>
@@ -49,17 +62,18 @@ export default async function HomePage() {
 
         <section className="py-16 px-4">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-2xl font-bold mb-8">Discover by Category</h2>
+            <h2 className="text-2xl font-bold mb-2">Ano ang hanap mo ngayon?</h2>
+            <p className="text-stone-500 mb-8">Pumili ng kategorya at tuklasin ang sarap ng tunay na lutong Pinoy.</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
-                  href={`/recipes?category=${cat.slug}`}
+                  href={session?.user ? `/recipes?category=${cat.slug}` : "/login"}
                   className="bg-white rounded-xl p-6 border border-stone-200 hover:border-red-300 hover:shadow-sm transition-all"
                 >
                   <span className="text-3xl block mb-2">{cat.icon}</span>
                   <h3 className="font-semibold text-stone-900">{cat.name}</h3>
-                  <p className="text-sm text-stone-500">{cat.desc}</p>
+                  <p className="text-sm text-stone-500 mt-1 leading-snug">{cat.desc}</p>
                 </Link>
               ))}
             </div>
@@ -68,31 +82,71 @@ export default async function HomePage() {
 
         <section className="py-16 px-4 bg-white">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-2xl font-bold mb-4">Latest Recipes</h2>
-            <p className="text-stone-500 mb-8">
-              No recipes yet — be the first to share!
-            </p>
-            {session?.user ? (
-              <Link
-                href="/recipes/new"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
-              >
-                Share Your First Recipe
-              </Link>
+            <h2 className="text-2xl font-bold mb-4">Mga Bagong Luto</h2>
+
+            {latestRecipes.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  {latestRecipes.map((recipe) => (
+                    session?.user ? (
+                      <RecipeCard key={recipe.id} recipe={recipe} />
+                    ) : (
+                      <Link
+                        key={recipe.id}
+                        href="/login"
+                        className="block bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-card hover:shadow-card-hover hover:border-amber-200 transition-all duration-200"
+                      >
+                        <div className="aspect-video bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-4xl">
+                          <MdFastfood />
+                        </div>
+                        <div className="p-4">
+                          <p className="font-semibold text-stone-900">{recipe.title}</p>
+                          <p className="text-xs text-stone-400 mt-2">Sign in to view recipe</p>
+                        </div>
+                      </Link>
+                    )
+                  ))}
+                </div>
+                <div className="text-center">
+                  <Link
+                    href={session?.user ? "/recipes" : "/login"}
+                    className="inline-block text-red-600 font-medium hover:text-red-700 transition-colors border border-red-300 px-6 py-2.5 rounded-full hover:bg-red-50"
+                  >
+                    Tingnan ang Iba Pa
+                  </Link>
+                </div>
+              </>
             ) : (
-              <Link
-                href="/login"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
-              >
-                Sign In to Share
-              </Link>
+              <>
+                <p className="text-stone-600 mb-2 max-w-xl leading-relaxed">
+                  Wala pang laman ang ating kusina digitally... Pero nandito ka na. Baka ikaw na ang mag-umpisa?
+                </p>
+                <p className="text-stone-500 mb-8 max-w-xl">
+                  Yung recipe ng pamilya niyo na hanggang ngayon, sa isip mo lang itinatago — it's time to write it down. Maging unang mag-ambag ng inyong pamana.
+                </p>
+                {session?.user ? (
+                  <Link
+                    href="/recipes/new"
+                    className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Isulat ang Unang Recipe
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Sumali at Mag-ambag
+                  </Link>
+                )}
+              </>
             )}
           </div>
         </section>
       </main>
 
       <footer className="bg-stone-900 text-stone-400 py-8 px-4 text-sm text-center">
-        <p>Mga recipe ng pamilya, pinagbabahagi ng bayan.</p>
+        <p>Bawat recipe ay may kuwento. Bawat kusina ay may pamana.</p>
       </footer>
     </>
   )
