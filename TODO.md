@@ -83,6 +83,34 @@
 
 ---
 
+## ✅ Collections
+- ✅ Create / rename / delete collections (API + pages)
+- ✅ Add/remove recipes from collections (inline toggle checkboxes)
+- ✅ Collection detail page (`/collections/[id]`)
+- ✅ User's collections page (`/collections`)
+- ✅ Add-to-collection dropdown on recipe detail page
+
+---
+
+## ✅ Notifications
+- ✅ Notification creation helper in `src/lib/notifications.ts`
+- ✅ Notifications created on like, comment, follow actions
+- ✅ Notification bell in Header with unread badge + dropdown
+- ✅ Notifications page (`/notifications`) with All/Unread tabs
+- ✅ Mark all as read + single notification read on click
+- ✅ 30s polling for unread count
+
+---
+
+## ✅ UI Polish
+- ✅ Toast notification system (`ToastProvider` + `useToast`)
+- ✅ Toasts integrated into LikeButton, SaveButton, FollowButton, CommentForm
+- ✅ Infinite scroll on browse page (`/recipes`) via IntersectionObserver + paginated API
+- ✅ Responsive mobile hamburger menu with slide-in overlay drawer
+- ✅ General responsiveness fixes (grid stacking, bigger tap targets, flex-wrap, overflow-x-auto)
+
+---
+
 ## ✅ PWA Setup
 - ✅ `manifest.json` (name, display: standalone, theme color, orientation)
 - ✅ iOS meta tags + `apple-touch-icon.png`
