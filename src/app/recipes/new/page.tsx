@@ -2,8 +2,13 @@
 
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { MdLock } from "react-icons/md"
-import RecipeForm from "@/components/RecipeForm"
+import ErrorBoundary from "@/components/ErrorBoundary"
+
+const RecipeForm = dynamic(() => import("@/components/RecipeForm"), {
+  loading: () => null,
+})
 
 export default function NewRecipePage() {
   const { data: session } = useSession()
@@ -28,5 +33,14 @@ export default function NewRecipePage() {
     )
   }
 
-  return <RecipeForm mode="create" />
+  return (
+    <ErrorBoundary fallback={
+      <div className="min-h-screen flex items-center justify-center px-4 text-center">
+        <p className="text-stone-500">Failed to load recipe form. Please try again.</p>
+        <Link href="/recipes/new" className="mt-3 text-amber-600 hover:underline">Reload</Link>
+      </div>
+    }>
+      <RecipeForm mode="create" />
+    </ErrorBoundary>
+  )
 }

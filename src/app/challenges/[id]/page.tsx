@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import Image from "next/image"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
 import { MdPeople, MdWorkspacePremium, MdCameraAlt, MdStar } from "react-icons/md"
@@ -80,11 +81,13 @@ export default async function ChallengeDetailPage(props: { params: Params }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {challenge.entries.map((entry) => (
               <div key={entry.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-                <div className="aspect-square bg-stone-100 overflow-hidden">
-                  <img
+                <div className="aspect-square bg-stone-100 overflow-hidden relative">
+                  <Image
                     src={entry.photoUrl}
                     alt={entry.caption || "Challenge entry"}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
                   />
                 </div>
                 <div className="p-4">

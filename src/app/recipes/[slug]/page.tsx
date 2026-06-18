@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/db"
+import Image from "next/image"
 import Header from "@/components/Header"
 import LikeButton from "@/components/LikeButton"
 import SaveButton from "@/components/SaveButton"
@@ -150,11 +151,16 @@ export default async function RecipeDetailPage(props: { params: Params }) {
       <main className="flex-1 mx-auto max-w-4xl w-full px-4 py-8">
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           {recipe.heroImage ? (
-            <img
-              src={recipe.heroImage}
-              alt={recipe.title}
-              className="w-full h-64 md:h-96 object-cover"
-            />
+            <div className="w-full h-64 md:h-96 relative">
+              <Image
+                src={recipe.heroImage}
+                alt={recipe.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+                priority
+              />
+            </div>
           ) : (
             <div className="w-full h-64 md:h-96 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl">
               <MdRestaurant />

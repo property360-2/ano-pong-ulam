@@ -201,7 +201,7 @@
 
 ## 🟢 Low Priority / Backlog
 
-- [ ] Error boundaries
+- [x] Error boundaries (global error.tsx, recipes error.tsx, reusable ErrorBoundary component, not-found.tsx, wrapped RecipeForm)
 - [x] Forgot password / reset flow (signed-token approach, no DB migration needed)
 - [ ] Account deletion
 - [ ] Admin dashboard + moderation tools

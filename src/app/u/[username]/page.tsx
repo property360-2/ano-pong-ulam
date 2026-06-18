@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import Image from "next/image"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
 import RecipeCard from "@/components/RecipeCard"
@@ -32,9 +33,15 @@ export default async function UserProfilePage(props: { params: Params }) {
       <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-8">
         <div className="bg-white rounded-xl border border-stone-200 p-6 md:p-8 mb-8">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-2xl font-bold text-amber-600 flex-shrink-0 overflow-hidden">
+            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-2xl font-bold text-amber-600 flex-shrink-0 overflow-hidden relative">
               {user.avatarUrl ? (
-                <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                <Image
+                  src={user.avatarUrl}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
               ) : (
                 user.displayName?.[0]?.toUpperCase() || user.username[0].toUpperCase()
               )}

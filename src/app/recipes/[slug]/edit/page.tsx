@@ -1,8 +1,12 @@
 import { notFound, redirect } from "next/navigation"
+import nextDynamic from "next/dynamic"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import Header from "@/components/Header"
-import RecipeForm from "@/components/RecipeForm"
+
+const RecipeForm = nextDynamic(() => import("@/components/RecipeForm"), {
+  loading: () => null,
+})
 
 export const dynamic = "force-dynamic"
 

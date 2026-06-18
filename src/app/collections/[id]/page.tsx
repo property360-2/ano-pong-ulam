@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { MdLock, MdArrowBack, MdDelete, MdEdit, MdRestaurant } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
@@ -210,9 +211,11 @@ export default function CollectionDetailPage() {
               >
                 <div className="w-20 h-20 rounded-xl bg-stone-100 flex-shrink-0 overflow-hidden">
                   {recipe.heroImage ? (
-                    <img
+                    <Image
                       src={recipe.heroImage}
                       alt={recipe.title}
+                      width={80}
+                      height={80}
                       className="w-full h-full object-cover"
                     />
                   ) : (

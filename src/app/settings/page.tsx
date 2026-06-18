@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { MdLock, MdCameraAlt } from "react-icons/md"
 import Header from "@/components/Header"
 
@@ -249,7 +250,13 @@ export default function SettingsPage() {
                   {avatarPreview ? (
                     <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
                   ) : profile?.avatarUrl ? (
-                    <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    <Image
+                      src={profile.avatarUrl}
+                      alt=""
+                      width={56}
+                      height={56}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     (profile?.displayName?.[0] || profile?.username[0] || "?").toUpperCase()
                   )}

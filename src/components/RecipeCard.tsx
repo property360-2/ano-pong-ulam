@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { MdRestaurant, MdTimer, MdLocationOn } from "react-icons/md"
 
 type Recipe = {
@@ -23,11 +24,13 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
       className="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-card hover:shadow-card-hover hover:border-amber-200 transition-all duration-200"
     >
       {recipe.heroImage ? (
-        <div className="aspect-video bg-stone-100 overflow-hidden">
-          <img
+        <div className="aspect-video bg-stone-100 overflow-hidden relative">
+          <Image
             src={recipe.heroImage}
             alt={recipe.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform"
           />
         </div>
       ) : (
