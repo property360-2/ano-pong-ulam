@@ -4,9 +4,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
-import { MdRestaurant, MdClose, MdMenu } from "react-icons/md"
+import { MdRestaurant, MdClose, MdMenu, MdAdd } from "react-icons/md"
 import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
+import UserMenu from "./UserMenu"
 
 function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
   const pathname = usePathname()
@@ -19,7 +20,7 @@ function NavLink({ href, children, onClick }: { href: string; children: React.Re
     <Link
       href={href}
       onClick={onClick}
-      className={`block transition-colors ${isActive ? "text-red-600 font-semibold" : "text-stone-700 hover:text-amber-600"}`}
+      className={`transition-colors ${isActive ? "text-red-600 font-semibold" : "text-stone-600 hover:text-amber-600"}`}
     >
       {children}
     </Link>
@@ -40,49 +41,56 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-stone-200">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
-            <MdRestaurant className="text-2xl" />
-            <span className="font-bold text-lg tracking-tight">
-              Ano Pong <span className="text-red-600">Ulam?</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+              <MdRestaurant className="text-2xl" />
+              <span className="font-bold text-lg tracking-tight">
+                Ano Pong <span className="text-red-600">Ulam?</span>
+              </span>
+            </Link>
 
-          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+            <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
+              <NavLink href="/recipes">Recipes</NavLink>
+              <NavLink href="/challenges">Challenges</NavLink>
+              <NavLink href="/collections">Collections</NavLink>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-3">
             {!isNewRecipe && (
-              <NavLink href="/recipes/new">Share Recipe</NavLink>
-            )}
-            <NavLink href="/recipes">Recipes</NavLink>
-            <NavLink href="/challenges">Challenges</NavLink>
-            <NavLink href="/collections">Collections</NavLink>
-            {session?.user ? (
-              <div className="flex items-center gap-3">
-                <NotificationBell />
-                <NavLink href={`/u/${session.user.name}`}>Profile</NavLink>
-                <NavLink href="/settings">Settings</NavLink>
-                <button
-                  onClick={() => signOut()}
-                  className="text-stone-500 hover:text-stone-800 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
               <Link
-                href="/login"
-                className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors"
+                href="/recipes/new"
+                className="hidden md:inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
               >
-                Sign In
+                <MdAdd className="text-base" />
+                Share Recipe
               </Link>
             )}
-          </nav>
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-stone-600 hover:text-amber-600 transition-colors"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-          >
-            {menuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
-          </button>
+            <div className="flex items-center gap-1.5">
+              {session?.user ? (
+                <>
+                  <NotificationBell />
+                  <UserMenu />
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden p-2 text-stone-600 hover:text-amber-600 transition-colors"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -99,7 +107,14 @@ export default function Header() {
               </div>
 
               {!isNewRecipe && (
-                <NavLink href="/recipes/new" onClick={closeMenu}>Share Recipe</NavLink>
+                <Link
+                  href="/recipes/new"
+                  onClick={closeMenu}
+                  className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2"
+                >
+                  <MdAdd className="text-base" />
+                  Share Recipe
+                </Link>
               )}
               <NavLink href="/recipes" onClick={closeMenu}>Recipes</NavLink>
               <NavLink href="/challenges" onClick={closeMenu}>Challenges</NavLink>
@@ -109,10 +124,11 @@ export default function Header() {
                 <>
                   <div className="mt-3 pt-3 border-t border-stone-100" />
                   <NavLink href="/notifications" onClick={closeMenu}>Notifications</NavLink>
+                  <NavLink href={`/u/${session.user.name}`} onClick={closeMenu}>Profile</NavLink>
                   <NavLink href="/settings" onClick={closeMenu}>Settings</NavLink>
                   <button
                     onClick={() => { signOut(); closeMenu() }}
-                    className="text-left text-stone-500 hover:text-stone-800 transition-colors py-2"
+                    className="text-left text-stone-500 hover:text-red-600 transition-colors py-2"
                   >
                     Sign Out
                   </button>
@@ -122,7 +138,7 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={closeMenu}
-                    className="block text-center bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors"
+                    className="block text-center bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
                   >
                     Sign In
                   </Link>
