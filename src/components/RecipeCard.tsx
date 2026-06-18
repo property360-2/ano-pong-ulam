@@ -2,7 +2,7 @@ import Link from "next/link"
 import { MdRestaurant, MdTimer, MdLocationOn } from "react-icons/md"
 
 type Recipe = {
-  id: bigint
+  id: bigint | number
   slug: string
   title: string
   description: string | null

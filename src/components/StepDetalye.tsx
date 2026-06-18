@@ -36,7 +36,7 @@ const DIFFICULTIES = [
 export default function StepDetalye({ data, onChange }: Props) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label htmlFor="category" className="block text-sm font-medium mb-1">Category *</label>
           <select
@@ -44,7 +44,7 @@ export default function StepDetalye({ data, onChange }: Props) {
             required
             value={data.category}
             onChange={(e) => onChange({ category: e.target.value })}
-            className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full border border-stone-300 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             <option value="">Select...</option>
             {CATEGORIES.map((c) => (
@@ -83,7 +83,7 @@ export default function StepDetalye({ data, onChange }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <NumberStepper
           value={data.servings}
           onChange={(v) => onChange({ servings: v })}

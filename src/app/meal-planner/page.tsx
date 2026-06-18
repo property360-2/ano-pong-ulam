@@ -115,7 +115,7 @@ export default function MealPlannerPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-200 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-stone-50 border-b border-stone-200">

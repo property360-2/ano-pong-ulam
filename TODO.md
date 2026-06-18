@@ -133,7 +133,7 @@
 - ✅ BigInt serialization (`BigInt.prototype.toJSON` polyfill in `db.ts`)
 - ✅ `e.currentTarget` null in async form handlers (save ref before await)
 - ✅ `&apos;` HTML entity rendering in JS string literals
-- ✅ `bg-brand` custom color not resolving (replaced with `bg-red-600` everywhere)
+- ✅ `bg-brand` / `text-brand` custom colors not resolving (replaced with `bg-red-600` / `text-red-600` everywhere)
 - ✅ Emoji icons → Material SVGs in InstallPrompt and all components
 - ✅ `overflow-hidden` clipping card content
 - ✅ `completedSteps` being recreated on every render (useRef + useState trigger)
@@ -145,22 +145,25 @@
 
 ## 🔴 High Priority — Next
 
-### Collections (Prisma model exists, needs UI)
-- [ ] Create / rename / delete collections
-- [ ] Add/remove recipes from collections
-- [ ] Collection detail page
-- [ ] User's collections page
+### Collections (Prisma model existed, now has UI)
+- [x] Create / rename / delete collections (API + pages + dropdown on recipe detail)
+- [x] Add/remove recipes from collections (inline toggle checkboxes)
+- [x] Collection detail page (`/collections/[id]`) showing recipe cards
+- [x] User's collections page (`/collections`) with rename/delete inline
+- [x] Collections link in Header nav
 
-### Notifications (Prisma model exists, needs UI)
-- [ ] Notification bell in Header with unread count
-- [ ] Notification dropdown/list
-- [ ] Mark as read API
-- [ ] Real-time polling or SSE
+### Notifications (Prisma model existed, now has UI)
+- [x] Notification creation helper (`src/lib/notifications.ts`)
+- [x] Notifications created on like, comment, follow actions
+- [x] Notification bell in Header with unread badge + dropdown preview
+- [x] Notifications page (`/notifications`) with All/Unread tabs
+- [x] Mark all as read + single notification read on click
+- [x] Polling every 30s for unread count
 
 ### UX Gaps
 - [ ] Responsive mobile navigation (hamburger menu)
-- [ ] Infinite scroll on browse page (`/recipes`)
-- [ ] Toast notifications (success/error on like, save, follow, comment)
+- [x] Infinite scroll on browse page (`/recipes`) via IntersectionObserver
+- [x] Toast notifications (success/error on like, save, follow, comment)
 - [ ] Loading skeletons for recipe cards
 
 ---

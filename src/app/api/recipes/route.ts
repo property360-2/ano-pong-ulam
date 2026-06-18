@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
+import { Prisma, $Enums } from "@/generated/prisma/client"
 
 function slugify(text: string): string {
   return text
@@ -10,6 +11,56 @@ function slugify(text: string): string {
     .replace(/-+/g, "-")
     .trim()
     .slice(0, 100)
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url)
+  const q = url.searchParams.get("q")
+  const category = url.searchParams.get("category")
+  const region = url.searchParams.get("region")
+  const difficulty = url.searchParams.get("difficulty")
+  const tag = url.searchParams.get("tag")
+  const sort = url.searchParams.get("sort")
+  const offset = parseInt(url.searchParams.get("offset") || "0")
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "12"), 50)
+
+  const filters: Prisma.RecipeWhereInput[] = []
+  if (category) filters.push({ category })
+  if (region) filters.push({ region })
+  if (difficulty) filters.push({ difficulty: difficulty as $Enums.Difficulty })
+  if (tag) filters.push({ tags: { has: tag } })
+  if (q) {
+    filters.push({
+      OR: [
+        { title: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ],
+    })
+  }
+
+  const where: Prisma.RecipeWhereInput = { isPublished: true }
+  if (filters.length > 0) where.AND = filters
+
+  let orderBy: Prisma.RecipeOrderByWithRelationInput = { createdAt: "desc" }
+  if (sort === "popular") orderBy = { cookCount: "desc" }
+  else if (sort === "quickest") orderBy = { cookTime: "asc" }
+
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      include: { author: { select: { username: true } } },
+      orderBy,
+      skip: offset,
+      take: limit,
+    }),
+    prisma.recipe.count({ where }),
+  ])
+
+  return NextResponse.json({
+    recipes: recipes.map((r) => ({ ...r, id: Number(r.id) })),
+    total,
+    hasMore: offset + limit < total,
+  })
 }
 
 export async function POST(req: Request) {

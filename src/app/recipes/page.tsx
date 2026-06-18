@@ -1,7 +1,7 @@
 import { Prisma, $Enums } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
-import RecipeCard from "@/components/RecipeCard"
+import RecipeList from "@/components/RecipeList"
 import SearchFilters from "@/components/SearchFilters"
 import { MdSearch, MdRestaurantMenu } from "react-icons/md"
 
@@ -39,11 +39,15 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
   if (sort === "popular") orderBy = { cookCount: "desc" }
   else if (sort === "quickest") orderBy = { cookTime: "asc" }
 
-  const recipes = await prisma.recipe.findMany({
-    where,
-    include: { author: { select: { username: true } } },
-    orderBy,
-  })
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      include: { author: { select: { username: true } } },
+      orderBy,
+      take: 12,
+    }),
+    prisma.recipe.count({ where }),
+  ])
 
   const catGroups = await prisma.recipe.groupBy({
     by: ["category"],
@@ -80,7 +84,7 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
           regions={regions}
         />
 
-        {recipes.length === 0 ? (
+        {total === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
             <span className="text-5xl block mb-4">{hasActiveFilters ? <MdSearch /> : <MdRestaurantMenu />}</span>
             <h2 className="text-xl font-semibold mb-2">
@@ -108,13 +112,9 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
         ) : (
           <>
             <p className="text-sm text-stone-400 mb-4">
-              {recipes.length} recipe{recipes.length !== 1 ? "s" : ""} found
+              {total} recipe{total !== 1 ? "s" : ""} found
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
-            </div>
+            <RecipeList initialRecipes={recipes.map((r) => ({ ...r, id: Number(r.id), createdAt: r.createdAt.toISOString(), updatedAt: r.updatedAt.toISOString() }))} />
           </>
         )}
       </main>
