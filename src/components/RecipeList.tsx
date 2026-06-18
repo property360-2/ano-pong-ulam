@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import RecipeCard from "./RecipeCard"
+import RecipeCardSkeleton from "./RecipeCardSkeleton"
 
 type Recipe = {
   id: number
@@ -98,8 +99,10 @@ export default function RecipeList({ initialRecipes }: { initialRecipes: Recipe[
       </div>
 
       {loading && (
-        <div className="text-center py-8">
-          <p className="text-stone-400 text-sm">Loading more recipes...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <RecipeCardSkeleton key={i} />
+          ))}
         </div>
       )}
 

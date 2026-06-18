@@ -141,6 +141,9 @@
 - ✅ DropZone (drag-and-drop file upload with preview, type/size validation)
 - ✅ ProgressBar (clickable step indicator for wizard)
 - ✅ RecipePreview (full recipe detail layout for wizard preview step)
+- ✅ RecipeList (infinite scroll client component with IntersectionObserver)
+- ✅ AddToCollectionButton (collection dropdown with create inline)
+- ✅ NotificationBell (bell icon with unread badge, dropdown, polling)
 
 ---
 
@@ -181,26 +184,8 @@
 
 ## 🔴 High Priority — Next
 
-### Collections (Prisma model existed, now has UI)
-- [x] Create / rename / delete collections (API + pages + dropdown on recipe detail)
-- [x] Add/remove recipes from collections (inline toggle checkboxes)
-- [x] Collection detail page (`/collections/[id]`) showing recipe cards
-- [x] User's collections page (`/collections`) with rename/delete inline
-- [x] Collections link in Header nav
-
-### Notifications (Prisma model existed, now has UI)
-- [x] Notification creation helper (`src/lib/notifications.ts`)
-- [x] Notifications created on like, comment, follow actions
-- [x] Notification bell in Header with unread badge + dropdown preview
-- [x] Notifications page (`/notifications`) with All/Unread tabs
-- [x] Mark all as read + single notification read on click
-- [x] Polling every 30s for unread count
-
 ### UX Gaps
-- [x] Responsive mobile navigation (hamburger menu with overlay drawer)
-- [x] Infinite scroll on browse page (`/recipes`) via IntersectionObserver
-- [x] Toast notifications (success/error on like, save, follow, comment)
-- [ ] Loading skeletons for recipe cards
+- [x] Loading skeletons for recipe cards (during initial server load via SSR + "load more" scroll)
 
 ---
 
