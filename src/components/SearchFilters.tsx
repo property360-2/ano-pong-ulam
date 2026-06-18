@@ -91,7 +91,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.category ?? ""}
           onChange={(e) => navigate({ category: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="px-3 py-2.5 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -104,7 +104,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.region ?? ""}
           onChange={(e) => navigate({ region: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="px-3 py-2.5 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">All Regions</option>
           {regions.map((r) => (
@@ -117,7 +117,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.difficulty ?? ""}
           onChange={(e) => navigate({ difficulty: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="px-3 py-2.5 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">Any Difficulty</option>
           {DIFFICULTIES.map((d) => (
@@ -130,7 +130,7 @@ export default function SearchFilters({
         <select
           value={currentSort ?? "newest"}
           onChange={(e) => navigate({}, e.target.value)}
-          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="px-3 py-2.5 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           {SORTS.map((s) => (
             <option key={s.value} value={s.value}>
@@ -142,7 +142,7 @@ export default function SearchFilters({
         {hasActiveFilters && (
           <button
             onClick={clearAll}
-            className="px-3 py-2 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+            className="px-3 py-2.5 text-sm text-stone-500 hover:text-amber-600 transition-colors"
           >
             Clear all
           </button>

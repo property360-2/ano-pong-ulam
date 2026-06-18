@@ -134,7 +134,7 @@ export default function CollectionsPage() {
           </div>
           <button
             onClick={() => setShowCreate(true)}
-            className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
+            className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
           >
             <MdAdd /> New Collection
           </button>
@@ -149,7 +149,7 @@ export default function CollectionsPage() {
               placeholder="Collection name..."
               maxLength={50}
               autoFocus
-              className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 mb-3"
+              className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 mb-3"
               onKeyDown={(e) => {
                 if (e.key === "Enter") createCollection()
                 if (e.key === "Escape") setShowCreate(false)

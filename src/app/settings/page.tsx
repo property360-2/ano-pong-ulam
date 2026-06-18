@@ -163,7 +163,7 @@ export default function SettingsPage() {
                   type="text"
                   value={`@${profile?.username || ""}`}
                   disabled
-                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2 pl-9 text-sm text-stone-500 cursor-not-allowed"
+                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2.5 pl-9 text-sm text-stone-500 cursor-not-allowed"
                 />
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function SettingsPage() {
                   type="text"
                   value={profile?.email || ""}
                   disabled
-                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2 pl-9 text-sm text-stone-500 cursor-not-allowed"
+                  className="w-full bg-stone-100 border border-stone-200 rounded-xl px-3 py-2.5 pl-9 text-sm text-stone-500 cursor-not-allowed"
                 />
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function SettingsPage() {
                 type="text"
                 defaultValue={profile?.displayName || ""}
                 placeholder="Your display name"
-                className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
@@ -234,7 +234,7 @@ export default function SettingsPage() {
                   rows={3}
                   defaultValue={profile?.bio || ""}
                   placeholder="Tell the community about yourself..."
-                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                   id="region"
                   name="region"
                   defaultValue={profile?.region || ""}
-                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Prefer not to say</option>
                   <option value="tagalog">Tagalog</option>
@@ -263,7 +263,7 @@ export default function SettingsPage() {
                   id="cookingLevel"
                   name="cookingLevel"
                   defaultValue={profile?.cookingLevel || ""}
-                  className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Select level</option>
                   <option value="beginner">Beginner</option>

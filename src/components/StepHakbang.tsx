@@ -56,7 +56,7 @@ export default function StepHakbang({ steps, onChange }: Props) {
               onChange={(e) => update(i, "instruction", e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, i)}
               rows={2}
-              className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <div className="relative">
               <MdLightbulb className="absolute left-2 top-1/2 -translate-y-1/2 text-stone-400 text-sm" />
@@ -65,7 +65,7 @@ export default function StepHakbang({ steps, onChange }: Props) {
                 placeholder="Tip for this step (optional)"
                 value={step.tips}
                 onChange={(e) => update(i, "tips", e.target.value)}
-                className="w-full border border-stone-200 rounded-xl pl-7 pr-3 py-1.5 text-xs text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full border border-stone-200 rounded-xl pl-7 pr-3 py-2.5 text-sm text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
           </div>

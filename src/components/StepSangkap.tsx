@@ -76,21 +76,21 @@ export default function StepSangkap({ ingredients, onChange }: Props) {
               placeholder="Amount"
               value={ing.amount}
               onChange={(e) => update(i, "amount", e.target.value)}
-              className="col-span-2 border border-stone-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="col-span-2 border border-stone-300 rounded-xl px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <input
               type="text"
               placeholder="Unit"
               value={ing.unit}
               onChange={(e) => update(i, "unit", e.target.value)}
-              className="col-span-2 border border-stone-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="col-span-2 border border-stone-300 rounded-xl px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <input
               type="text"
               placeholder="Ingredient name"
               value={ing.name}
               onChange={(e) => update(i, "name", e.target.value)}
-              className="col-span-5 border border-stone-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="col-span-5 border border-stone-300 rounded-xl px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <input
               type="text"
@@ -98,7 +98,7 @@ export default function StepSangkap({ ingredients, onChange }: Props) {
               value={ing.notes}
               onChange={(e) => update(i, "notes", e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, i)}
-              className="col-span-3 border border-stone-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="col-span-3 border border-stone-300 rounded-xl px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
           {ingredients.length > 1 && (

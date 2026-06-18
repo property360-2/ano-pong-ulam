@@ -32,7 +32,7 @@ export default function NumberStepper({ value, onChange, min = 0, max = 999, nam
         <button
           type="button"
           onClick={decrement}
-          className="px-2 py-2 text-stone-500 hover:text-amber-600 hover:bg-stone-50 transition-colors disabled:opacity-30"
+          className="px-2 py-2.5 text-stone-500 hover:text-amber-600 hover:bg-stone-50 transition-colors disabled:opacity-30"
           disabled={value <= min}
         >
           <MdRemove />
@@ -45,12 +45,12 @@ export default function NumberStepper({ value, onChange, min = 0, max = 999, nam
             const v = parseInt(e.target.value) || min
             onChange(Math.min(Math.max(v, min), max))
           }}
-          className="w-full text-center text-sm py-2 border-x border-stone-200 focus:outline-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full text-center text-sm py-2.5 border-x border-stone-200 focus:outline-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <button
           type="button"
           onClick={increment}
-          className="px-2 py-2 text-stone-500 hover:text-amber-600 hover:bg-stone-50 transition-colors disabled:opacity-30"
+          className="px-2 py-2.5 text-stone-500 hover:text-amber-600 hover:bg-stone-50 transition-colors disabled:opacity-30"
           disabled={value >= max}
         >
           <MdAdd />

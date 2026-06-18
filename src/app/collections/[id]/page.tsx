@@ -155,7 +155,7 @@ export default function CollectionDetailPage() {
                 onChange={(e) => setEditName(e.target.value)}
                 maxLength={50}
                 autoFocus
-                className="flex-1 text-2xl font-bold border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="flex-1 text-2xl font-bold border border-stone-300 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
             <div className="flex gap-2">

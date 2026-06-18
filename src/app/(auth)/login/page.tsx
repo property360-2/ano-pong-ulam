@@ -46,7 +46,7 @@ export default function LoginPage() {
           <h1 className="text-xl font-bold text-center">Sign In</h1>
 
           {error && (
-            <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded">{error}</p>
+            <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2.5 rounded">{error}</p>
           )}
 
           <div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
@@ -67,14 +67,14 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+            className="w-full bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

@@ -22,7 +22,7 @@ export default function StepKuwento({ data, onChange, heroFile, onHeroFile }: Pr
           value={data.title}
           onChange={(e) => onChange({ title: e.target.value })}
           placeholder="e.g., Sinigang na Baboy"
-          className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
       </div>
 
@@ -36,7 +36,7 @@ export default function StepKuwento({ data, onChange, heroFile, onHeroFile }: Pr
           value={data.description || ""}
           onChange={(e) => onChange({ description: e.target.value })}
           placeholder="A comforting sour soup perfect for rainy days..."
-          className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
       </div>
 
@@ -55,7 +55,7 @@ export default function StepKuwento({ data, onChange, heroFile, onHeroFile }: Pr
           value={data.story || ""}
           onChange={(e) => onChange({ story: e.target.value })}
           placeholder="Lola Maria's original recipe from 1960s Batangas..."
-          className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
       </div>
     </div>

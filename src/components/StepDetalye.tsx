@@ -59,7 +59,7 @@ export default function StepDetalye({ data, onChange }: Props) {
             id="region"
             value={data.region || ""}
             onChange={(e) => onChange({ region: e.target.value || null })}
-            className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             <option value="">Any region</option>
             {REGIONS.map((r) => (
@@ -74,7 +74,7 @@ export default function StepDetalye({ data, onChange }: Props) {
             id="difficulty"
             value={data.difficulty || "easy"}
             onChange={(e) => onChange({ difficulty: e.target.value })}
-            className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             {DIFFICULTIES.map((d) => (
               <option key={d.value} value={d.value}>{d.label}</option>
@@ -118,7 +118,7 @@ export default function StepDetalye({ data, onChange }: Props) {
           value={data.tags.join(", ")}
           onChange={(e) => onChange({ tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean) })}
           placeholder="budget, lenten, freezer-friendly, kids-love-it (comma separated)"
-          className="w-full border border-stone-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
       </div>
     </div>

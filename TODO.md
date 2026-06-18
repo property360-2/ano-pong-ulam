@@ -51,6 +51,11 @@
 - ✅ Save / unsave API + SaveButton
 - ✅ Comment API + CommentForm
 - ✅ Activity feed (following + global tabs, cursor pagination)
+- ✅ Notifications created on like, comment, follow actions
+- ✅ Notification bell in Header with unread badge + dropdown preview
+- ✅ Notifications page (`/notifications`) with All/Unread tabs
+- ✅ Mark all as read + single notification read on click
+- ✅ 30s polling for unread count
 
 ---
 
@@ -115,6 +120,9 @@
 - ✅ Active link indicator in Header (`usePathname()`)
 - ✅ Share Recipe link hidden when on create page
 - ✅ Settings link in Header navigation
+- ✅ Collections link in Header navigation
+- ✅ NotificationBell in Header with unread badge + dropdown
+- ✅ Responsive mobile hamburger menu with slide-in overlay drawer
 
 ---
 
@@ -161,7 +169,7 @@
 - [x] Polling every 30s for unread count
 
 ### UX Gaps
-- [ ] Responsive mobile navigation (hamburger menu)
+- [x] Responsive mobile navigation (hamburger menu with overlay drawer)
 - [x] Infinite scroll on browse page (`/recipes`) via IntersectionObserver
 - [x] Toast notifications (success/error on like, save, follow, comment)
 - [ ] Loading skeletons for recipe cards

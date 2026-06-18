@@ -55,7 +55,7 @@ export default async function ChallengesPage() {
                       {challenge.description && (
                         <p className="text-stone-600 text-sm mb-2">{challenge.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-sm text-stone-500">
+                      <div className="flex items-center gap-4 text-sm text-stone-500 flex-wrap">
                         <span>
                           {challenge.startDate.toLocaleDateString("en-PH", { month: "short", day: "numeric" })}
                           {" — "}
