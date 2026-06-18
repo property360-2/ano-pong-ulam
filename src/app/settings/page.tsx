@@ -26,6 +26,12 @@ export default function SettingsPage() {
   const [success, setSuccess] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordSaving, setPasswordSaving] = useState(false)
+  const [passwordError, setPasswordError] = useState("")
+  const [passwordSuccess, setPasswordSuccess] = useState("")
 
   const avatarPreview = useMemo(() => {
     if (avatarFile) return URL.createObjectURL(avatarFile)
@@ -46,6 +52,43 @@ export default function SettingsPage() {
         setLoading(false)
       })
   }, [session])
+
+  async function handleChangePassword() {
+    setPasswordError("")
+    setPasswordSuccess("")
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match")
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters")
+      return
+    }
+
+    setPasswordSaving(true)
+    try {
+      const res = await fetch("/api/user/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setPasswordSuccess("Password updated successfully")
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+      } else {
+        setPasswordError(data.error || "Failed to change password")
+      }
+    } catch {
+      setPasswordError("Something went wrong")
+    } finally {
+      setPasswordSaving(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -290,6 +333,59 @@ export default function SettingsPage() {
             </div>
           </section>
         </form>
+
+        <section className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 mt-8">
+          <h2 className="text-lg font-bold mb-1">Change Password</h2>
+          <p className="text-sm text-stone-500 mb-6">Update your account password</p>
+
+          {passwordError && (
+            <p className="text-sm text-red-600 mb-4 bg-red-50 px-3 py-2 rounded-lg">{passwordError}</p>
+          )}
+          {passwordSuccess && (
+            <p className="text-sm text-green-600 mb-4 bg-green-50 px-3 py-2 rounded-lg">{passwordSuccess}</p>
+          )}
+
+          <div className="space-y-4 max-w-md">
+            <div>
+              <label htmlFor="currentPassword" className="block text-sm font-medium mb-1">Current Password</label>
+              <input
+                id="currentPassword"
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium mb-1">New Password</label>
+              <input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">Confirm New Password</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full border border-stone-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+            <button
+              onClick={handleChangePassword}
+              disabled={passwordSaving || !currentPassword || !newPassword || !confirmPassword}
+              className="bg-stone-800 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-stone-900 disabled:opacity-50 transition-colors"
+            >
+              {passwordSaving ? "Updating..." : "Update Password"}
+            </button>
+          </div>
+        </section>
       </main>
     </>
   )

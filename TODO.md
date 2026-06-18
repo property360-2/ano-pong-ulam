@@ -194,8 +194,8 @@
 - [x] Social share buttons (Facebook, Twitter, copy link) on recipe detail
 - [x] Open Graph meta tags per recipe + JSON-LD structured data
 - [x] Sitemap.xml + robots.txt
-- [ ] Change password (form + API)
-- [ ] Onboarding page (NextAuth redirects to `/onboarding`)
+- [x] Change password (form + API)
+- [x] Onboarding page (3-step wizard after registration: welcome, profile, done)
 
 ---
 
