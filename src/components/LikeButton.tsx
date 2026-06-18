@@ -39,7 +39,7 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
       onClick={handleClick}
       disabled={loading}
       className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
-        liked ? "text-red-600" : "text-stone-500 hover:text-red-600"
+        liked ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
       }`}
     >
       <span>{liked ? <MdFavorite /> : <MdFavoriteBorder />}</span>

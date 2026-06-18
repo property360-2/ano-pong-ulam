@@ -37,8 +37,8 @@ export default function FollowButton({ targetUserId, initialFollowing = false }:
       disabled={loading}
       className={`text-sm font-medium px-4 py-1.5 rounded-lg border transition-colors ${
         following
-          ? "border-stone-300 text-stone-600 hover:border-red-300 hover:text-red-600"
-          : "bg-red-600 text-white border-red-600 hover:bg-red-700"
+          ? "border-stone-300 text-stone-600 hover:border-red-300 hover:text-amber-600"
+          : "bg-brand text-white border-red-600 hover:bg-brand-dark"
       }`}
     >
       {following ? "Following" : "Follow"}

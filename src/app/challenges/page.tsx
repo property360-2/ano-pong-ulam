@@ -34,7 +34,7 @@ export default async function ChallengesPage() {
                 <Link
                   key={challenge.id}
                   href={`/challenges/${challenge.id}`}
-                  className="bg-white rounded-xl border border-stone-200 p-6 hover:shadow-sm hover:border-red-200 transition-all"
+                  className="bg-white rounded-xl border border-stone-200 p-6 hover:shadow-sm hover:border-amber-200 transition-all"
                 >
                   <div className="flex items-start gap-4">
                     <span className="text-4xl">{challenge.emoji}</span>

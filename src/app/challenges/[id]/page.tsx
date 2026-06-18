@@ -96,7 +96,7 @@ export default async function ChallengeDetailPage(props: { params: Params }) {
                   {entry.recipe && (
                     <a
                       href={`/recipes/${entry.recipe.slug}`}
-                      className="text-sm text-red-600 hover:underline mt-2 inline-block"
+                      className="text-sm text-amber-600 hover:underline mt-2 inline-block"
                     >
                       View Recipe → ({entry.recipe.title})
                     </a>

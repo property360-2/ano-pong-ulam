@@ -3,4 +3,28 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand: #dc2626;
+  --color-brand-dark: #b91c1c;
+  --color-accent: #d97706;
+  --color-accent-light: #fef3c7;
+  --color-warm: #f97316;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+
+  ::selection {
+    @apply bg-amber-200 text-amber-900;
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  }
+  .shadow-card-hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  }
 }

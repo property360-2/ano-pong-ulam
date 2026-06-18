@@ -6,7 +6,8 @@ import SaveButton from "@/components/SaveButton"
 import FollowButton from "@/components/FollowButton"
 import CommentForm from "@/components/CommentForm"
 import { auth } from "@/lib/auth"
-import { MdRestaurant, MdLocationOn, MdLightbulb } from "react-icons/md"
+import { MdRestaurant, MdLocationOn, MdLightbulb, MdEdit } from "react-icons/md"
+import Link from "next/link"
 
 export const dynamic = "force-dynamic"
 
@@ -83,7 +84,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
 
           <div className="p-6 md:p-8">
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded capitalize">
+              <span className="text-xs font-medium bg-amber-50 text-amber-700 px-2 py-0.5 rounded capitalize">
                 {recipe.category}
               </span>
               {recipe.region && (
@@ -125,6 +126,14 @@ export default async function RecipeDetailPage(props: { params: Params }) {
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-stone-200">
               <LikeButton recipeId={recipe.id} initialCount={recipe._count.likes} initialLiked={userLiked} />
               <SaveButton recipeId={recipe.id} initialSaved={userSaved} />
+              {session?.user?.id === recipe.author?.id && (
+                <Link
+                  href={`/recipes/${recipe.slug}/edit`}
+                  className="ml-auto flex items-center gap-1 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+                >
+                  <MdEdit /> Edit
+                </Link>
+              )}
             </div>
 
             {recipe.story && (
@@ -154,7 +163,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                 <ol className="space-y-4">
                   {steps.map((step, i) => (
                     <li key={i} className="flex gap-3">
-                      <span className="flex-shrink-0 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      <span className="flex-shrink-0 w-7 h-7 bg-brand text-white rounded-full flex items-center justify-center text-xs font-bold">
                         {step.number}
                       </span>
                       <div>

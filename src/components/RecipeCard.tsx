@@ -20,7 +20,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <Link
       href={`/recipes/${recipe.slug}`}
-      className="group bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-md hover:border-red-200 transition-all"
+      className="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-card hover:shadow-card-hover hover:border-amber-200 transition-all duration-200"
     >
       {recipe.heroImage ? (
         <div className="aspect-video bg-stone-100 overflow-hidden">
@@ -37,14 +37,14 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
       )}
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded capitalize">
+          <span className="text-xs font-medium bg-amber-50 text-amber-700 px-2 py-0.5 rounded capitalize">
             {recipe.category}
           </span>
           {recipe.difficulty && (
             <span className="text-xs text-stone-400 capitalize">{recipe.difficulty}</span>
           )}
         </div>
-        <h3 className="font-semibold text-stone-900 group-hover:text-red-600 transition-colors">
+        <h3 className="font-semibold text-stone-900 group-hover:text-amber-700 transition-colors">
           {recipe.title}
         </h3>
         {recipe.description && (

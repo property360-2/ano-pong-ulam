@@ -25,7 +25,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Ano pong{" "}
-              <span className="text-red-600">ulam?</span>
+              <span className="text-amber-600">ulam?</span>
             </h1>
             <p className="text-lg text-stone-600 mb-8 max-w-xl mx-auto">
               Filipino family recipes — shared by lolas, titas, and home cooks. Discover, cook, and share the dishes that bring us together.
@@ -33,7 +33,7 @@ export default async function HomePage() {
             <div className="flex gap-3 justify-center">
               <Link
                 href="/recipes"
-                className="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
               >
                 Browse Recipes
               </Link>
@@ -75,14 +75,14 @@ export default async function HomePage() {
             {session?.user ? (
               <Link
                 href="/recipes/new"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
               >
                 Share Your First Recipe
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
               >
                 Sign In to Share
               </Link>

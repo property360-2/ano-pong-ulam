@@ -77,11 +77,11 @@ export default function SearchFilters({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search recipes..."
-          className="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          className="flex-1 px-4 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
         />
         <button
           type="submit"
-          className="px-6 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+          className="px-6 py-2.5 bg-brand text-white rounded-xl font-medium hover:bg-brand-dark transition-colors"
         >
           Search
         </button>
@@ -91,7 +91,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.category ?? ""}
           onChange={(e) => navigate({ category: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -104,7 +104,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.region ?? ""}
           onChange={(e) => navigate({ region: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">All Regions</option>
           {regions.map((r) => (
@@ -117,7 +117,7 @@ export default function SearchFilters({
         <select
           value={currentFilters.difficulty ?? ""}
           onChange={(e) => navigate({ difficulty: e.target.value || null })}
-          className="px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="">Any Difficulty</option>
           {DIFFICULTIES.map((d) => (
@@ -130,7 +130,7 @@ export default function SearchFilters({
         <select
           value={currentSort ?? "newest"}
           onChange={(e) => navigate({}, e.target.value)}
-          className="px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="px-3 py-2 border border-stone-300 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           {SORTS.map((s) => (
             <option key={s.value} value={s.value}>
@@ -142,7 +142,7 @@ export default function SearchFilters({
         {hasActiveFilters && (
           <button
             onClick={clearAll}
-            className="px-3 py-2 text-sm text-stone-500 hover:text-red-600 transition-colors"
+            className="px-3 py-2 text-sm text-stone-500 hover:text-amber-600 transition-colors"
           >
             Clear all
           </button>
@@ -152,58 +152,58 @@ export default function SearchFilters({
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2">
           {currentFilters.q && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 text-sm rounded-full">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full">
               &ldquo;{currentFilters.q}&rdquo;
               <button
                 onClick={() => {
                   setSearchInput("")
                   navigate({ q: null })
                 }}
-                className="hover:text-red-900 font-bold"
+                className="hover:text-amber-900 font-bold"
               >
                 ×
               </button>
             </span>
           )}
           {currentFilters.category && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 text-sm rounded-full capitalize">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full capitalize">
               {currentFilters.category}
               <button
                 onClick={() => navigate({ category: null })}
-                className="hover:text-red-900 font-bold"
+                className="hover:text-amber-900 font-bold"
               >
                 ×
               </button>
             </span>
           )}
           {currentFilters.region && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 text-sm rounded-full capitalize">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full capitalize">
               {currentFilters.region}
               <button
                 onClick={() => navigate({ region: null })}
-                className="hover:text-red-900 font-bold"
+                className="hover:text-amber-900 font-bold"
               >
                 ×
               </button>
             </span>
           )}
           {currentFilters.difficulty && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 text-sm rounded-full capitalize">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full capitalize">
               {currentFilters.difficulty}
               <button
                 onClick={() => navigate({ difficulty: null })}
-                className="hover:text-red-900 font-bold"
+                className="hover:text-amber-900 font-bold"
               >
                 ×
               </button>
             </span>
           )}
           {currentFilters.tag && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 text-sm rounded-full">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full">
               #{currentFilters.tag}
               <button
                 onClick={() => navigate({ tag: null })}
-                className="hover:text-red-900 font-bold"
+                className="hover:text-amber-900 font-bold"
               >
                 ×
               </button>

@@ -39,14 +39,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <Link href="/" className="block text-center mb-8 text-2xl">
-          <MdRestaurant className="inline-block" /> <span className="font-bold">Ano Pong <span className="text-red-600">Ulam?</span></span>
+          <MdRestaurant className="inline-block" /> <span className="font-bold">Ano Pong <span className="text-amber-600">Ulam?</span></span>
         </Link>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
           <h1 className="text-xl font-bold text-center">Sign In</h1>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded">{error}</p>
+            <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded">{error}</p>
           )}
 
           <div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
@@ -67,21 +67,21 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+            className="w-full bg-brand text-white py-2 rounded-lg font-medium hover:bg-brand-dark disabled:opacity-50 transition-colors"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
 
           <p className="text-center text-sm text-stone-500">
             No account yet?{" "}
-            <Link href="/register" className="text-red-600 hover:underline">Register</Link>
+            <Link href="/register" className="text-amber-600 hover:underline">Register</Link>
           </p>
         </form>
       </div>

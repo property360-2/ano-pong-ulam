@@ -42,12 +42,12 @@ export default function CommentForm({ recipeId }: { recipeId: bigint | number })
         onChange={(e) => setContent(e.target.value)}
         placeholder="Add a comment..."
         maxLength={500}
-        className="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+        className="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
       />
       <button
         type="submit"
         disabled={submitting || !content.trim()}
-        className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+        className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark disabled:opacity-50 transition-colors"
       >
         Post
       </button>

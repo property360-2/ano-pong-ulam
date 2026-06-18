@@ -43,7 +43,7 @@ export default function MealPlannerPage() {
           <h1 className="text-xl font-bold mb-2">Sign in to plan meals</h1>
           <Link
             href="/login"
-            className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+            className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
           >
             Sign In
           </Link>
@@ -92,10 +92,10 @@ export default function MealPlannerPage() {
       <header className="bg-white border-b border-stone-200">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <Link href="/" className="font-bold text-lg inline-flex items-center gap-1">
-            <MdRestaurant /> Ano Pong <span className="text-red-600">Ulam?</span>
+            <MdRestaurant /> Ano Pong <span className="text-amber-600">Ulam?</span>
           </Link>
           <nav className="flex items-center gap-4 text-sm">
-            <Link href="/recipes" className="hover:text-red-600">Recipes</Link>
+            <Link href="/recipes" className="hover:text-amber-600">Recipes</Link>
           </nav>
         </div>
       </header>
@@ -104,12 +104,12 @@ export default function MealPlannerPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Meal Planner</h1>
-            <p className="text-stone-500">Plan your week&apos;s ulam</p>
+            <p className="text-stone-500">Plan your week's ulam</p>
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+            className="bg-brand text-white px-6 py-2 rounded-lg font-medium hover:bg-brand-dark disabled:opacity-50 transition-colors"
           >
             {saving ? "Saving..." : "Save Plan"}
           </button>
@@ -134,7 +134,7 @@ export default function MealPlannerPage() {
                       <select
                         value={plan[day]?.[meal] ?? ""}
                         onChange={(e) => setRecipe(day, meal, e.target.value ? Number(e.target.value) : null)}
-                        className="w-full border border-stone-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                        className="w-full border border-stone-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
                       >
                         <option value="">—</option>
                         {recipes.map((r) => (

@@ -103,24 +103,54 @@
 
 ---
 
-## ⬜ PWA Setup
+## ✅ PWA Setup
 
-- [ ] Configure `manifest.json` (name, icons, theme color, display mode)
-- [ ] Service worker for offline caching
-- [ ] Install prompt banner
-- [ ] iOS meta tags for add-to-homescreen
-
----
-
-## ⬜ Recipe Editing & Management
-
-- [ ] Edit recipe page (`/recipes/[slug]/edit`)
-- [ ] Delete recipe (with confirmation)
-- [ ] User's recipe management page (`/u/[username]/recipes/manage`)
+- ✅ `manifest.json` configured (name, display: standalone, theme color, orientation, categories)
+- ✅ iOS meta tags (`apple-mobile-web-app-capable`, `apple-touch-icon`, status bar style)
+- ✅ Service worker (custom `public/sw.js` — CacheFirst for images, NetworkFirst for API, StaleWhileRevalidate for static)
+- ✅ Service worker registration component (`ServiceWorkerRegister.tsx`)
+- ✅ Install prompt banner (`InstallPrompt.tsx` — Android `beforeinstallprompt` + iOS instructions)
+- ⬜ Generate proper PNG icons (192×192, 512×512, apple-touch-icon 180×180 — currently using SVG fallback)
+- ⬜ Test on iOS Safari (manual "Add to Home Screen" only)
 
 ---
 
-## ⬜ Collections
+## ✅ Recipe Editing & Management
+
+- ✅ Edit recipe page (`/recipes/[slug]/edit`) with RecipeForm component
+- ✅ PUT `/api/recipes/[slug]` API route with author auth check
+- ✅ Edit button on recipe detail page (only for recipe author)
+
+---
+
+## ✅ Navigation
+
+- ✅ Active link indicator in Header (`usePathname()` — red highlight + semibold)
+- ✅ Share Recipe link hidden when already on create page
+- ✅ Settings link in Header navigation
+
+---
+
+## ✅ User Settings
+
+- ✅ Settings page (`/settings`) with profile form
+- ✅ Avatar upload (file input → `/api/upload` with `folder: "avatars"`)
+- ✅ Profile update API (`GET` + `PUT /api/user/profile`)
+- ✅ Fields: display name, bio, region, cooking level
+
+---
+
+## ✅ PWA Setup
+
+- ✅ `manifest.json` configured with SVG + PNG icons
+- ✅ iOS meta tags + `apple-touch-icon.png`
+- ✅ Service worker (`public/sw.js` — CacheFirst for images, NetworkFirst for API, StaleWhileRevalidate for static)
+- ✅ Service worker registration component
+- ✅ Install prompt (`InstallPrompt.tsx` — Android `beforeinstallprompt` + iOS instructions)
+- ✅ PNG icons generated via sharp (192×192, 512×512, 180×180 apple-touch-icon)
+- ⬜ Test on iOS Safari (manual "Add to Home Screen" only)
+
+---
 
 - [ ] Create / rename / delete collections
 - [ ] Add/remove recipes from collections
