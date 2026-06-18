@@ -10,7 +10,7 @@ import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
 import UserMenu from "./UserMenu"
 
-function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
+function NavLink({ href, children, onClick, className = "" }: { href: string; children: React.ReactNode; onClick?: () => void; className?: string }) {
   const pathname = usePathname()
   const isActive =
     href === "/"
@@ -21,7 +21,7 @@ function NavLink({ href, children, onClick }: { href: string; children: React.Re
     <Link
       href={href}
       onClick={onClick}
-      className={`transition-colors ${isActive ? "text-red-600 font-semibold" : "text-stone-600 hover:text-amber-600"}`}
+      className={`transition-colors ${isActive ? "text-red-600 font-semibold" : "text-stone-600 hover:text-amber-600"} ${className}`}
     >
       {children}
     </Link>
@@ -44,8 +44,8 @@ export default function Header() {
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
-              <Image src="/logo-no-bg.png" alt="" width={36} height={36} className="rounded" />
-              <span className="font-bold text-lg tracking-tight">
+              <Image src="/logo-no-bg.png" alt="" width={28} height={28} className="sm:w-9 sm:h-9 w-7 h-7 rounded" />
+              <span className="hidden sm:inline font-bold text-lg tracking-tight">
                 Ano Pong <span className="text-red-600">Ulam?</span>
               </span>
             </Link>
@@ -81,7 +81,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                  className="bg-red-600 text-white px-4 py-2.5 sm:py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
                 >
                   Sign In
                 </Link>
@@ -90,7 +90,7 @@ export default function Header() {
 
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 text-stone-600 hover:text-amber-600 transition-colors"
+              className="md:hidden p-2.5 text-stone-600 hover:text-amber-600 transition-colors"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
               {menuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
@@ -108,7 +108,7 @@ export default function Header() {
           <div className="fixed top-16 right-0 w-72 bg-white border-l border-stone-200 shadow-lg z-50 md:hidden min-h-[calc(100vh-4rem)]">
             <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
               <div className="mb-3 pb-3 border-b border-stone-100">
-                <NavLink href="/" onClick={closeMenu}>Home</NavLink>
+                <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Home</NavLink>
               </div>
 
               {session?.user ? (
@@ -123,16 +123,16 @@ export default function Header() {
                       Share Recipe
                     </Link>
                   )}
-                  <NavLink href="/recipes" onClick={closeMenu}>Recipes</NavLink>
-                  <NavLink href="/challenges" onClick={closeMenu}>Challenges</NavLink>
-                  <NavLink href="/collections" onClick={closeMenu}>Collections</NavLink>
+                  <NavLink href="/recipes" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Recipes</NavLink>
+                  <NavLink href="/challenges" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Challenges</NavLink>
+                  <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Collections</NavLink>
                   <div className="mt-3 pt-3 border-t border-stone-100" />
-                  <NavLink href="/notifications" onClick={closeMenu}>Notifications</NavLink>
-                  <NavLink href={`/u/${session.user.name}`} onClick={closeMenu}>Profile</NavLink>
-                  <NavLink href="/settings" onClick={closeMenu}>Settings</NavLink>
+                  <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Notifications</NavLink>
+                  <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Profile</NavLink>
+                  <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Settings</NavLink>
                   <button
                     onClick={() => { signOut(); closeMenu() }}
-                    className="text-left text-stone-500 hover:text-red-600 transition-colors py-2"
+                    className="w-full text-left text-stone-500 hover:text-red-600 transition-colors py-3 min-h-[44px] flex items-center"
                   >
                     Sign Out
                   </button>

@@ -33,43 +33,45 @@ export default async function HomePage() {
     <>
       <Header />
       <main className="flex-1">
-        <section className="bg-gradient-to-b from-red-50 to-stone-50 py-20 px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Ang recipe ng{" "}
-              <span className="text-amber-600">lola</span>
-              {" "}mo, deserve niyang ma-share sa mundo.
-            </h1>
-            <p className="text-lg text-stone-600 mb-8 max-w-xl mx-auto leading-relaxed">
-              <span className="font-semibold">Ano Pong Ulam?</span> is where Filipino heirloom recipes live forever. Isulat mo ang kuwento ng inyong kusina — the secret adobo ng nanay mo, ang pancit na laging hinihingi sa fiesta, ang dessert na namimiss mo tuwing uuwi ka. Mula sa ating mga kusina, patungo sa bawat mesa.
-            </p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <Link
-                href={session?.user ? "/recipes" : "/login"}
-                className="bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
-              >
-                Halungkat ng Recipes
-              </Link>
-              <Link
-                href={session?.user ? "/recipes/new" : "/login"}
-                className="bg-white text-red-600 px-6 py-3 rounded-full font-medium border border-red-300 hover:bg-red-50 transition-colors"
-              >
-                Ibahagi ang Recipe Mo
-              </Link>
+        <section className="bg-gradient-to-b from-red-50 to-stone-50 py-12 md:py-20 px-4">
+          <div className="mx-auto max-w-screen-xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                Ang recipe ng{" "}
+                <span className="text-amber-600">lola</span>
+                {" "}mo, deserve niyang ma-share sa mundo.
+              </h1>
+              <p className="text-base sm:text-lg text-stone-600 mb-8 max-w-xl mx-auto leading-relaxed">
+                <span className="font-semibold">Ano Pong Ulam?</span> is where Filipino heirloom recipes live forever. Isulat mo ang kuwento ng inyong kusina — the secret adobo ng nanay mo, ang pancit na laging hinihingi sa fiesta, ang dessert na namimiss mo tuwing uuwi ka. Mula sa ating mga kusina, patungo sa bawat mesa.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  href={session?.user ? "/recipes" : "/login"}
+                  className="bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
+                >
+                  Halungkat ng Recipes
+                </Link>
+                <Link
+                  href={session?.user ? "/recipes/new" : "/login"}
+                  className="bg-white text-red-600 px-6 py-3 rounded-full font-medium border border-red-300 hover:bg-red-50 transition-colors"
+                >
+                  Ibahagi ang Recipe Mo
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="py-16 px-4">
-          <div className="mx-auto max-w-6xl">
+        <section className="py-12 md:py-16 px-4">
+          <div className="mx-auto max-w-screen-xl">
             <h2 className="text-2xl font-bold mb-2">Ano ang hanap mo ngayon?</h2>
             <p className="text-stone-500 mb-8">Pumili ng kategorya at tuklasin ang sarap ng tunay na lutong Pinoy.</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5">
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
                   href={session?.user ? `/recipes?category=${cat.slug}` : "/login"}
-                  className="bg-white rounded-xl p-6 border border-stone-200 hover:border-red-300 hover:shadow-sm transition-all"
+                  className="bg-white rounded-xl p-5 md:p-6 border border-stone-200 hover:border-red-300 hover:shadow-sm transition-all"
                 >
                   <span className="text-3xl block mb-2">{cat.icon}</span>
                   <h3 className="font-semibold text-stone-900">{cat.name}</h3>
@@ -80,8 +82,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="py-16 px-4 bg-white">
-          <div className="mx-auto max-w-6xl">
+        <section className="py-12 md:py-16 px-4 bg-white">
+          <div className="mx-auto max-w-screen-xl">
             <h2 className="text-2xl font-bold mb-4">Mga Bagong Luto</h2>
 
             {latestRecipes.length > 0 ? (
@@ -110,7 +112,7 @@ export default async function HomePage() {
                 <div className="text-center">
                   <Link
                     href={session?.user ? "/recipes" : "/login"}
-                    className="inline-block text-red-600 font-medium hover:text-red-700 transition-colors border border-red-300 px-6 py-2.5 rounded-full hover:bg-red-50"
+                    className="inline-block text-red-600 font-medium hover:text-red-700 transition-colors border border-red-300 px-8 py-3 rounded-full hover:bg-red-50"
                   >
                     Tingnan ang Iba Pa
                   </Link>
@@ -124,21 +126,31 @@ export default async function HomePage() {
                 <p className="text-stone-500 mb-8 max-w-xl">
                   Yung recipe ng pamilya niyo na hanggang ngayon, sa isip mo lang itinatago — it's time to write it down. Maging unang mag-ambag ng inyong pamana.
                 </p>
-                {session?.user ? (
-                  <Link
-                    href="/recipes/new"
-                    className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
-                  >
-                    Isulat ang Unang Recipe
-                  </Link>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
-                  >
-                    Sumali at Mag-ambag
-                  </Link>
-                )}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {session?.user ? (
+                    <Link
+                      href="/recipes/new"
+                      className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
+                    >
+                      Isulat ang Unang Recipe
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="inline-block bg-red-600 text-white px-6 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
+                      >
+                        Sumali at Mag-ambag
+                      </Link>
+                      <Link
+                        href="/recipes"
+                        className="inline-block text-red-600 font-medium hover:text-red-700 transition-colors border border-red-300 px-6 py-3 rounded-full hover:bg-red-50"
+                      >
+                        Mag-browse Muna
+                      </Link>
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -146,7 +158,9 @@ export default async function HomePage() {
       </main>
 
       <footer className="bg-stone-900 text-stone-400 py-8 px-4 text-sm text-center">
-        <p>Bawat recipe ay may kuwento. Bawat kusina ay may pamana.</p>
+        <div className="mx-auto max-w-screen-xl">
+          <p>Bawat recipe ay may kuwento. Bawat kusina ay may pamana.</p>
+        </div>
       </footer>
     </>
   )
