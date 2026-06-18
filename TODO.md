@@ -191,9 +191,9 @@
 
 ## 🟡 Medium Priority
 
-- [ ] Social share buttons (Facebook, Twitter, copy link) on recipe detail
-- [ ] Open Graph meta tags per recipe + JSON-LD structured data
-- [ ] Sitemap.xml + robots.txt
+- [x] Social share buttons (Facebook, Twitter, copy link) on recipe detail
+- [x] Open Graph meta tags per recipe + JSON-LD structured data
+- [x] Sitemap.xml + robots.txt
 - [ ] Change password (form + API)
 - [ ] Onboarding page (NextAuth redirects to `/onboarding`)
 

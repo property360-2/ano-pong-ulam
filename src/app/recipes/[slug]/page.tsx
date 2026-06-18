@@ -5,14 +5,60 @@ import LikeButton from "@/components/LikeButton"
 import SaveButton from "@/components/SaveButton"
 import FollowButton from "@/components/FollowButton"
 import AddToCollectionButton from "@/components/AddToCollectionButton"
+import ShareButton from "@/components/ShareButton"
 import CommentForm from "@/components/CommentForm"
 import { auth } from "@/lib/auth"
 import { MdRestaurant, MdLocationOn, MdLightbulb, MdEdit } from "react-icons/md"
 import Link from "next/link"
+import type { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
 
 type Params = Promise<{ slug: string }>
+
+function minutesToIso(minutes: number): string {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `PT${h > 0 ? `${h}H` : ""}${m > 0 ? `${m}M` : ""}`
+}
+
+export async function generateMetadata(props: { params: Params }): Promise<Metadata> {
+  const { slug } = await props.params
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { slug },
+    select: {
+      title: true,
+      description: true,
+      heroImage: true,
+      category: true,
+      author: { select: { username: true } },
+    },
+  })
+
+  if (!recipe) return {}
+
+  const title = `${recipe.title} — Ano Pong Ulam?`
+  const description = recipe.description || `A ${recipe.category} recipe by @${recipe.author?.username || "anonymous"}`
+  const image = recipe.heroImage || undefined
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      ...(image ? { images: [{ url: image, width: 1200, height: 630 }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(image ? { images: [image] } : {}),
+    },
+  }
+}
 
 export default async function RecipeDetailPage(props: { params: Params }) {
   const { slug } = await props.params
@@ -66,9 +112,41 @@ export default async function RecipeDetailPage(props: { params: Params }) {
   const steps = recipe.steps as Array<{ number: number; instruction: string; tips?: string }>
   const tips = recipe.tips as Record<string, string> | null
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    name: recipe.title,
+    ...(recipe.description ? { description: recipe.description } : {}),
+    ...(recipe.heroImage ? { image: recipe.heroImage } : {}),
+    ...(recipe.author?.username
+      ? { author: { "@type": "Person", name: recipe.author.username } }
+      : {}),
+    datePublished: recipe.createdAt.toISOString(),
+    ...(recipe.prepTime ? { prepTime: minutesToIso(recipe.prepTime) } : {}),
+    ...(recipe.cookTime ? { cookTime: minutesToIso(recipe.cookTime) } : {}),
+    ...(recipe.prepTime || recipe.cookTime
+      ? { totalTime: minutesToIso((recipe.prepTime || 0) + (recipe.cookTime || 0)) }
+      : {}),
+    recipeYield: `${recipe.servings} servings`,
+    recipeCategory: recipe.category,
+    recipeCuisine: "Filipino",
+    recipeIngredient: ingredients.map((i) => `${i.amount} ${i.unit} ${i.name}${i.notes ? ` (${i.notes})` : ""}`),
+    recipeInstructions: steps.map((s) => ({
+      "@type": "HowToStep",
+      name: `Step ${s.number}`,
+      text: s.instruction,
+      ...(tips?.[`step_${s.number}`] ? { tip: tips[`step_${s.number}`] } : {}),
+    })),
+    ...(recipe.tags.length > 0 ? { keywords: recipe.tags.join(", ") } : {}),
+  }
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <main className="flex-1 mx-auto max-w-4xl w-full px-4 py-8">
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           {recipe.heroImage ? (
@@ -128,6 +206,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
               <LikeButton recipeId={recipe.id} initialCount={recipe._count.likes} initialLiked={userLiked} />
               <SaveButton recipeId={recipe.id} initialSaved={userSaved} />
               <AddToCollectionButton recipeId={recipe.id} />
+              <ShareButton slug={recipe.slug} title={recipe.title} />
               {session?.user?.id === recipe.author?.id && (
                 <Link
                   href={`/recipes/${recipe.slug}/edit`}
