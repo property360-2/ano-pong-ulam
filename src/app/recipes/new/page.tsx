@@ -19,7 +19,7 @@ export default function NewRecipePage() {
           </p>
           <Link
             href="/login"
-            className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
+            className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
           >
             Sign In
           </Link>

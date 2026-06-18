@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
+import { createNotification, createActivity } from "@/lib/notifications"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -22,6 +23,27 @@ export async function POST(req: Request) {
         parentId: parentId ? BigInt(parentId) : null,
       },
       include: { user: { select: { username: true, avatarUrl: true } } },
+    })
+
+    const recipe = await prisma.recipe.findUnique({
+      where: { id: BigInt(recipeId) },
+      select: { authorId: true, title: true },
+    })
+
+    if (recipe?.authorId) {
+      createNotification({
+        type: "comment",
+        recipientId: recipe.authorId,
+        actorId: session.user.id,
+        recipeId: BigInt(recipeId),
+        message: `commented on "${recipe.title}": "${content.trim().slice(0, 50)}${content.trim().length > 50 ? "..." : ""}"`,
+      })
+    }
+
+    createActivity({
+      userId: session.user.id,
+      type: "comment",
+      recipeId: BigInt(recipeId),
     })
 
     return NextResponse.json(comment, { status: 201 })

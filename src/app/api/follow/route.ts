@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
+import { createNotification, createActivity } from "@/lib/notifications"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -31,6 +32,19 @@ export async function POST(req: Request) {
 
     await prisma.follow.create({
       data: { followerId: session.user.id, followingId: targetUserId },
+    })
+
+    createNotification({
+      type: "follow",
+      recipientId: targetUserId,
+      actorId: session.user.id,
+      message: "started following you",
+    })
+
+    createActivity({
+      userId: session.user.id,
+      type: "follow",
+      targetUserId,
     })
 
     return NextResponse.json({ following: true })

@@ -92,14 +92,14 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
             {hasActiveFilters ? (
               <a
                 href="/recipes"
-                className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
+                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
               >
                 Clear Filters
               </a>
             ) : (
               <a
                 href="/recipes/new"
-                className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
+                className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
               >
                 Share a Recipe
               </a>

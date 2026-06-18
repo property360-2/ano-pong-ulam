@@ -1,0 +1,158 @@
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { MdPlaylistAdd, MdCheck, MdAdd } from "react-icons/md"
+import { useToast } from "@/lib/toast"
+
+export default function AddToCollectionButton({ recipeId }: { recipeId: bigint | number }) {
+  const { data: session } = useSession()
+  const { toast } = useToast()
+  const [open, setOpen] = useState(false)
+  const [collections, setCollections] = useState<Array<{ id: number; name: string; emoji: string; recipeCount: number; hasRecipe: boolean }>>([])
+  const [loading, setLoading] = useState(true)
+  const [newName, setNewName] = useState("")
+  const [creating, setCreating] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  async function fetchCollections() {
+    setLoading(true)
+    try {
+      const rid = Number(recipeId)
+      const res = await fetch(`/api/collections?checkRecipeId=${rid}`)
+      const list = await res.json()
+      setCollections(list)
+    } catch {
+      // silent
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (open && session) {
+      fetchCollections()
+    }
+  }, [open, session])
+
+  async function toggleRecipe(collectionId: number) {
+    try {
+      const res = await fetch(`/api/collections/${collectionId}/recipes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId: Number(recipeId) }),
+      })
+      const data = await res.json()
+      toast.success(data.added ? "Recipe added to collection" : "Recipe removed from collection")
+      setCollections((prev) =>
+        prev.map((c) =>
+          c.id === collectionId ? { ...c, hasRecipe: data.added, recipeCount: data.recipeCount } : c
+        )
+      )
+    } catch {
+      toast.error("Failed to update collection")
+    }
+  }
+
+  async function createCollection() {
+    if (!newName.trim()) return
+    setCreating(true)
+    try {
+      const res = await fetch("/api/collections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName.trim() }),
+      })
+      if (res.ok) {
+        const collection = await res.json()
+        setNewName("")
+        await fetchCollections()
+        toast.success(`Created "${collection.name}"`)
+      } else {
+        const err = await res.json()
+        toast.error(err.error || "Failed to create collection")
+      }
+    } catch {
+      toast.error("Failed to create collection")
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  if (!session) return null
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+        title="Add to collection"
+      >
+        <MdPlaylistAdd className="text-lg" />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-card border border-stone-200 p-3">
+          {loading ? (
+            <p className="text-sm text-stone-400 text-center py-4">Loading...</p>
+          ) : collections.length === 0 ? (
+            <p className="text-sm text-stone-400 text-center py-4">No collections yet</p>
+          ) : (
+            <ul className="space-y-1 max-h-48 overflow-y-auto mb-3">
+              {collections.map((c) => (
+                <li key={c.id}>
+                  <button
+                    onClick={() => toggleRecipe(c.id)}
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-left transition-colors ${
+                      c.hasRecipe
+                        ? "bg-amber-50 text-amber-700"
+                        : "hover:bg-stone-100 text-stone-700"
+                    }`}
+                  >
+                    <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded border border-stone-300">
+                      {c.hasRecipe && <MdCheck className="text-amber-600 text-sm" />}
+                    </span>
+                    <span>{c.emoji}</span>
+                    <span className="flex-1 truncate">{c.name}</span>
+                    <span className="text-xs text-stone-400">{c.recipeCount}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="flex gap-2 border-t border-stone-100 pt-3">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="New collection name..."
+              maxLength={50}
+              className="flex-1 text-sm border border-stone-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") createCollection()
+              }}
+            />
+            <button
+              onClick={createCollection}
+              disabled={creating || !newName.trim()}
+              className="flex items-center gap-1 text-sm bg-amber-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors"
+            >
+              <MdAdd />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

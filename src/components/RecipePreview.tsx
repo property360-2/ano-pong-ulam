@@ -102,7 +102,7 @@ export default function RecipePreview({ data, heroFile }: Props) {
               <ol className="space-y-4">
                 {validSteps.map((step, i) => (
                   <li key={i} className="flex gap-3">
-                    <span className="flex-shrink-0 w-7 h-7 bg-brand text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
                       {i + 1}
                     </span>
                     <div>

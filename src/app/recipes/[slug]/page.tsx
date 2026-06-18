@@ -4,6 +4,7 @@ import Header from "@/components/Header"
 import LikeButton from "@/components/LikeButton"
 import SaveButton from "@/components/SaveButton"
 import FollowButton from "@/components/FollowButton"
+import AddToCollectionButton from "@/components/AddToCollectionButton"
 import CommentForm from "@/components/CommentForm"
 import { auth } from "@/lib/auth"
 import { MdRestaurant, MdLocationOn, MdLightbulb, MdEdit } from "react-icons/md"
@@ -114,7 +115,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                 <span className="flex items-center gap-2">
                   By @{recipe.author.username}
                   {session?.user?.id && recipe.author.id !== session.user.id && (
-                    <FollowButton targetUserId={recipe.author.id} initialFollowing={isFollowingAuthor} />
+                    <FollowButton targetUserId={recipe.author.id} initialFollowing={isFollowingAuthor} username={recipe.author.username} />
                   )}
                 </span>
               )}
@@ -126,6 +127,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-stone-200">
               <LikeButton recipeId={recipe.id} initialCount={recipe._count.likes} initialLiked={userLiked} />
               <SaveButton recipeId={recipe.id} initialSaved={userSaved} />
+              <AddToCollectionButton recipeId={recipe.id} />
               {session?.user?.id === recipe.author?.id && (
                 <Link
                   href={`/recipes/${recipe.slug}/edit`}
@@ -163,7 +165,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                 <ol className="space-y-4">
                   {steps.map((step, i) => (
                     <li key={i} className="flex gap-3">
-                      <span className="flex-shrink-0 w-7 h-7 bg-brand text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      <span className="flex-shrink-0 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
                         {step.number}
                       </span>
                       <div>

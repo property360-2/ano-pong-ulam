@@ -4,10 +4,12 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md"
+import { useToast } from "@/lib/toast"
 
 export default function LikeButton({ recipeId, initialCount = 0, initialLiked = false }: { recipeId: bigint | number; initialCount?: number; initialLiked?: boolean }) {
   const { data: session } = useSession()
   const router = useRouter()
+  const { toast } = useToast()
   const [liked, setLiked] = useState(initialLiked)
   const [count, setCount] = useState(initialCount)
   const [loading, setLoading] = useState(false)
@@ -27,8 +29,9 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
       const data = await res.json()
       setLiked(data.liked)
       setCount((c) => data.liked ? c + 1 : c - 1)
+      toast.success(data.liked ? "Recipe liked!" : "Recipe unliked")
     } catch {
-      // revert on error
+      toast.error("Something went wrong")
     } finally {
       setLoading(false)
     }

@@ -43,7 +43,7 @@ export default function MealPlannerPage() {
           <h1 className="text-xl font-bold mb-2">Sign in to plan meals</h1>
           <Link
             href="/login"
-            className="inline-block bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark transition-colors"
+            className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
           >
             Sign In
           </Link>
@@ -109,7 +109,7 @@ export default function MealPlannerPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-brand text-white px-6 py-2 rounded-lg font-medium hover:bg-brand-dark disabled:opacity-50 transition-colors"
+            className="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
           >
             {saving ? "Saving..." : "Save Plan"}
           </button>

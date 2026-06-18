@@ -16,7 +16,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className={`transition-colors ${isActive ? "text-brand font-semibold" : "hover:text-amber-600"}`}
+      className={`transition-colors ${isActive ? "text-red-600 font-semibold" : "hover:text-amber-600"}`}
     >
       {children}
     </Link>
@@ -35,7 +35,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <MdRestaurant className="text-2xl" />
             <span className="font-bold text-lg tracking-tight">
-              Ano Pong <span className="text-brand">Ulam?</span>
+              Ano Pong <span className="text-red-600">Ulam?</span>
             </span>
           </Link>
 
@@ -45,6 +45,7 @@ export default function Header() {
             )}
             <NavLink href="/recipes">Recipes</NavLink>
             <NavLink href="/challenges">Challenges</NavLink>
+            <NavLink href="/collections">Collections</NavLink>
             {session?.user ? (
               <div className="flex items-center gap-3">
                 <NavLink href={`/u/${session.user.name}`}>Profile</NavLink>
@@ -59,7 +60,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/login"
-                className="bg-brand text-white px-4 py-2 rounded-xl hover:bg-brand-dark transition-colors"
+                className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors"
               >
                 Sign In
               </Link>

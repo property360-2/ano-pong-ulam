@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/lib/toast"
 
-export default function FollowButton({ targetUserId, initialFollowing = false }: { targetUserId: string; initialFollowing?: boolean }) {
+export default function FollowButton({ targetUserId, initialFollowing = false, username }: { targetUserId: string; initialFollowing?: boolean; username?: string }) {
   const { data: session } = useSession()
   const router = useRouter()
+  const { toast } = useToast()
   const [following, setFollowing] = useState(initialFollowing)
   const [loading, setLoading] = useState(false)
 
@@ -24,8 +26,9 @@ export default function FollowButton({ targetUserId, initialFollowing = false }:
       })
       const data = await res.json()
       setFollowing(data.following)
+      toast.success(data.following ? `Followed ${username || "user"}` : `Unfollowed ${username || "user"}`)
     } catch {
-      // revert
+      toast.error("Something went wrong")
     } finally {
       setLoading(false)
     }
@@ -38,7 +41,7 @@ export default function FollowButton({ targetUserId, initialFollowing = false }:
       className={`text-sm font-medium px-4 py-1.5 rounded-lg border transition-colors ${
         following
           ? "border-stone-300 text-stone-600 hover:border-red-300 hover:text-amber-600"
-          : "bg-brand text-white border-red-600 hover:bg-brand-dark"
+          : "bg-red-600 text-white border-red-600 hover:bg-red-700"
       }`}
     >
       {following ? "Following" : "Follow"}

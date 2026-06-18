@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
+import { createNotification, createActivity } from "@/lib/notifications"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -27,6 +28,27 @@ export async function POST(req: Request) {
 
     await prisma.recipeLike.create({
       data: { userId: session.user.id, recipeId: BigInt(recipeId) },
+    })
+
+    const recipe = await prisma.recipe.findUnique({
+      where: { id: BigInt(recipeId) },
+      select: { authorId: true, title: true },
+    })
+
+    if (recipe?.authorId) {
+      createNotification({
+        type: "like",
+        recipientId: recipe.authorId,
+        actorId: session.user.id,
+        recipeId: BigInt(recipeId),
+        message: `liked your recipe "${recipe.title}"`,
+      })
+    }
+
+    createActivity({
+      userId: session.user.id,
+      type: "like",
+      recipeId: BigInt(recipeId),
     })
 
     return NextResponse.json({ liked: true })

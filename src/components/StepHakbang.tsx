@@ -46,7 +46,7 @@ export default function StepHakbang({ steps, onChange }: Props) {
 
       {steps.map((step, i) => (
         <div key={i} className="flex gap-3">
-          <span className="flex-shrink-0 w-8 h-8 bg-brand text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
+          <span className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
             {i + 1}
           </span>
           <div className="flex-1 space-y-2">
