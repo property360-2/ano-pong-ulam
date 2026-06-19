@@ -38,6 +38,7 @@ interface FeedRecipe {
   heroImage: string | null
   category?: string
   difficulty?: string
+  _count?: { likes: number }
 }
 
 interface FeedActivity {
@@ -325,7 +326,7 @@ export default function FeedPage() {
                     
                     <Link
                       href={`/u/${activity.targetUser.username}`}
-                      className="bg-stone-105 hover:bg-stone-200 text-stone-700 text-[10px] font-extrabold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-0.5"
+                      className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-extrabold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-0.5"
                     >
                       Profile <MdArrowForward />
                     </Link>
@@ -346,7 +347,7 @@ export default function FeedPage() {
                           alt={activity.recipe.title}
                           fill
                           sizes="(max-width: 768px) 100vw, 512px"
-                          className="object-cover group-hover:scale-102 transition-transform duration-500"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-red-800 via-red-900 to-stone-950" />
@@ -385,13 +386,12 @@ export default function FeedPage() {
                             {activity.recipe.title}
                           </h3>
                           
-                          {/* Stars Social Proof */}
-                          <div className="flex items-center text-amber-400 gap-0.5 mt-1">
-                            <MdStar className="text-sm drop-shadow-md" />
-                            <MdStar className="text-sm drop-shadow-md" />
-                            <MdStar className="text-sm drop-shadow-md" />
-                            <MdStar className="text-sm drop-shadow-md" />
-                            <MdStar className="text-sm drop-shadow-md" />
+                          {/* Like count badge */}
+                          <div className="flex items-center gap-1 mt-1">
+                            <MdFavorite className="text-sm text-red-400 drop-shadow-md" />
+                            <span className="text-xs text-white/80 font-semibold">
+                              {activity.recipe._count?.likes ?? 0} likes
+                            </span>
                           </div>
                         </div>
 

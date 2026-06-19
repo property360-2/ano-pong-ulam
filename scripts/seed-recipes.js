@@ -12,9 +12,19 @@ function slugify(text) {
     .slice(0, 100)
 }
 
+const HERO_ADOBORICE = "https://images.unsplash.com/photo-1570275239925-4af0aa93a0dc?w=1280&q=80"
+const HERO_LECHON = "https://images.unsplash.com/photo-1704865192176-d15656117a76?w=1280&q=80"
+const HERO_LECHONKAWALI = "https://images.unsplash.com/photo-1625477811233-044633d10dd1?w=1280&q=80"
+const HERO_GRILLEDFISH = "https://images.unsplash.com/photo-1556814901-18c866c057da?w=1280&q=80"
+const HERO_STREETFOOD = "https://images.unsplash.com/photo-1642616128754-7d026f979317?w=1280&q=80"
+const HERO_UBECAKE = "https://images.unsplash.com/photo-1640839954789-ca0049648b18?w=1280&q=80"
+const HERO_ROASTCHICKEN = "https://images.unsplash.com/photo-1727775827745-7d0065544693?w=1280&q=80"
+const HERO_WETMARKET = "https://images.unsplash.com/photo-1556602168-4f849564d44e?w=1280&q=80"
+
 const RECIPES = [
   {
     title: "Sinigang na Baboy",
+    heroImage: HERO_LECHON,
     description: "A comforting sour soup made with pork ribs, tamarind, and fresh vegetables. Perfect for rainy days.",
     story: "My lola would make this every Friday after the palengke. The smell of sinigang simmering meant the whole family was coming over.",
     category: "soup",
@@ -52,6 +62,7 @@ const RECIPES = [
   },
   {
     title: "Adobong Manok",
+    heroImage: HERO_ADOBORICE,
     description: "The national dish of the Philippines — chicken simmered in soy sauce, vinegar, garlic, and bay leaves.",
     story: "Every family has their own adobo. Ours is dark, garlicky, and a little oily — the way my tatay liked it.",
     category: "ulam",
@@ -84,6 +95,7 @@ const RECIPES = [
   },
   {
     title: "Kare-Kare",
+    heroImage: HERO_ROASTCHICKEN,
     description: "A rich peanut stew with oxtail, tripe, and vegetables. Served with bagoong on the side.",
     story: "Kare-kare was saved for special occasions because oxtail was expensive. My lola would wake up at 5AM to start cooking it for fiesta.",
     category: "fiesta",
@@ -120,6 +132,7 @@ const RECIPES = [
   },
   {
     title: "Pork Sisig",
+    heroImage: HERO_LECHONKAWALI,
     description: "A sizzling chopped pork dish with calamansi, chili, and onion — iconic Kapampangan pulutan.",
     story: "Sisig was born in Angeles City, Pampanga. My uncle would order it with ice-cold beer after work — the sizzling plate was always the star.",
     category: "ulam",
@@ -154,6 +167,7 @@ const RECIPES = [
   },
   {
     title: "Chicken Tinola",
+    heroImage: HERO_ROASTCHICKEN,
     description: "A light and ginger-forward chicken soup with green papaya and malunggay leaves.",
     story: "Tinola was always the go-to when someone was sick. My nanay believed the ginger would heal everything — and honestly, it always worked.",
     category: "soup",
@@ -186,6 +200,7 @@ const RECIPES = [
   },
   {
     title: "Bicol Express",
+    heroImage: HERO_STREETFOOD,
     description: "A fiery pork stew cooked in coconut milk with shrimp paste and loads of siling labuyo.",
     story: "Bicolanos know their gata. This dish was named after the train from Manila to Bicol — just as hot and intense as the Bicol sun.",
     category: "ulam",
@@ -218,6 +233,7 @@ const RECIPES = [
   },
   {
     title: "Lechon Kawali",
+    heroImage: HERO_LECHONKAWALI,
     description: "Deep-fried crispy pork belly with a crackling skin that shatters when you bite into it.",
     story: "My tito would make this for Noche Buena — the sizzling sound of pork hitting hot oil meant Christmas had truly begun.",
     category: "ulam",
@@ -249,6 +265,7 @@ const RECIPES = [
   },
   {
     title: "Pancit Canton",
+    heroImage: HERO_STREETFOOD,
     description: "A stir-fried noodle dish with meat, vegetables, and soy sauce — always present at Filipino birthday tables.",
     story: "Pancit means long life — so every birthday party had to have it. My lola would make a huge batch in her biggest kawali.",
     category: "ulam",
@@ -287,6 +304,7 @@ const RECIPES = [
   },
   {
     title: "Lumpiang Shanghai",
+    heroImage: HERO_WETMARKET,
     description: "Crispy golden spring rolls filled with seasoned ground pork, shrimp, and vegetables.",
     story: "Every family gathering started with a tray of lumpia — the unofficial Filipino appetizer. We'd fight over the crispy edges.",
     category: "merienda",
@@ -319,6 +337,7 @@ const RECIPES = [
   },
   {
     title: "Arroz Caldo",
+    heroImage: HERO_WETMARKET,
     description: "A warm chicken rice porridge with ginger, garlic, and safflower. Filipino comfort in a bowl.",
     story: "When it rained, my lola would make arroz caldo. She said the ginger would keep us from getting sick — and a drizzle of calamansi made everything better.",
     category: "breakfast",
@@ -354,6 +373,7 @@ const RECIPES = [
   },
   {
     title: "Chicken Inasal",
+    heroImage: HERO_GRILLEDFISH,
     description: "Grilled chicken marinated in calamansi, lemongrass, and annatto — a Bacolod specialty.",
     story: "Inasal from Bacolod is different — it's marinated with sinamak (spiced coconut vinegar) and grilled over hot coals. The best part? The chicken oil (sinamak) drizzled on rice.",
     category: "ulam",
@@ -384,6 +404,7 @@ const RECIPES = [
   },
   {
     title: "Beef Caldereta",
+    heroImage: HERO_ADOBORICE,
     description: "A rich tomato-based beef stew with liver spread, bell peppers, and chili — Kapampangan comfort.",
     story: "Caldereta was my ninong's specialty. He added liver spread and a touch of sugar — his secret for that rich, sweet-savory balance.",
     category: "ulam",
@@ -421,6 +442,7 @@ const RECIPES = [
   },
   {
     title: "Tinolang Isda (Fish Tinola)",
+    heroImage: HERO_GRILLEDFISH,
     description: "A light and sour fish soup with ginger, vegetables, and malunggay — common in coastal fishing communities.",
     story: "My grandfather was a fisherman in Quezon. He'd come home with the morning catch and my lola would make tinolang isda in 20 minutes flat.",
     category: "soup",
@@ -453,6 +475,7 @@ const RECIPES = [
   },
   {
     title: "Ube Halaya",
+    heroImage: HERO_UBECAKE,
     description: "A sweet and creamy purple yam dessert — the quintessential Filipino甜蜜 treat.",
     story: "Making ube halaya was a family affair. Everyone took turns grating the purple yam while my lola stirred the pot for hours.",
     category: "dessert",
@@ -482,6 +505,7 @@ const RECIPES = [
   },
   {
     title: "Ginataang Manok",
+    heroImage: HERO_LECHON,
     description: "Chicken simmered in coconut milk with green papaya, ginger, and chili — a Bicol region staple.",
     story: "In Bicol, every dish has gata. My tita would add so much siling labuyo your ears would sweat — but you couldn't stop eating.",
     category: "ulam",
@@ -513,6 +537,7 @@ const RECIPES = [
   },
   {
     title: "Tapsilog",
+    heroImage: HERO_ADOBORICE,
     description: "The ultimate Filipino breakfast — cured beef tapa, garlic fried rice, and fried egg.",
     story: "Tapsilog is not just food — it's a mood. After a long night or an early morning, a plate of tapsilog fixes everything.",
     category: "breakfast",
@@ -547,6 +572,7 @@ const RECIPES = [
   },
   {
     title: "Laing",
+    heroImage: HERO_LECHON,
     description: "Dried taro leaves (gabi) cooked in coconut milk with chili — a Bicol classic.",
     story: "Laing is proof that Bicolanos can make anything taste good with gata and sili. My lola dried the gabi leaves herself under the sun.",
     category: "ulam",
@@ -577,6 +603,7 @@ const RECIPES = [
   },
   {
     title: "Halo-Halo",
+    heroImage: HERO_UBECAKE,
     description: "The iconic Filipino shaved ice dessert with sweet beans, fruits, leche flan, ube, and ice cream.",
     story: "No summer is complete without halo-halo. My lola would set up a halo-halo station in the garage — everyone mixed their own.",
     category: "dessert",
@@ -610,6 +637,7 @@ const RECIPES = [
   },
   {
     title: "Dinuguan",
+    heroImage: HERO_LECHONKAWALI,
     description: "A rich savory blood stew made with pork meat and innards, served with puto (rice cakes).",
     story: "Don't let the name scare you — dinuguan is pure comfort. My lola said the secret was patience: slow cooking until the blood turns rich and velvety.",
     category: "ulam",
@@ -646,6 +674,7 @@ const RECIPES = [
   },
   {
     title: "Puto Bumbong",
+    heroImage: HERO_STREETFOOD,
     description: "A purple steamed rice cake traditionally served during Christmas, topped with coconut and muscovado.",
     story: "Simbang Gabi wasn't complete without puto bumbong. The steam rising from the bamboo tubes smelled like Christmas morning.",
     category: "dessert",
@@ -676,6 +705,7 @@ const RECIPES = [
   },
   {
     title: "Pinakbet",
+    heroImage: HERO_WETMARKET,
     description: "A classic Ilocano vegetable dish with shrimp paste, bitter melon, and squash — no water added.",
     story: "Ilocano cooking is about letting vegetables speak for themselves. No water, just bagoong and the natural juices of the vegetables.",
     category: "vegetable",
@@ -745,8 +775,8 @@ async function seed() {
     }
 
     await client.query(
-      `INSERT INTO "Recipe" (slug, title, description, story, category, region, difficulty, "prepTime", "cookTime", servings, ingredients, steps, tags, "authorId", "sourceType", "isPublished", "isFeatured", "viewCount", "cookCount", "createdAt", "updatedAt")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14, 'heirloom', true, false, 0, 0, NOW(), NOW())`,
+      `INSERT INTO "Recipe" (slug, title, description, story, category, region, difficulty, "prepTime", "cookTime", servings, ingredients, steps, tags, "heroImage", "authorId", "sourceType", "isPublished", "isFeatured", "viewCount", "cookCount", "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14, $15, 'heirloom', true, false, 0, 0, NOW(), NOW())`,
       [
         slug,
         recipe.title,
@@ -761,6 +791,7 @@ async function seed() {
         JSON.stringify(recipe.ingredients),
         JSON.stringify(recipe.steps),
         recipe.tags,
+        recipe.heroImage || null,
         authorId,
       ]
     )

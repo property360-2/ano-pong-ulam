@@ -11,6 +11,7 @@ import StepDetalye from "./StepDetalye"
 import StepSangkap from "./StepSangkap"
 import StepHakbang from "./StepHakbang"
 import RecipePreview from "./RecipePreview"
+import ConfirmModal from "./ConfirmModal"
 
 let keyCounter = 0
 function nextKey() { return ++keyCounter }
@@ -74,6 +75,9 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
   const [error, setError] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
+
+  const [showDraftModal, setShowDraftModal] = useState(false)
+  const [draftData, setDraftData] = useState<RecipeFormData | null>(null)
 
   const [completedSteps, setCompletedSteps] = useState<Set<StepID>>(() => new Set())
 
@@ -268,18 +272,8 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
     try {
       const parsed = JSON.parse(saved)
       if (parsed.title || parsed.ingredients?.some((i: Ingredient) => i.name)) {
-        setTimeout(() => {
-          const confirmed = window.confirm("We found a draft from your last session. Restore it?")
-          if (confirmed) {
-            setFormData((prev) => ({
-              ...prev,
-              ...parsed,
-              ingredients: withKeys(parsed.ingredients || prev.ingredients),
-            }))
-          } else {
-            localStorage.removeItem(STORAGE_KEY_CREATE)
-          }
-        }, 0)
+        setDraftData(parsed)
+        setShowDraftModal(true)
       }
     } catch {
       localStorage.removeItem(STORAGE_KEY_CREATE)
@@ -382,6 +376,27 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
           </div>
         </div>
       </main>
+      <ConfirmModal
+        isOpen={showDraftModal}
+        title="Restore Draft?"
+        message="We found a draft from your last session. Would you like to restore it?"
+        confirmLabel="Restore"
+        cancelLabel="Discard"
+        onConfirm={() => {
+          if (draftData) {
+            setFormData((prev) => ({
+              ...prev,
+              ...draftData,
+              ingredients: withKeys(draftData.ingredients || prev.ingredients),
+            }))
+          }
+          setShowDraftModal(false)
+        }}
+        onCancel={() => {
+          localStorage.removeItem(STORAGE_KEY_CREATE)
+          setShowDraftModal(false)
+        }}
+      />
     </div>
   )
 }

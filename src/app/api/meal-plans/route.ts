@@ -32,7 +32,31 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { plan, groceryList, weekStartDate } = await req.json()
+    const body = await req.json()
+    const { plan, groceryList, weekStartDate } = body
+
+    // Validate plan structure
+    if (!plan || typeof plan !== "object" || Array.isArray(plan)) {
+      return NextResponse.json({ error: "Invalid plan: must be an object" }, { status: 400 })
+    }
+    const validDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    const validMeals = ["breakfast", "lunch", "dinner"]
+    for (const [day, meals] of Object.entries(plan)) {
+      if (!validDays.includes(day)) {
+        return NextResponse.json({ error: `Invalid day: ${day}` }, { status: 400 })
+      }
+      if (meals && typeof meals === "object") {
+        for (const [meal, value] of Object.entries(meals as Record<string, unknown>)) {
+          if (!validMeals.includes(meal)) {
+            return NextResponse.json({ error: `Invalid meal: ${meal}` }, { status: 400 })
+          }
+          if (value !== undefined && value !== null && typeof value !== "number") {
+            return NextResponse.json({ error: `Invalid recipe ID for ${day} ${meal}` }, { status: 400 })
+          }
+        }
+      }
+    }
+
     const weekStart = weekStartDate ? new Date(weekStartDate) : getWeekStart()
 
     const mealPlan = await prisma.mealPlan.upsert({

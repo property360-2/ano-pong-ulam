@@ -10,7 +10,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { 
+import {
   MdCalendarMonth, 
   MdSearch, 
   MdClose, 
@@ -21,7 +21,8 @@ import {
   MdDelete,
   MdAdd,
   MdVisibility,
-  MdEdit
+  MdEdit,
+  MdShoppingCart
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
@@ -72,17 +73,11 @@ export default function MealPlannerPage() {
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const [planRes, recipesRes] = await Promise.all([
-        fetch("/api/meal-plans").then((r) => r.json()),
-        fetch("/api/recipes?limit=100").then((r) => r.json()),
-      ])
+      const planRes = await fetch("/api/meal-plans").then((r) => r.json())
       if (planRes.plan) setPlan(planRes.plan)
       if (planRes.groceryList && Array.isArray(planRes.groceryList)) {
         setCheckedIngredients(planRes.groceryList)
       }
-      const rawList = Array.isArray(recipesRes) ? recipesRes : (recipesRes?.recipes || [])
-      const list = rawList.filter((r: any) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
-      setRecipes(list)
     } catch {
       toast.error("Failed to load planner data")
     } finally {
@@ -98,6 +93,30 @@ export default function MealPlannerPage() {
       fetchData()
     }
   }, [session, fetchData])
+
+  // Lazy-load recipes only when the assign slot modal opens
+  const [recipesLoading, setRecipesLoading] = useState(false)
+  const recipesFetchedRef = useRef(false)
+
+  useEffect(() => {
+    if (!activeAssignSlot) return
+    const shouldFetch = !recipesFetchedRef.current || searchQuery.length >= 2 || searchQuery.length === 0
+    if (!shouldFetch) return
+    recipesFetchedRef.current = true
+    setRecipesLoading(true)
+    const params = new URLSearchParams()
+    if (searchQuery) params.set("q", searchQuery)
+    params.set("limit", "20")
+    fetch(`/api/recipes?${params.toString()}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const rawList = Array.isArray(data) ? data : (data?.recipes || [])
+        const list = rawList.filter((r: any) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
+        setRecipes(list)
+      })
+      .catch(() => toast.error("Failed to load recipes"))
+      .finally(() => setRecipesLoading(false))
+  }, [activeAssignSlot, searchQuery, toast])
 
   /**
    * Updates a specific slot in the active schedule.
@@ -218,8 +237,26 @@ export default function MealPlannerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <p className="text-stone-500 animate-pulse">Loading Meal Planner...</p>
+      <div className="min-h-screen bg-stone-50 flex flex-col">
+        <Header />
+        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+          <div className="mb-8">
+            <div className="h-9 w-64 bg-stone-200 rounded-lg animate-pulse" />
+            <div className="h-5 w-48 bg-stone-100 rounded-lg animate-pulse mt-2" />
+          </div>
+          <div className="space-y-2">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="grid grid-cols-4 gap-4">
+                <div className="h-20 bg-stone-200 rounded-xl animate-pulse" />
+                <div className="col-span-3 grid grid-cols-3 gap-4">
+                  {[1,2,3].map((j) => (
+                    <div key={j} className="h-20 bg-stone-100 rounded-xl animate-pulse" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
       </div>
     )
   }
@@ -267,9 +304,9 @@ export default function MealPlannerPage() {
    * 
    * @param {string} name - Ingredient name.
    */
-  function toggleIngredient(name: string) {
+  function toggleIngredient(key: string) {
     setCheckedIngredients((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+      prev.includes(key) ? prev.filter((n) => n !== key) : [...prev, key]
     )
   }
 
@@ -288,14 +325,14 @@ export default function MealPlannerPage() {
           <div className="flex items-center gap-1 w-full md:w-auto">
             <button
               onClick={loadFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-105 font-medium"
+              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
             >
               <MdStar className="text-amber-500 text-base" />
               Quick-Fill
             </button>
             <button
               onClick={saveAsFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-105 font-medium"
+              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
             >
               <MdContentCopy className="text-stone-450 text-base" />
               Save Template
@@ -509,7 +546,11 @@ export default function MealPlannerPage() {
 
               {/* Scrollable list inside Modal */}
               <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-                {filteredRecipes.length === 0 ? (
+                {recipesLoading ? (
+                  <div className="space-y-2">
+                    {[1,2,3].map((n) => <div key={n} className="h-16 bg-stone-100 rounded-xl animate-pulse" />)}
+                  </div>
+                ) : filteredRecipes.length === 0 ? (
                   <p className="text-sm text-stone-400 italic text-center py-8">No matching recipes found.</p>
                 ) : (
                   filteredRecipes.map((recipe) => (
@@ -598,7 +639,7 @@ export default function MealPlannerPage() {
         {/* Smart Shopping List Section */}
         <div className="bg-white rounded-2xl border border-stone-200 p-6 mt-8 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">🧺</span>
+            <MdShoppingCart className="text-xl text-amber-600" />
             <h2 className="text-lg font-bold text-stone-850">Smart Shopping List</h2>
           </div>
           <p className="text-xs text-stone-500 mb-6">
@@ -621,11 +662,12 @@ export default function MealPlannerPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
                 {aggregatedIngredients.map((ing) => {
-                  const isChecked = checkedIngredients.includes(ing.name)
+                  const ingKey = `${ing.name}-${ing.unit}`
+                  const isChecked = checkedIngredients.includes(ingKey)
                   return (
                     <label
-                      key={ing.name}
-                      onClick={() => toggleIngredient(ing.name)}
+                      key={ingKey}
+                      onClick={() => toggleIngredient(ingKey)}
                       className={`flex items-center gap-3 p-2.5 rounded-xl border border-stone-150 hover:border-amber-300 hover:bg-stone-50/50 transition-all cursor-pointer select-none ${
                         isChecked ? "bg-stone-50/40 border-stone-100 text-stone-400" : ""
                       }`}

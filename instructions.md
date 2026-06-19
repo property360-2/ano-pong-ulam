@@ -4,7 +4,7 @@
 4. Use TODO:, FIXME:, and NOTE: tags consistently — never leave unexplained dead code.
 5. Before creating anything new, check if a similar function, component, or utility already exists in the codebase.
 6. Extract any logic used 2 or more times into a shared utility, helper, or component.
-7. Keep files under around 200–500 lines. If longer, split it — it likely has more than one responsibility. or use reusable atomic components (atom, molecule, organism)
+7. Every UI element must be built as a reusable atomic component — no inline one-off elements. Base HTML-level elements (eg headings, paragraphs, buttons, divs, links) must be wrapped as atoms. Composed elements (cards, form fields, nav items) are molecules. Page-level sections (navbars, sidebars, footers) are organisms. Only the top-level page/layout component should assemble and arrange these — never rebuild the same element in two places. Files should stay under necessary number of lines; if exceeded, it has more than one responsibility and must be split.
 8. Follow naming conventions of the active stack — never impose one stack's conventions onto another.
 9. Never hardcode secrets, tokens, URLs, or magic values — use constants files or environment variables.
 10. Every async operation must have explicit error handling — no bare awaits or unhandled promise rejections.
@@ -18,4 +18,5 @@
 18. Proactively suggest splitting or refactoring when a file mixes concerns, repeats patterns, or exceeds size limits.
 19. dont test the generated files, codes or features unless asked
 20. STRICT: always respond and output in english, even the user has speak tagalog or taglish 
+21. Dont Execute anything unless the user give the approval
 22. be brutally honest 

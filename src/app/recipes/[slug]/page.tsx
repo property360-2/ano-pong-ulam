@@ -107,6 +107,12 @@ export default async function RecipeDetailPage(props: { params: Params }) {
 
   if (!recipe || !recipe.isPublished) notFound()
 
+  // Fire-and-forget viewCount increment (no await — doesn't block render)
+  prisma.recipe.update({
+    where: { id: recipe.id },
+    data: { viewCount: { increment: 1 } },
+  }).catch(() => {})
+
   // Redirect to canonical slug-based URL if page is loaded using database ID
   if (isNumeric) {
     redirect(`/recipes/${recipe.slug}`)

@@ -37,37 +37,67 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
   if (filters.length > 0) where.AND = filters
 
   let orderBy: Prisma.RecipeOrderByWithRelationInput = { createdAt: "desc" }
-  if (sort === "popular") orderBy = { cookCount: "desc" }
+  if (sort === "popular") orderBy = { likes: { _count: "desc" } }
   else if (sort === "quickest") orderBy = { cookTime: "asc" }
 
-  const [recipes, total] = await Promise.all([
-    prisma.recipe.findMany({
-      where,
-      include: { author: { select: { username: true } } },
-      orderBy,
-      take: 12,
-    }),
-    prisma.recipe.count({ where }),
-  ])
+  let recipes: Array<any> = []
+  let total = 0
+  let categories: Array<{ name: string; count: number }> = []
+  let regions: Array<{ name: string; count: number }> = []
+  let dbError = false
 
-  const catGroups = await prisma.recipe.groupBy({
-    by: ["category"],
-    where: { isPublished: true },
-    _count: true,
-    orderBy: { _count: { category: "desc" } },
-  })
-  const categories = catGroups.map((c) => ({ name: c.category, count: c._count }))
+  try {
+    const results = await Promise.all([
+      prisma.recipe.findMany({
+        where,
+        include: { author: { select: { username: true } } },
+        orderBy,
+        take: 12,
+      }),
+      prisma.recipe.count({ where }),
+    ])
+    recipes = results[0]
+    total = results[1]
 
-  const regionGroups = await prisma.recipe.groupBy({
-    by: ["region"],
-    where: { isPublished: true, region: { not: null } },
-    _count: true,
-    orderBy: { _count: { region: "desc" } },
-  })
-  const regions = regionGroups.filter((r) => r.region).map((r) => ({ name: r.region!, count: r._count }))
+    const catGroups = await prisma.recipe.groupBy({
+      by: ["category"],
+      where: { isPublished: true },
+      _count: true,
+      orderBy: { _count: { category: "desc" } },
+    })
+    categories = catGroups.map((c) => ({ name: c.category, count: c._count }))
+
+    const regionGroups = await prisma.recipe.groupBy({
+      by: ["region"],
+      where: { isPublished: true, region: { not: null } },
+      _count: true,
+      orderBy: { _count: { region: "desc" } },
+    })
+    regions = regionGroups.filter((r) => r.region).map((r) => ({ name: r.region!, count: r._count }))
+  } catch {
+    dbError = true
+  }
 
   const activeFilters = { q, category, region, difficulty, tag }
   const hasActiveFilters = Object.values(activeFilters).some(Boolean)
+
+  if (dbError) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-8 text-center">
+          <h2 className="text-xl font-bold mb-2">May problema sa paglo-load</h2>
+          <p className="text-stone-500 mb-6">Subukan muli mamaya.</p>
+          <Link
+            href="/recipes"
+            className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+          >
+            Subukan Muli
+          </Link>
+        </main>
+      </>
+    )
+  }
 
   return (
     <>

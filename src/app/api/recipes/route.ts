@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   if (filters.length > 0) where.AND = filters
 
   let orderBy: Prisma.RecipeOrderByWithRelationInput = { createdAt: "desc" }
-  if (sort === "popular") orderBy = { cookCount: "desc" }
+  if (sort === "popular") orderBy = { likes: { _count: "desc" } }
   else if (sort === "quickest") orderBy = { cookTime: "asc" }
 
   const [recipes, total] = await Promise.all([

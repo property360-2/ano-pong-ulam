@@ -19,22 +19,41 @@ export async function GET(req: Request) {
     })
     const followingIds = following.map((f) => f.followingId)
 
+    let cursorFilter = {}
+    if (cursor) {
+      try {
+        cursorFilter = { skip: 1, cursor: { id: BigInt(cursor) } }
+      } catch {
+        // Invalid cursor — return empty feed
+        cursorFilter = {}
+      }
+    }
+
     rawActivities = await prisma.activity.findMany({
       where: { userId: { in: followingIds } },
       orderBy: { createdAt: "desc" },
       take,
-      ...(cursor ? { skip: 1, cursor: { id: BigInt(cursor) } } : {}),
+      ...cursorFilter,
       include: {
-        recipe: { select: { slug: true, title: true, heroImage: true } },
+        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true } } } },
       },
     })
   } else {
+    let cursorFilter = {}
+    if (cursor) {
+      try {
+        cursorFilter = { skip: 1, cursor: { id: BigInt(cursor) } }
+      } catch {
+        cursorFilter = {}
+      }
+    }
+
     rawActivities = await prisma.activity.findMany({
       orderBy: { createdAt: "desc" },
       take,
-      ...(cursor ? { skip: 1, cursor: { id: BigInt(cursor) } } : {}),
+      ...cursorFilter,
       include: {
-        recipe: { select: { slug: true, title: true, heroImage: true } },
+        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true } } } },
       },
     })
   }

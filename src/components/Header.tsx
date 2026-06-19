@@ -140,21 +140,7 @@ export default function Header() {
 
               {session?.user ? (
                 <>
-                  {!isNewRecipe && (
-                    <Link
-                      href="/recipes/new"
-                      onClick={closeMenu}
-                      className="flex items-center justify-center gap-1.5 bg-red-600 text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2 min-h-[44px]"
-                    >
-                      <MdAdd className="text-base" />
-                      Share Recipe
-                    </Link>
-                  )}
-                  <NavLink href="/feed" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Feed</NavLink>
-                  <NavLink href="/recipes" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Recipes</NavLink>
-                  <NavLink href="/meal-planner" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Meal Planner</NavLink>
-                  <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Collections</NavLink>
-                  <div className="mt-3 pt-3 border-t border-stone-100" />
+                  <div className="mt-0 pt-0 border-t border-stone-100" />
                   <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Notifications</NavLink>
                   <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Profile</NavLink>
                   <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Settings</NavLink>
