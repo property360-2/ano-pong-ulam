@@ -1,7 +1,19 @@
+/**
+ * @file not-found.tsx
+ * @description Custom 404 Not Found error page for the application.
+ * Offers a friendly illustration, explanatory message, and quick navigation button back to the homepage.
+ */
+
 import Link from "next/link"
 import { MdSearchOff, MdHome } from "react-icons/md"
 import Header from "@/components/Header"
 
+/**
+ * NotFound component.
+ * Renders a fallback 404 message layout with navigation controls.
+ * 
+ * @returns {JSX.Element} The rendered error page interface.
+ */
 export default function NotFound() {
   return (
     <>
@@ -13,7 +25,7 @@ export default function NotFound() {
           </div>
           <h1 className="text-2xl font-bold mb-2">Page not found</h1>
           <p className="text-stone-500 mb-6">
-            The page you're looking for doesn't exist or has been moved.
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
           <Link
             href="/"
@@ -26,3 +38,4 @@ export default function NotFound() {
     </>
   )
 }
+

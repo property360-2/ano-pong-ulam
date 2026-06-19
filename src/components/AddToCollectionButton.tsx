@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { MdPlaylistAdd, MdCheck, MdAdd } from "react-icons/md"
 import { useToast } from "@/lib/toast"
@@ -42,7 +42,7 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: number }
   /**
    * Fetches the user's collections, checking if the current recipe is already part of each.
    */
-  async function fetchCollections() {
+  const fetchCollections = useCallback(async () => {
     setLoading(true)
     try {
       const rid = Number(recipeId)
@@ -54,13 +54,16 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: number }
     } finally {
       setLoading(false)
     }
-  }
+  }, [recipeId])
 
   useEffect(() => {
     if (open && session) {
-      fetchCollections()
+      const timer = setTimeout(() => {
+        fetchCollections()
+      }, 0)
+      return () => clearTimeout(timer)
     }
-  }, [open, session])
+  }, [open, session, fetchCollections])
 
   /**
    * Toggles the presence of the recipe inside a specific collection.

@@ -1,3 +1,10 @@
+/**
+ * @file page.tsx
+ * @description Root application homepage component. Renders site introduction, recipe search prompts,
+ * categories selection grid, and lists recently published heirloom and community recipe cards.
+ * Designed with a warm amber theme, responsive grid layouts, and clean routing links.
+ */
+
 import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
@@ -16,6 +23,13 @@ const CATEGORIES = [
   { name: "Matatamis", slug: "dessert", desc: "Handa na ang panghimagas? Leche flan, ube halaya, at iba pa.", icon: <MdCake /> },
 ]
 
+/**
+ * HomePage component.
+ * Main dashboard server component that queries and presents the categories list and recent luto recipes.
+ * Handles different CTA routes depending on active session state.
+ * 
+ * @returns {JSX.Element} The rendered homepage structure.
+ */
 export default async function HomePage() {
   const session = await auth()
 
@@ -37,7 +51,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-screen-xl">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                Ang recipe ng{" "}
+                Ang recipe ng {" "}
                 <span className="text-amber-600">lola</span>
                 {" "}mo, deserve niyang ma-share sa mundo.
               </h1>
@@ -66,7 +80,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-screen-xl">
             <h2 className="text-2xl font-bold mb-2">Ano ang hanap mo ngayon?</h2>
             <p className="text-stone-500 mb-8">Pumili ng kategorya at tuklasin ang sarap ng tunay na lutong Pinoy.</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5">
+            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5">
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
@@ -81,6 +95,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
 
         <section className="py-12 md:py-16 px-4 bg-white">
           <div className="mx-auto max-w-screen-xl">
@@ -124,7 +139,7 @@ export default async function HomePage() {
                   Wala pang laman ang ating kusina digitally... Pero nandito ka na. Baka ikaw na ang mag-umpisa?
                 </p>
                 <p className="text-stone-500 mb-8 max-w-xl">
-                  Yung recipe ng pamilya niyo na hanggang ngayon, sa isip mo lang itinatago — it's time to write it down. Maging unang mag-ambag ng inyong pamana.
+                  Yung recipe ng pamilya niyo na hanggang ngayon, sa isip mo lang itinatago — it&apos;s time to write it down. Maging unang mag-ambag ng inyong pamana.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   {session?.user ? (

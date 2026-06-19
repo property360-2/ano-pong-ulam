@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * scripts/generate-icons.js
  * Generates PNG icons from public/icon.svg at various sizes for PWA manifest

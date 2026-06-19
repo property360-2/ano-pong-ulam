@@ -1,6 +1,13 @@
+/**
+ * @file page.tsx
+ * @description Detail page for a specific collection. Renders custom collection name,
+ * lists all recipes that are saved inside this collection, and provides controls for
+ * renaming or deleting the collection.
+ */
+
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
@@ -28,6 +35,12 @@ interface CollectionData {
   recipes: RecipeItem[]
 }
 
+/**
+ * CollectionDetailPage component.
+ * Renders the detail view of a collection, including saved recipes list and folder settings actions.
+ * 
+ * @returns {JSX.Element} The rendered collection detail page structure.
+ */
 export default function CollectionDetailPage() {
   const { data: session } = useSession()
   const params = useParams()
@@ -37,11 +50,12 @@ export default function CollectionDetailPage() {
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState("")
 
-  useEffect(() => {
-    if (session) fetchCollection()
-  }, [session])
-
-  async function fetchCollection() {
+  /**
+   * Fetches specific collection detail data by ID from parameters.
+   * 
+   * @returns {Promise<void>} Resolves when collection data state has been updated.
+   */
+  const fetchCollection = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`/api/collections/${params.id}`)
@@ -56,7 +70,16 @@ export default function CollectionDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id, toast])
+
+  useEffect(() => {
+    if (session) {
+      const timer = setTimeout(() => {
+        fetchCollection()
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [session, fetchCollection])
 
   async function saveChanges() {
     if (!editName.trim()) return

@@ -58,7 +58,7 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+      className={`flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 ${
         liked ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
       }`}
     >

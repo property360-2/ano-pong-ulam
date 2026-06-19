@@ -1,7 +1,13 @@
+/**
+ * @file DropZone.tsx
+ * @description Drag-and-drop file upload zone component. Handles local image file drop and browse
+ * actions, generates preview blob URLs, validates file sizes/types, and fires callbacks.
+ */
+
 "use client"
 
 import { useState, useRef } from "react"
-import { MdCloudUpload, MdClose, MdImage } from "react-icons/md"
+import { MdCloudUpload, MdClose } from "react-icons/md"
 
 type Props = {
   onFile: (file: File | null) => void
@@ -9,6 +15,13 @@ type Props = {
   hint?: string
 }
 
+/**
+ * DropZone component.
+ * Provides a user-friendly drag-and-drop or clickable box for uploading images.
+ * 
+ * @param {Props} props - Component properties.
+ * @returns {JSX.Element} The rendered dropzone.
+ */
 export default function DropZone({ onFile, currentImage, hint }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(null)

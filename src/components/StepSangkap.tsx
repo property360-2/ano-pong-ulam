@@ -1,3 +1,9 @@
+/**
+ * @file StepSangkap.tsx
+ * @description Ingredient input form step inside the recipe creator wizard.
+ * Renders dynamic ingredient input rows (amount, unit, name, notes) and handles row additions/deletions.
+ */
+
 import { useRef, useCallback } from "react"
 import { MdClose } from "react-icons/md"
 import type { Ingredient } from "@/lib/recipe-types"
@@ -10,10 +16,22 @@ type Props = {
 let keyCounter = 0
 function nextKey() { return ++keyCounter }
 
+/**
+ * Creates a default initialized Ingredient record with a unique key.
+ * 
+ * @returns {Ingredient & { _key: number }} The initialized ingredient item.
+ */
 export function createIngredient(): Ingredient & { _key: number } {
   return { _key: nextKey(), name: "", amount: "", unit: "", notes: "" }
 }
 
+/**
+ * StepSangkap component.
+ * Allows users to add, edit, and remove dynamic ingredient rows. Focuses on the next amount field when adding a row.
+ * 
+ * @param {Props} props Component properties.
+ * @returns {JSX.Element} The rendered ingredients table list.
+ */
 export default function StepSangkap({ ingredients, onChange }: Props) {
   const amountRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -68,7 +86,7 @@ export default function StepSangkap({ ingredients, onChange }: Props) {
       </div>
 
       {ingredients.map((ing, i) => (
-        <div key={(ing as any)._key ?? i} className="flex gap-2 items-start">
+        <div key={((ing as Ingredient & { _key?: number })._key ?? i).toString()} className="flex gap-2 items-start">
           <div className="flex-1 grid grid-cols-12 gap-2">
             <input
               ref={(el) => { amountRefs.current[i] = el }}

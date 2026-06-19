@@ -1,3 +1,9 @@
+/**
+ * @file RecipeList.tsx
+ * @description Client-side component displaying an infinite-scroll list of recipes.
+ * Employs IntersectionObserver to fetch more recipes on scroll and syncs server-side filter updates.
+ */
+
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
@@ -21,15 +27,38 @@ type Recipe = {
   author: { username: string } | null
 }
 
+/**
+ * RecipeList component.
+ * Displays recipes in a responsive grid and performs infinite scroll fetching on element intersection.
+ * Syncs the initialRecipes prop updates directly during render to prevent effect cascades.
+ * 
+ * @param {Object} props Component properties.
+ * @param {Recipe[]} props.initialRecipes The initial page of recipes fetched by the server component.
+ * @returns {JSX.Element | null} The rendered recipe list layout.
+ */
 export default function RecipeList({ initialRecipes }: { initialRecipes: Recipe[] }) {
   const searchParams = useSearchParams()
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [prevInitial, setPrevInitial] = useState<Recipe[]>(initialRecipes)
   const sentinelRef = useRef<HTMLDivElement>(null)
+
+  // Sync props to state synchronously inside rendering (prevents useEffect render cycle)
+  if (initialRecipes !== prevInitial) {
+    setRecipes(initialRecipes)
+    setHasMore(true)
+    setPrevInitial(initialRecipes)
+  }
 
   const hasInitialData = initialRecipes.length > 0
 
+  /**
+   * Generates a URL query string based on current browser parameters and offset coordinates.
+   * 
+   * @param {number} offset The current offset position (number of items already loaded).
+   * @returns {string} The formatted URL query parameters.
+   */
   const buildQueryString = useCallback((offset: number) => {
     const params = new URLSearchParams()
     const q = searchParams.get("q")
@@ -49,10 +78,6 @@ export default function RecipeList({ initialRecipes }: { initialRecipes: Recipe[
     return params.toString()
   }, [searchParams])
 
-  useEffect(() => {
-    setRecipes(initialRecipes)
-    setHasMore(true)
-  }, [initialRecipes])
 
   useEffect(() => {
     if (!hasInitialData || !hasMore) return

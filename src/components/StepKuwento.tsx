@@ -1,14 +1,26 @@
+/**
+ * @file StepKuwento.tsx
+ * @description First step form panel in recipe creation. Users input the title,
+ * short description, story behind the recipe, and drag-and-drop a hero image.
+ */
+
 import DropZone from "./DropZone"
 import type { RecipeFormData } from "@/lib/recipe-types"
 
 type Props = {
   data: RecipeFormData
   onChange: (patch: Partial<RecipeFormData>) => void
-  heroFile: File | null
   onHeroFile: (f: File | null) => void
 }
 
-export default function StepKuwento({ data, onChange, heroFile, onHeroFile }: Props) {
+/**
+ * StepKuwento component.
+ * Renders recipe meta fields (title, desc, story, cover photo) for recipe form wizard.
+ * 
+ * @param {Props} props - Component properties.
+ * @returns {JSX.Element} The story step form segment.
+ */
+export default function StepKuwento({ data, onChange, onHeroFile }: Props) {
   return (
     <div className="space-y-4">
       <div>

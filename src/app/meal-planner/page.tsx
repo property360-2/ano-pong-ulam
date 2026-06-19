@@ -1,8 +1,13 @@
+/**
+ * @file page.tsx
+ * @description Meal Planner page client component. Allows users to schedule recipes
+ * for breakfast, lunch, and dinner across the days of the week and save plans to the database.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { MdCalendarMonth, MdRestaurant } from "react-icons/md"
 
@@ -12,9 +17,14 @@ const MEALS = ["breakfast", "lunch", "dinner"] as const
 type DayPlan = { breakfast?: number; lunch?: number; dinner?: number }
 type MealPlanData = Record<string, DayPlan | undefined>
 
+/**
+ * MealPlannerPage component.
+ * Allows authenticated users to plan their weekly menu and save it.
+ * 
+ * @returns {JSX.Element} The rendered week planner layout.
+ */
 export default function MealPlannerPage() {
   const { data: session } = useSession()
-  const router = useRouter()
   const [plan, setPlan] = useState<MealPlanData>({})
   const [recipes, setRecipes] = useState<Array<{ id: number; title: string; slug: string }>>([])
   const [loading, setLoading] = useState(true)
@@ -22,17 +32,22 @@ export default function MealPlannerPage() {
 
   useEffect(() => {
     if (!session) {
-      setLoading(false)
-      return
+      const timer = setTimeout(() => {
+        setLoading(false)
+      }, 0)
+      return () => clearTimeout(timer)
     }
-    Promise.all([
-      fetch("/api/meal-plans").then((r) => r.json()),
-      fetch("/api/recipes").then((r) => r.json()),
-    ]).then(([planData, recipesData]) => {
-      if (planData.plan) setPlan(planData.plan)
-      if (Array.isArray(recipesData)) setRecipes(recipesData.slice(0, 20))
-      setLoading(false)
-    })
+    const timer = setTimeout(() => {
+      Promise.all([
+        fetch("/api/meal-plans").then((r) => r.json()),
+        fetch("/api/recipes").then((r) => r.json()),
+      ]).then(([planData, recipesData]) => {
+        if (planData.plan) setPlan(planData.plan)
+        if (Array.isArray(recipesData)) setRecipes(recipesData.slice(0, 20))
+        setLoading(false)
+      })
+    }, 0)
+    return () => clearTimeout(timer)
   }, [session])
 
   if (!session) {
@@ -52,6 +67,13 @@ export default function MealPlannerPage() {
     )
   }
 
+  /**
+   * Updates the selected recipe for a specific day and meal slot.
+   * 
+   * @param {string} day - Day of the week.
+   * @param {string} meal - The meal time slot (breakfast, lunch, or dinner).
+   * @param {number|null} recipeId - The ID of the selected recipe or null to clear.
+   */
   function setRecipe(day: string, meal: string, recipeId: number | null) {
     setPlan((prev) => ({
       ...prev,
@@ -59,11 +81,11 @@ export default function MealPlannerPage() {
     }))
   }
 
-  function getRecipeTitle(id: number | undefined) {
-    if (!id) return ""
-    return recipes.find((r) => r.id === id)?.title || ""
-  }
-
+  /**
+   * Saves the current meal plan to the database.
+   * 
+   * @returns {Promise<void>} Resolves when save operation finishes.
+   */
   async function handleSave() {
     setSaving(true)
     try {
@@ -104,7 +126,7 @@ export default function MealPlannerPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Meal Planner</h1>
-            <p className="text-stone-500">Plan your week's ulam</p>
+            <p className="text-stone-500">Plan your week&apos;s ulam</p>
           </div>
           <button
             onClick={handleSave}

@@ -55,7 +55,7 @@ export default function SaveButton({ recipeId, initialSaved = false }: { recipeI
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+      className={`flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 ${
         saved ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
       }`}
     >

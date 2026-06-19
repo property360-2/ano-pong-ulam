@@ -1,3 +1,9 @@
+/**
+ * @file Header.tsx
+ * @description Main application navigation header. Handles responsive desktop/mobile menus,
+ * dynamic session-state visual skeletons to avoid Cumulative Layout Shift (CLS), and exposes PWA install prompts.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -10,6 +16,17 @@ import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
 import UserMenu from "./UserMenu"
 
+/**
+ * NavLink component.
+ * Renders a link that visually highlights itself when the current route matches the href destination.
+ * 
+ * @param {Object} props Component properties.
+ * @param {string} props.href Destination URL.
+ * @param {React.ReactNode} props.children Link label or elements.
+ * @param {Function} [props.onClick] Click handler, e.g. to dismiss menus.
+ * @param {string} [props.className=""] Additional CSS classes.
+ * @returns {JSX.Element} The active-state-aware navigation link.
+ */
 function NavLink({ href, children, onClick, className = "" }: { href: string; children: React.ReactNode; onClick?: () => void; className?: string }) {
   const pathname = usePathname()
   const isActive =
@@ -21,15 +38,22 @@ function NavLink({ href, children, onClick, className = "" }: { href: string; ch
     <Link
       href={href}
       onClick={onClick}
-      className={`transition-colors ${isActive ? "text-red-600 font-semibold" : "text-stone-600 hover:text-amber-600"} ${className}`}
+      className={`transition-colors min-h-[44px] flex items-center px-2 ${isActive ? "text-red-600 font-semibold" : "text-stone-600 hover:text-amber-600"} ${className}`}
     >
       {children}
     </Link>
   )
 }
 
+/**
+ * Header component.
+ * Main navigation bar rendering branding logo, main pages list, session interactions, notification bell,
+ * and a mobile side-drawer menu. Employs pulse skeletons during authorization state queries to block CLS.
+ * 
+ * @returns {JSX.Element} The rendered header bar.
+ */
 export default function Header() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const isNewRecipe = pathname.startsWith("/recipes/new")
@@ -43,7 +67,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-white border-b border-stone-200">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+            <Link href="/" className="flex items-center gap-2 min-h-[44px]" onClick={closeMenu}>
               <Image src="/logo-no-bg.png" alt="" width={28} height={28} className="sm:w-9 sm:h-9 w-7 h-7 rounded" />
               <span className="hidden sm:inline font-bold text-lg tracking-tight">
                 Ano Pong <span className="text-red-600">Ulam?</span>
@@ -65,15 +89,17 @@ export default function Header() {
             {!isNewRecipe && (
               <Link
                 href="/recipes/new"
-                className="hidden md:inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
+                className="hidden md:inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm min-h-[44px]"
               >
                 <MdAdd className="text-base" />
                 Share Recipe
               </Link>
             )}
 
-            <div className="flex items-center gap-1.5">
-              {session?.user ? (
+            <div className="flex items-center gap-1.5 min-w-[80px] justify-end">
+              {status === "loading" ? (
+                <div className="w-8 h-8 rounded-full bg-stone-200 animate-pulse" />
+              ) : session?.user ? (
                 <>
                   <NotificationBell />
                   <UserMenu />
@@ -81,7 +107,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="bg-red-600 text-white px-4 py-2.5 sm:py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                  className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors min-h-[44px] flex items-center justify-center"
                 >
                   Sign In
                 </Link>
@@ -90,7 +116,7 @@ export default function Header() {
 
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2.5 text-stone-600 hover:text-amber-600 transition-colors"
+              className="md:hidden p-3 text-stone-600 hover:text-amber-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
               {menuOpen ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
@@ -117,7 +143,7 @@ export default function Header() {
                     <Link
                       href="/recipes/new"
                       onClick={closeMenu}
-                      className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2"
+                      className="flex items-center justify-center gap-1.5 bg-red-600 text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors mb-2 min-h-[44px]"
                     >
                       <MdAdd className="text-base" />
                       Share Recipe
@@ -142,7 +168,7 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={closeMenu}
-                    className="block text-center bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                    className="block text-center bg-red-600 text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors min-h-[44px]"
                   >
                     Sign In
                   </Link>
@@ -157,3 +183,4 @@ export default function Header() {
     </>
   )
 }
+

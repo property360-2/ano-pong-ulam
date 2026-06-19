@@ -71,25 +71,31 @@ export default function NotificationBell() {
 
   useEffect(() => {
     if (session) {
-      fetchNotifications()
+      const timer = setTimeout(() => {
+        fetchNotifications()
+      }, 0)
       pollingRef.current = setInterval(fetchNotifications, 30000)
-    }
-    return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current)
+      return () => {
+        clearTimeout(timer)
+        if (pollingRef.current) clearInterval(pollingRef.current)
+      }
     }
   }, [session, fetchNotifications])
 
   useEffect(() => {
     if (open && session) {
-      setLoading(true)
-      fetch("/api/notifications")
-        .then((r) => r.json())
-        .then((data) => {
-          setNotifications(data.notifications || [])
-          setUnreadCount(data.unreadCount || 0)
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false))
+      const timer = setTimeout(() => {
+        setLoading(true)
+        fetch("/api/notifications")
+          .then((r) => r.json())
+          .then((data) => {
+            setNotifications(data.notifications || [])
+            setUnreadCount(data.unreadCount || 0)
+          })
+          .catch(() => {})
+          .finally(() => setLoading(false))
+      }, 0)
+      return () => clearTimeout(timer)
     }
   }, [open, session])
 

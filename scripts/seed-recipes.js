@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { Client } = require("pg")
 require("dotenv").config()
-const crypto = require("crypto")
 
 function slugify(text) {
   return text

@@ -1,7 +1,20 @@
+/**
+ * @file route.ts
+ * @description API route handler for notifications. Retrieves notification lists and marks
+ * notification entries as read.
+ */
+
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 
+/**
+ * Handles GET requests to retrieve notifications.
+ * Optionally filters by tab (all vs unread) and returns count.
+ * 
+ * @param {Request} req - HTTP request object.
+ * @returns {Promise<NextResponse>} JSON response containing notifications and unreadCount.
+ */
 export async function GET(req: Request) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -12,7 +25,6 @@ export async function GET(req: Request) {
   const tab = url.searchParams.get("tab") || "all"
 
   const take = 50
-  const includeActor = { select: { id: true, username: true, avatarUrl: true } }
 
   if (tab === "unread") {
     const [notifications, unreadCount] = await Promise.all([
@@ -42,6 +54,12 @@ export async function GET(req: Request) {
   return NextResponse.json({ notifications, unreadCount })
 }
 
+/**
+ * Handles POST requests to mark a specific notification or all notifications as read.
+ * 
+ * @param {Request} req - HTTP request object.
+ * @returns {Promise<NextResponse>} JSON response indicating success or failure.
+ */
 export async function POST(req: Request) {
   const session = await auth()
   if (!session?.user?.id) {

@@ -1,3 +1,9 @@
+/**
+ * @file page.tsx
+ * @description Forgot password client page component. Users can input their email
+ * to request a password reset link.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -5,12 +11,24 @@ import Link from "next/link"
 import Image from "next/image"
 import { MdCheck } from "react-icons/md"
 
+/**
+ * ForgotPasswordPage component.
+ * Renders the forgot password email form.
+ * 
+ * @returns {JSX.Element} The password reset email request interface.
+ */
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState("")
 
+  /**
+   * Handles submission of the password reset request.
+   * 
+   * @param {React.FormEvent} e - React form submit event object.
+   * @returns {Promise<void>} Resolves when request finishes.
+   */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email.trim()) return
@@ -52,7 +70,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h1 className="text-xl font-bold mb-2">Check your email</h1>
             <p className="text-sm text-stone-500 mb-6">
-              If an account with that email exists, we've sent a reset link. Check your inbox (and spam).
+              If an account with that email exists, we&apos;ve sent a reset link. Check your inbox (and spam).
             </p>
             <p className="text-xs text-stone-400 mb-4">In development, check the server console for the link.</p>
             <Link href="/login" className="text-amber-600 text-sm font-medium hover:underline">
@@ -63,7 +81,7 @@ export default function ForgotPasswordPage() {
           <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
             <h1 className="text-xl font-bold text-center">Forgot Password</h1>
             <p className="text-sm text-stone-500 text-center">
-              Enter your email and we'll send you a reset link.
+              Enter your email and we&apos;ll send you a reset link.
             </p>
 
             {error && (

@@ -1,14 +1,25 @@
+/**
+ * @file page.tsx
+ * @description Reset Password client page component. Users arrive here via a link from their email
+ * to specify their new password. Wrapped with a Suspense boundary for search params decoding.
+ */
+
 "use client"
 
 import { Suspense } from "react"
 import { useState } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { MdRestaurant, MdCheck, MdLock } from "react-icons/md"
 
+/**
+ * ResetForm component.
+ * Renders password input elements, verifies validation, and sends request to server.
+ * 
+ * @returns {JSX.Element} The rendered reset form component.
+ */
 function ResetForm() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const token = searchParams.get("token")
 
   const [password, setPassword] = useState("")
@@ -129,6 +140,12 @@ function ResetForm() {
   )
 }
 
+/**
+ * ResetPasswordPage component.
+ * Wrapper container layout hosting the ResetForm inside a Suspense boundary.
+ * 
+ * @returns {JSX.Element} The rendered reset password page container.
+ */
 export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">

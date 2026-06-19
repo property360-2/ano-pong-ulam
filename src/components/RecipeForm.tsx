@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { STEPS, type StepID } from "@/lib/recipe-steps"
+import { type StepID } from "@/lib/recipe-steps"
 import type { RecipeFormData, Ingredient, Step } from "@/lib/recipe-types"
 import ProgressBar from "./ProgressBar"
 import StepKuwento from "./StepKuwento"
 import StepDetalye from "./StepDetalye"
-import StepSangkap, { createIngredient } from "./StepSangkap"
+import StepSangkap from "./StepSangkap"
 import StepHakbang from "./StepHakbang"
 import RecipePreview from "./RecipePreview"
 
@@ -45,6 +45,17 @@ function defaultFormData(): RecipeFormData {
 
 const STORAGE_KEY_CREATE = "recipe-wizard-draft"
 
+/**
+ * RecipeForm component.
+ * Renders a multi-step recipe creator/editor wizard including draft saving, progress indicators,
+ * field validation, image upload, and server synchronizations.
+ * 
+ * @param {Object} props Component properties.
+ * @param {"create"|"edit"} props.mode The wizard operating mode.
+ * @param {RecipeFormData} [props.initialData] Pre-filled recipe details for edit mode.
+ * @param {string} [props.recipeSlug] Database slug of the recipe in edit mode.
+ * @returns {JSX.Element} The rendered multi-step recipe form.
+ */
 export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
   const router = useRouter()
   const isEdit = mode === "edit"
@@ -64,31 +75,51 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
 
-  const completedStepsRef = useRef<Set<StepID>>(new Set())
-  const [completedVersion, setCompletedVersion] = useState(0)
+  const [completedSteps, setCompletedSteps] = useState<Set<StepID>>(() => new Set())
 
-  function markCompleted(step: StepID) {
-    completedStepsRef.current.add(step)
-    setCompletedVersion((v) => v + 1)
-  }
-
+  /**
+   * Patches the form data state with partial updates.
+   * 
+   * @param {Partial<RecipeFormData>} patch The state updates.
+   */
   function patchData(patch: Partial<RecipeFormData>) {
     setFormData((prev) => ({ ...prev, ...patch }))
   }
 
+  /**
+   * Replaces the ingredients list in the form data.
+   * 
+   * @param {Ingredient[]} ings The updated ingredients array.
+   */
   function setIngredients(ings: Ingredient[]) {
     setFormData((prev) => ({ ...prev, ingredients: ings }))
   }
 
+  /**
+   * Replaces the steps list in the form data.
+   * 
+   * @param {Step[]} steps The updated steps array.
+   */
   function setSteps(steps: Step[]) {
     setFormData((prev) => ({ ...prev, steps }))
   }
 
+  /**
+   * Navigates to a specific step.
+   * 
+   * @param {StepID} id The destination step identifier.
+   */
   function goToStep(id: StepID) {
     setCurrentStep(id)
     setError("")
   }
 
+  /**
+   * Validates required inputs of the current step.
+   * 
+   * @param {StepID} step The step to validate.
+   * @returns {boolean} True if validation passes, false otherwise.
+   */
   function validateStep(step: StepID): boolean {
     switch (step) {
       case 1:
@@ -120,16 +151,23 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
     }
   }
 
+  /**
+   * Triggers navigation to the next step, marking the current step as completed.
+   */
   function handleNext() {
     setError("")
     if (!validateStep(currentStep)) return
-    completedStepsRef.current.add(currentStep)
-    setCompletedVersion((v) => v + 1)
+    setCompletedSteps((prev) => {
+      const next = new Set(prev)
+      next.add(currentStep)
+      return next
+    })
     const next = (currentStep + 1) as StepID
     if (next <= 5) {
       setCurrentStep(next)
     }
   }
+
 
   function handleBack() {
     setError("")
@@ -212,7 +250,8 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
 
   const saveDraft = useCallback(() => {
     if (!isEdit) {
-      const { heroImage, ...draftable } = formData
+      const draftable = { ...formData }
+      delete (draftable as Partial<RecipeFormData>).heroImage
       localStorage.setItem(STORAGE_KEY_CREATE, JSON.stringify(draftable))
     }
   }, [formData, isEdit])
@@ -228,17 +267,19 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
     if (!saved) return
     try {
       const parsed = JSON.parse(saved)
-      if (parsed.title || parsed.ingredients?.some((i: any) => i.name)) {
-        const confirmed = window.confirm("We found a draft from your last session. Restore it?")
-        if (confirmed) {
-          setFormData((prev) => ({
-            ...prev,
-            ...parsed,
-            ingredients: withKeys(parsed.ingredients || prev.ingredients),
-          }))
-        } else {
-          localStorage.removeItem(STORAGE_KEY_CREATE)
-        }
+      if (parsed.title || parsed.ingredients?.some((i: Ingredient) => i.name)) {
+        setTimeout(() => {
+          const confirmed = window.confirm("We found a draft from your last session. Restore it?")
+          if (confirmed) {
+            setFormData((prev) => ({
+              ...prev,
+              ...parsed,
+              ingredients: withKeys(parsed.ingredients || prev.ingredients),
+            }))
+          } else {
+            localStorage.removeItem(STORAGE_KEY_CREATE)
+          }
+        }, 0)
       }
     } catch {
       localStorage.removeItem(STORAGE_KEY_CREATE)
@@ -279,7 +320,7 @@ export default function RecipeForm({ mode, initialData, recipeSlug }: Props) {
             <ProgressBar
               currentStep={currentStep}
               onStepClick={goToStep}
-              completedSteps={completedStepsRef.current}
+              completedSteps={completedSteps}
               isEdit={isEdit}
             />
           </div>

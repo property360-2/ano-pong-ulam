@@ -1,6 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+/**
+ * @file page.tsx
+ * @description Client-side notifications dashboard. Displays real-time and historical
+ * system notification events like likes, saves, comments, or follows for the logged-in user.
+ * Supports marking all as read, and tab filtering between all or unread notifications.
+ */
+
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { MdLock, MdArrowBack, MdCheck, MdFavorite, MdChat, MdPersonAdd, MdBookmark, MdNotifications } from "react-icons/md"
@@ -24,6 +31,12 @@ const typeIcons: Record<string, React.ReactNode> = {
   save: <MdBookmark className="text-amber-500" />,
 }
 
+/**
+ * Computes a relative time string (e.g. "5 min ago", "2h ago") from a ISO date string.
+ * 
+ * @param {string} dateStr - The ISO date string of the event.
+ * @returns {string} Relative time representation.
+ */
 function timeAgo(dateStr: string) {
   const now = Date.now()
   const date = new Date(dateStr).getTime()
@@ -38,6 +51,12 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString()
 }
 
+/**
+ * NotificationsPage component.
+ * Renders the list of notifications for the logged-in user with filter tabs and mark-all-read action.
+ * 
+ * @returns {JSX.Element} The rendered notifications center.
+ */
 export default function NotificationsPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
@@ -46,11 +65,7 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<"all" | "unread">("all")
 
-  useEffect(() => {
-    if (session) fetchNotifications()
-  }, [session, tab])
-
-  async function fetchNotifications() {
+  const fetchNotifications = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`/api/notifications?tab=${tab}`)
@@ -62,8 +77,24 @@ export default function NotificationsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [tab, toast])
 
+  useEffect(() => {
+    if (session) {
+      const timer = setTimeout(() => {
+        fetchNotifications()
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [session, fetchNotifications])
+
+
+  /**
+   * Marks all current user notifications as read via a POST api request
+   * and updates local react state to show 0 unread notifications.
+   * 
+   * @returns {Promise<void>} Resolves when notifications are marked read.
+   */
   async function markAllRead() {
     try {
       await fetch("/api/notifications", {
@@ -146,7 +177,7 @@ export default function NotificationsPage() {
               {tab === "unread" ? "No unread notifications" : "No notifications yet"}
             </p>
             <p className="text-xs text-stone-300 mt-1">
-              When someone likes, comments, or follows you, it'll show up here
+              When someone likes, comments, or follows you, it&apos;ll show up here
             </p>
           </div>
         ) : (
