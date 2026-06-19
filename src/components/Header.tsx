@@ -78,7 +78,7 @@ export default function Header() {
               {session?.user && (
                 <>
                   <NavLink href="/recipes">Recipes</NavLink>
-                  <NavLink href="/challenges">Challenges</NavLink>
+                  <NavLink href="/meal-planner">Meal Planner</NavLink>
                   <NavLink href="/collections">Collections</NavLink>
                 </>
               )}
@@ -150,7 +150,7 @@ export default function Header() {
                     </Link>
                   )}
                   <NavLink href="/recipes" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Recipes</NavLink>
-                  <NavLink href="/challenges" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Challenges</NavLink>
+                  <NavLink href="/meal-planner" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Meal Planner</NavLink>
                   <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Collections</NavLink>
                   <div className="mt-3 pt-3 border-t border-stone-100" />
                   <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Notifications</NavLink>

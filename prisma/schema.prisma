@@ -81,7 +81,6 @@ model User {
   likes            RecipeLike[]
   saves            RecipeSave[]
   comments         Comment[]
-  challengeEntries ChallengeEntry[]
 
   followers Follow[] @relation("following")
   following Follow[] @relation("follower")
@@ -132,7 +131,6 @@ model Recipe {
   saves     RecipeSave[]
   comments  Comment[]
   activities Activity[]
-  challengeEntries ChallengeEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -221,40 +219,7 @@ model Activity {
   @@index([createdAt])
 }
 
-model Challenge {
-  id          BigInt   @id @default(autoincrement())
-  title       String
-  description String?
-  emoji       String   @default("🍲")
-  startDate   DateTime
-  endDate     DateTime
-  themeTags   String[]
-  prize       String?
-  isActive    Boolean  @default(true)
-  createdBy   String?
 
-  entries ChallengeEntry[]
-
-  createdAt DateTime @default(now())
-
-  @@index([startDate, endDate])
-}
-
-model ChallengeEntry {
-  id          BigInt  @id @default(autoincrement())
-  challengeId BigInt
-  userId      String
-  recipeId    BigInt?
-  photoUrl    String  @default("")
-  caption     String?
-  voteCount   Int     @default(0)
-
-  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipe    Recipe?   @relation(fields: [recipeId], references: [id], onDelete: SetNull)
-
-  @@unique([challengeId, userId])
-}
 
 model MealPlan {
   id            BigInt   @id @default(autoincrement())
