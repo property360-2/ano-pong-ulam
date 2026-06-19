@@ -77,6 +77,7 @@ export default function Header() {
             <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
               {session?.user && (
                 <>
+                  <NavLink href="/feed">Feed</NavLink>
                   <NavLink href="/recipes">Recipes</NavLink>
                   <NavLink href="/meal-planner">Meal Planner</NavLink>
                   <NavLink href="/collections">Collections</NavLink>
@@ -149,6 +150,7 @@ export default function Header() {
                       Share Recipe
                     </Link>
                   )}
+                  <NavLink href="/feed" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Feed</NavLink>
                   <NavLink href="/recipes" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Recipes</NavLink>
                   <NavLink href="/meal-planner" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Meal Planner</NavLink>
                   <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Collections</NavLink>

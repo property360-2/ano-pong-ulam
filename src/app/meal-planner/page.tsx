@@ -37,6 +37,7 @@ interface RecipeItem {
   title: string
   slug: string
   category: string
+  ingredients?: any[]
 }
 
 /**
@@ -55,6 +56,9 @@ export default function MealPlannerPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   
+  // Track checked state of smart ingredients list
+  const [checkedIngredients, setCheckedIngredients] = useState<string[]>([])
+  
   // Navigation & Search State
   const [activeMobileDay, setActiveMobileDay] = useState("Monday")
   const [searchQuery, setSearchQuery] = useState("")
@@ -65,9 +69,6 @@ export default function MealPlannerPage() {
   // Track selected recipe slot details popover
   const [viewingSlotRecipe, setViewingSlotRecipe] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner"; recipe: RecipeItem } | null>(null)
 
-  /**
-   * Fetches weekly plans and general recipe recommendations from backend.
-   */
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
@@ -76,7 +77,11 @@ export default function MealPlannerPage() {
         fetch("/api/recipes?limit=100").then((r) => r.json()),
       ])
       if (planRes.plan) setPlan(planRes.plan)
-      const list = Array.isArray(recipesRes) ? recipesRes : (recipesRes?.recipes || [])
+      if (planRes.groceryList && Array.isArray(planRes.groceryList)) {
+        setCheckedIngredients(planRes.groceryList)
+      }
+      const rawList = Array.isArray(recipesRes) ? recipesRes : (recipesRes?.recipes || [])
+      const list = rawList.filter((r: any) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
       setRecipes(list)
     } catch {
       toast.error("Failed to load planner data")
@@ -121,7 +126,7 @@ export default function MealPlannerPage() {
       const res = await fetch("/api/meal-plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, groceryList: checkedIngredients }),
       })
       if (res.ok) {
         toast.success("Meal plan saved successfully!")
@@ -219,6 +224,55 @@ export default function MealPlannerPage() {
     )
   }
 
+  // Generate the smart ingredients checklist dynamically based on active plan recipes
+  const selectedRecipeIds = Object.values(plan)
+    .flatMap((dayPlan) => (dayPlan ? Object.values(dayPlan) : []))
+    .filter(Boolean)
+
+  const selectedRecipes = recipes.filter((r) =>
+    selectedRecipeIds.map(String).includes(String(r.id))
+  )
+
+  const aggregatedIngredients: { name: string; amount: string; unit: string }[] = []
+  
+  selectedRecipes.forEach((recipe) => {
+    const recipeIngs = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
+    recipeIngs.forEach((ing: any) => {
+      const name = ing.name.trim()
+      const existing = aggregatedIngredients.find(
+        (i) => i.name.toLowerCase() === name.toLowerCase()
+      )
+      if (existing) {
+        // Simple merge
+        if (existing.unit === ing.unit && !isNaN(Number(existing.amount)) && !isNaN(Number(ing.amount))) {
+          existing.amount = String(Number(existing.amount) + Number(ing.amount))
+        } else {
+          existing.amount = `${existing.amount} + ${ing.amount}`
+          if (existing.unit !== ing.unit) {
+            existing.unit = `${existing.unit}/${ing.unit}`
+          }
+        }
+      } else {
+        aggregatedIngredients.push({
+          name: ing.name,
+          amount: ing.amount,
+          unit: ing.unit,
+        })
+      }
+    })
+  })
+
+  /**
+   * Toggles the checked status of an ingredient.
+   * 
+   * @param {string} name - Ingredient name.
+   */
+  function toggleIngredient(name: string) {
+    setCheckedIngredients((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+    )
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       <Header />
@@ -231,25 +285,25 @@ export default function MealPlannerPage() {
             <p className="text-stone-500">Plan your week&apos;s ulam and organize your kitchen.</p>
           </div>
           
-          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-1 w-full md:w-auto">
             <button
               onClick={loadFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-sm border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 px-4 py-2.5 rounded-xl font-medium transition-colors"
+              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-105 font-medium"
             >
-              <MdStar className="text-amber-500 text-lg" />
-              Quick-Fill / Template
+              <MdStar className="text-amber-500 text-base" />
+              Quick-Fill
             </button>
             <button
               onClick={saveAsFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-sm border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 px-4 py-2.5 rounded-xl font-medium transition-colors"
+              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-105 font-medium"
             >
-              <MdContentCopy className="text-stone-500 text-lg" />
+              <MdContentCopy className="text-stone-450 text-base" />
               Save Template
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full md:w-auto flex items-center justify-center gap-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-medium shadow-sm transition-colors"
+              className="w-full md:w-auto flex items-center justify-center gap-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm transition-colors text-sm"
             >
               {saving ? "Saving..." : "Save Plan"}
             </button>
@@ -423,7 +477,7 @@ export default function MealPlannerPage() {
               </p>
 
               {/* Search Box inside Modal */}
-              <div className="relative mb-4">
+              <div className="relative mb-3">
                 <input
                   type="text"
                   value={searchQuery}
@@ -433,6 +487,24 @@ export default function MealPlannerPage() {
                   className="w-full text-sm border border-stone-300 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
                 <MdSearch className="absolute left-3 top-3 text-stone-400 text-lg" />
+              </div>
+
+              {/* Suggested Ulam Chips */}
+              <div className="flex flex-wrap gap-1.5 mb-4 items-center">
+                <span className="text-[10px] uppercase font-bold text-stone-400 mr-1">Suggestions:</span>
+                {["Adobo", "Sinigang", "Pinakbet", "Breakfast", "Dessert"].map((chip) => (
+                  <button
+                    key={chip}
+                    onClick={() => setSearchQuery(chip.toLowerCase() === searchQuery.toLowerCase() ? "" : chip)}
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg transition-colors ${
+                      searchQuery.toLowerCase() === chip.toLowerCase()
+                        ? "bg-red-600 text-white"
+                        : "bg-stone-100 hover:bg-stone-200 text-stone-600"
+                    }`}
+                  >
+                    {chip}
+                  </button>
+                ))}
               </div>
 
               {/* Scrollable list inside Modal */}
@@ -514,7 +586,7 @@ export default function MealPlannerPage() {
                     setSlotRecipe(day, meal, null)
                     setViewingSlotRecipe(null)
                   }}
-                  className="flex items-center justify-center gap-2 border border-red-200 bg-red-50 hover:bg-red-100 text-red-650 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
+                  className="flex items-center justify-center gap-2 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
                 >
                   <MdDelete className="text-lg text-red-500" />
                   Remove Recipe (Delete)
@@ -523,6 +595,64 @@ export default function MealPlannerPage() {
             </div>
           </div>
         )}
+        {/* Smart Shopping List Section */}
+        <div className="bg-white rounded-2xl border border-stone-200 p-6 mt-8 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🧺</span>
+            <h2 className="text-lg font-bold text-stone-850">Smart Shopping List</h2>
+          </div>
+          <p className="text-xs text-stone-500 mb-6">
+            A combined grocery checklist automatically generated from your planned ulam recipes.
+          </p>
+
+          {aggregatedIngredients.length === 0 ? (
+            <p className="text-xs text-stone-400 italic py-4 text-center">
+              Schedule recipes in the planner grid above to automatically compile your grocery list.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center text-xs font-bold text-stone-450 border-b border-stone-100 pb-2">
+                <span>Ingredient ({aggregatedIngredients.length} total)</span>
+                <span>
+                  {aggregatedIngredients.filter((i) => checkedIngredients.includes(i.name)).length} of{" "}
+                  {aggregatedIngredients.length} checked
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
+                {aggregatedIngredients.map((ing) => {
+                  const isChecked = checkedIngredients.includes(ing.name)
+                  return (
+                    <label
+                      key={ing.name}
+                      onClick={() => toggleIngredient(ing.name)}
+                      className={`flex items-center gap-3 p-2.5 rounded-xl border border-stone-150 hover:border-amber-300 hover:bg-stone-50/50 transition-all cursor-pointer select-none ${
+                        isChecked ? "bg-stone-50/40 border-stone-100 text-stone-400" : ""
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        readOnly
+                        className="rounded border-stone-300 text-amber-600 focus:ring-amber-500 h-4 w-4"
+                      />
+                      <span className={`text-xs font-semibold flex-1 ${isChecked ? "line-through" : "text-stone-700"}`}>
+                        {ing.name}
+                      </span>
+                      {ing.amount && (
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
+                          isChecked ? "bg-stone-100 text-stone-400" : "bg-amber-50 text-amber-700"
+                        }`}>
+                          {ing.amount} {ing.unit}
+                        </span>
+                      )}
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   )
