@@ -1,3 +1,9 @@
+/**
+ * @file AddToCollectionButton.tsx
+ * @description Client-side dropdown button allowing users to add/remove a recipe to/from their custom collections.
+ * Handles fetching available collections, toggling recipe inclusion, and inline creation of new collections.
+ */
+
 "use client"
 
 import { useState, useRef, useEffect } from "react"
@@ -5,7 +11,15 @@ import { useSession } from "next-auth/react"
 import { MdPlaylistAdd, MdCheck, MdAdd } from "react-icons/md"
 import { useToast } from "@/lib/toast"
 
-export default function AddToCollectionButton({ recipeId }: { recipeId: bigint | number }) {
+/**
+ * AddToCollectionButton component.
+ * Renders a playlist add icon button that expands into a dropdown of user collections with inline collection creation.
+ * 
+ * @param {Object} props Component properties.
+ * @param {number} props.recipeId The database ID of the recipe.
+ * @returns {JSX.Element} The rendered button and collection manager dropdown.
+ */
+export default function AddToCollectionButton({ recipeId }: { recipeId: number }) {
   const { data: session } = useSession()
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
@@ -25,6 +39,9 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: bigint |
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  /**
+   * Fetches the user's collections, checking if the current recipe is already part of each.
+   */
   async function fetchCollections() {
     setLoading(true)
     try {
@@ -45,6 +62,11 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: bigint |
     }
   }, [open, session])
 
+  /**
+   * Toggles the presence of the recipe inside a specific collection.
+   * 
+   * @param {number} collectionId The collection database ID.
+   */
   async function toggleRecipe(collectionId: number) {
     try {
       const res = await fetch(`/api/collections/${collectionId}/recipes`, {
@@ -64,6 +86,9 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: bigint |
     }
   }
 
+  /**
+   * Creates a new collection using the input name and refreshes the collections dropdown list.
+   */
   async function createCollection() {
     if (!newName.trim()) return
     setCreating(true)
@@ -156,3 +181,4 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: bigint |
     </div>
   )
 }
+

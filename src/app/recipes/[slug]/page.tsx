@@ -1,4 +1,11 @@
-import { notFound } from "next/navigation"
+/**
+ * @file page.tsx
+ * @description Recipe details page displaying a single recipe, its author, story, ingredients,
+ * instructions, likes, saves, collections, and comments. Supports both slug-based and ID-based URLs
+ * (redirecting IDs to canonical slugs) and handles BigInt serialization boundaries safely.
+ */
+
+import { notFound, redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 import Image from "next/image"
 import Header from "@/components/Header"
@@ -17,17 +24,30 @@ export const dynamic = "force-dynamic"
 
 type Params = Promise<{ slug: string }>
 
+/**
+ * Converts cooking/prep minutes into ISO 8601 duration format (e.g., PT45M).
+ * 
+ * @param {number} minutes The duration in minutes.
+ * @returns {string} The ISO 8601 formatted duration string.
+ */
 function minutesToIso(minutes: number): string {
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
   return `PT${h > 0 ? `${h}H` : ""}${m > 0 ? `${m}M` : ""}`
 }
 
+/**
+ * Generates OpenGraph and page metadata dynamically for SEO, supporting both ID and slug search.
+ * 
+ * @param {Object} props Next.js page props containing the params promise.
+ * @returns {Promise<Metadata>} Metadata configuration for Next.js.
+ */
 export async function generateMetadata(props: { params: Params }): Promise<Metadata> {
   const { slug } = await props.params
 
+  const isNumeric = /^\d+$/.test(slug)
   const recipe = await prisma.recipe.findUnique({
-    where: { slug },
+    where: isNumeric ? { id: BigInt(slug) } : { slug },
     select: {
       title: true,
       description: true,
@@ -61,12 +81,20 @@ export async function generateMetadata(props: { params: Params }): Promise<Metad
   }
 }
 
+/**
+ * Server component that renders the full recipe details layout.
+ * Resolves both slug-based search and numeric ID-based search (from notifications),
+ * handles authorization checks, loads user interactions, and renders metadata structures.
+ * 
+ * @param {Object} props Next.js page props containing params.
+ */
 export default async function RecipeDetailPage(props: { params: Params }) {
   const { slug } = await props.params
   const session = await auth()
 
+  const isNumeric = /^\d+$/.test(slug)
   const recipe = await prisma.recipe.findUnique({
-    where: { slug },
+    where: isNumeric ? { id: BigInt(slug) } : { slug },
     include: {
       author: { select: { id: true, username: true, avatarUrl: true } },
       comments: {
@@ -79,6 +107,11 @@ export default async function RecipeDetailPage(props: { params: Params }) {
 
   if (!recipe || !recipe.isPublished) notFound()
 
+  // Redirect to canonical slug-based URL if page is loaded using database ID
+  if (isNumeric) {
+    redirect(`/recipes/${recipe.slug}`)
+  }
+
   const userLiked = session?.user?.id
     ? !!(await prisma.recipeLike.findUnique({
         where: { userId_recipeId: { userId: session.user.id, recipeId: recipe.id } },
@@ -90,6 +123,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
         where: { userId_recipeId: { userId: session.user.id, recipeId: recipe.id } },
       }))
     : false
+
 
   const isFollowingAuthor =
     session?.user?.id && recipe.author?.id
@@ -209,9 +243,9 @@ export default async function RecipeDetailPage(props: { params: Params }) {
             </div>
 
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-stone-200">
-              <LikeButton recipeId={recipe.id} initialCount={recipe._count.likes} initialLiked={userLiked} />
-              <SaveButton recipeId={recipe.id} initialSaved={userSaved} />
-              <AddToCollectionButton recipeId={recipe.id} />
+              <LikeButton recipeId={Number(recipe.id)} initialCount={recipe._count.likes} initialLiked={userLiked} />
+              <SaveButton recipeId={Number(recipe.id)} initialSaved={userSaved} />
+              <AddToCollectionButton recipeId={Number(recipe.id)} />
               <ShareButton slug={recipe.slug} title={recipe.title} />
               {session?.user?.id === recipe.author?.id && (
                 <Link
@@ -288,7 +322,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
           </h2>
 
           <div className="mb-6">
-            <CommentForm recipeId={recipe.id} />
+            <CommentForm recipeId={Number(recipe.id)} />
           </div>
 
           {recipe.comments.length === 0 ? (
@@ -296,7 +330,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
           ) : (
             <div className="space-y-4">
               {recipe.comments.map((comment) => (
-                <div key={comment.id} className="bg-white rounded-lg border border-stone-200 p-4">
+                <div key={comment.id.toString()} className="bg-white rounded-lg border border-stone-200 p-4">
                   <p className="text-sm font-medium">@{comment.user.username}</p>
                   <p className="text-sm mt-1">{comment.content}</p>
                 </div>

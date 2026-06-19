@@ -1,3 +1,9 @@
+/**
+ * @file LikeButton.tsx
+ * @description Interactive client-side button enabling authenticated users to like or unlike a recipe.
+ * Communicates with the `/api/like` endpoint, updates the local count and state instantly, and triggers toasts.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,7 +12,18 @@ import { useRouter } from "next/navigation"
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md"
 import { useToast } from "@/lib/toast"
 
-export default function LikeButton({ recipeId, initialCount = 0, initialLiked = false }: { recipeId: bigint | number; initialCount?: number; initialLiked?: boolean }) {
+/**
+ * LikeButton component.
+ * Displays a heart icon with count and handles click events to toggle a recipe like.
+ * Redirects unauthenticated users to the login page.
+ * 
+ * @param {Object} props Component properties.
+ * @param {number} props.recipeId The database ID of the recipe.
+ * @param {number} [props.initialCount=0] The initial likes count of the recipe.
+ * @param {boolean} [props.initialLiked=false] Whether the current user has already liked this recipe.
+ * @returns {JSX.Element} The rendered button component.
+ */
+export default function LikeButton({ recipeId, initialCount = 0, initialLiked = false }: { recipeId: number; initialCount?: number; initialLiked?: boolean }) {
   const { data: session } = useSession()
   const router = useRouter()
   const { toast } = useToast()
@@ -50,3 +67,4 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
     </button>
   )
 }
+

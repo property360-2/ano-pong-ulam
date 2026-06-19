@@ -1,3 +1,9 @@
+/**
+ * @file CommentForm.tsx
+ * @description Interactive comment submission form for authenticated users.
+ * Submits comment contents to `/api/comment` and triggers page refresh and notifications.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -5,7 +11,16 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/lib/toast"
 
-export default function CommentForm({ recipeId }: { recipeId: bigint | number }) {
+/**
+ * CommentForm component.
+ * Renders a simple comment input field and submit button.
+ * Only renders if the user session is active.
+ * 
+ * @param {Object} props Component properties.
+ * @param {number} props.recipeId The database ID of the recipe.
+ * @returns {JSX.Element | null} The comment form interface or null if unauthenticated.
+ */
+export default function CommentForm({ recipeId }: { recipeId: number }) {
   const { data: session } = useSession()
   const router = useRouter()
   const { toast } = useToast()
@@ -59,3 +74,4 @@ export default function CommentForm({ recipeId }: { recipeId: bigint | number })
     </form>
   )
 }
+
