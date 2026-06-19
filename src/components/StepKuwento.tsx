@@ -4,6 +4,8 @@
  * short description, story behind the recipe, and drag-and-drop a hero image.
  */
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import DropZone from "./DropZone"

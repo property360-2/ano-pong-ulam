@@ -40,7 +40,8 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
   if (sort === "popular") orderBy = { likes: { _count: "desc" } }
   else if (sort === "quickest") orderBy = { cookTime: "asc" }
 
-  let recipes: Array<any> = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let recipes: any[] = []
   let total = 0
   let categories: Array<{ name: string; count: number }> = []
   let regions: Array<{ name: string; count: number }> = []

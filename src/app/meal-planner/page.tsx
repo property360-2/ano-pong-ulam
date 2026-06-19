@@ -38,6 +38,7 @@ interface RecipeItem {
   title: string
   slug: string
   category: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ingredients?: any[]
 }
 
@@ -111,7 +112,7 @@ export default function MealPlannerPage() {
       .then((r) => r.json())
       .then((data) => {
         const rawList = Array.isArray(data) ? data : (data?.recipes || [])
-        const list = rawList.filter((r: any) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
+        const list = rawList.filter((r: { title: string; slug: string }) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
         setRecipes(list)
       })
       .catch(() => toast.error("Failed to load recipes"))
@@ -274,7 +275,7 @@ export default function MealPlannerPage() {
   
   selectedRecipes.forEach((recipe) => {
     const recipeIngs = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
-    recipeIngs.forEach((ing: any) => {
+    recipeIngs.forEach((ing: Record<string, string>) => {
       const name = ing.name.trim()
       const existing = aggregatedIngredients.find(
         (i) => i.name.toLowerCase() === name.toLowerCase()

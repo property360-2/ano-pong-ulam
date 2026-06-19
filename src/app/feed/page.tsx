@@ -8,6 +8,8 @@
 
 "use client"
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"

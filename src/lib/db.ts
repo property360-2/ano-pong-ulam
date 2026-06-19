@@ -14,7 +14,6 @@ import { Pool } from "pg"
 // by JSON.stringify. This polyfill ensures all BigInt values are converted to
 // strings when passed through NextResponse.json or any JSON serialization.
 // TODO: remove this if Prisma migrates to number-based IDs
-// eslint-disable-next-line no-extend-native
 ;(BigInt.prototype as unknown as Record<string, unknown>).toJSON = function () {
   return this.toString()
 }
