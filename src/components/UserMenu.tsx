@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
-import { MdPerson, MdSettings, MdLogout, MdArrowDropDown, MdGetApp } from "react-icons/md"
+import { MdPerson, MdSettings, MdLogout, MdArrowDropDown, MdGetApp, MdFeedback } from "react-icons/md"
 import { usePwa } from "@/hooks/usePwa"
 import { useToast } from "@/lib/toast"
 
@@ -99,6 +99,14 @@ export default function UserMenu() {
           >
             <MdSettings className="text-lg text-stone-400" />
             Settings
+          </Link>
+          <Link
+            href="/feedback"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors min-h-[44px]"
+          >
+            <MdFeedback className="text-lg text-stone-400" />
+            Feedback
           </Link>
 
           {installable && (

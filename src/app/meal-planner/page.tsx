@@ -69,10 +69,10 @@ export default function MealPlannerPage() {
   const [searchQuery, setSearchQuery] = useState("")
   
   // Active target slot being assigned via modal
-  const [activeAssignSlot, setActiveAssignSlot] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" } | null>(null)
+  const [activeAssignSlot, setActiveAssignSlot] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" | "snacks" } | null>(null)
   
   // Track selected recipe slot details popover
-  const [viewingSlotRecipe, setViewingSlotRecipe] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner"; recipe: RecipeItem } | null>(null)
+  const [viewingSlotRecipe, setViewingSlotRecipe] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" | "snacks"; recipe: RecipeItem } | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -124,10 +124,10 @@ export default function MealPlannerPage() {
    * Updates a specific slot in the active schedule.
    * 
    * @param {string} day - Day of the week.
-   * @param {"breakfast" | "lunch" | "dinner"} meal - Meal slot.
+   * @param {"breakfast" | "lunch" | "dinner" | "snacks"} meal - Meal slot.
    * @param {number|null} recipeId - Recipe ID to assign or null to clear.
    */
-  function setSlotRecipe(day: string, meal: "breakfast" | "lunch" | "dinner", recipeId: number | null) {
+  function setSlotRecipe(day: string, meal: "breakfast" | "lunch" | "dinner" | "snacks", recipeId: number | null) {
     setPlan((prev) => ({
       ...prev,
       [day]: {

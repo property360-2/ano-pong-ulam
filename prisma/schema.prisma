@@ -1,3 +1,9 @@
+//
+// Purpose: Defines the PostgreSQL database schema using Prisma ORM.
+// Content: User, Follow, Recipe, Collection, Like/Save, Comment, Activity, MealPlan, Notification, and Feedback models.
+// Broad System Role: Serves as the single source of truth for the database layout, autogenerating the Prisma client.
+//
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -81,6 +87,7 @@ model User {
   likes            RecipeLike[]
   saves            RecipeSave[]
   comments         Comment[]
+  feedbacks        Feedback[]
 
   followers Follow[] @relation("following")
   following Follow[] @relation("follower")
@@ -250,3 +257,14 @@ model Notification {
 
   @@index([userId, isRead, createdAt])
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  category  String
+  message   String
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+

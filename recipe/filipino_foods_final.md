@@ -1,0 +1,494 @@
+# The Ultimate Master List of Filipino Foods
+
+This list contains titles of Filipino dishes, street foods, desserts, and regional specialties found across the internet and YouTube.
+
+## Main Dishes
+- Adobo (Chicken, Pork, Beef, Seafood)
+- Afritada (Chicken or Pork)
+- Asado (Beef or Pork)
+- Bagnet
+- Bopis
+- Camaron Rebosado
+- Chicken Inasal
+- Chicken Pastel
+- Crispy Pata
+- Crispy Tadyang ng Baka
+- Curacha
+- Daing na Bangus
+- Embutido
+- Escabeche
+- Giniling (Picadillo)
+- Halabos na Hipon
+- Hamonado
+- Humba
+- Inasal na Manok
+- Inihaw na Liempo
+- Inun-unan
+- Kadyos Manok Ubad
+- Kadyos-Baboy-Langka (KBL)
+- Kaldereta (Beef, Pork, Goat)
+- Kinilaw / Kilawin
+- Kinunot
+- Lechón (Pork, Chicken/Lechon Manok)
+- Lechón Kawali
+- Lengua Estofada
+- Lumpia (Shanghai, Sariwa, Ubod, Prito)
+- Mechado
+- Morcon
+- Paksiw (na Isda, na Baboy, na Lechon)
+- Piaparan
+- Pinakbet
+- Pinangat / Laing
+- Pyanggang Chicken
+- Relleno (Bangus, Manok, Talong)
+- Sarsiado
+- Sinanglay
+- Sisig (Pork, Tuna, Bangus)
+- Tapa (Beef, Horse/Tapang Rusa)
+- Torta (Talong, Alimasag, Carne)
+- Ukoy
+
+## Soups and Stews
+- Batchoy (La Paz Batchoy)
+- Bicol Express
+- Bulalo
+- Callos
+- Dinengdeng
+- Dinuguan
+- Ginataan (Ginataang Hipon, Gulay, Alimango, Manok)
+- Kansi
+- Kare-kare
+- Lauya
+- Linat-an
+- Mami (Beef, Chicken)
+- Menudo
+- Nilaga (Nilagang Baka, Bulalo)
+- Pancit Molo
+- Papaitan
+- Pares (Beef Pares)
+- Pochero
+- Sinanglaw
+- Sinigang (Baboy, Hipon, Isda, Baka)
+- Sopas (Chicken Macaroni Soup)
+- Soup No. 5
+- Tinola (Chicken, Fish, Pork)
+
+## Noodle Dishes (Pancit)
+- Filipino Spaghetti
+- Misua
+- Pancit Bihon Guisado
+- Pancit Cabagan
+- Pancit Canton
+- Pancit Estacion
+- Pancit Habhab (Lucban)
+- Pancit Lomi
+- Pancit Luglug
+- Pancit Malabon
+- Pancit Palabok
+- Pancit Tuguegarao (Batil-patong)
+- Sotanghon
+
+## Rice Dishes
+- Arroz Caldo
+- Arroz a la Valenciana
+- Binalot
+- Biryani (Mindanao Style)
+- Champorado
+- Kiampong
+- Lugaw
+- Paelya (Filipino Style)
+- Pastil
+- Puso (Hanging Rice)
+- Silog (Tapsilog, Longsilog, Tocilog, Bangsilog, Hotsilog, Dangsilog, Spamsilog)
+- Sinangag (Garlic Fried Rice)
+
+## Preserved Meat and Fish
+- Burong Isda / Burong Mangga
+- Daing
+- Danggit
+- Longganisa (Vigan, Lucban, Cebu, Alaminos)
+- Tinapa
+- Tocino
+- Tuyo
+
+## Street Food and Snacks
+- Adidas (Chicken Feet)
+- Balut
+- Betamax (Pig/Chicken Blood)
+- Binatog
+- Chicharon (Pork, Manok, Bulaklak)
+- Chicken Balls
+- Cornick
+- Day-old Chicken
+- Dynamite Lumpia
+- Fish Balls
+- Helmet (Chicken Head)
+- Isaw (Manok, Baboy)
+- Iskrambol (Ice Scramble)
+- Kikiam
+- Kurba (Chicken Skin)
+- Kwek-kwek
+- Mani (Roasted Peanuts)
+- Penoy
+- Proben
+- Scallops (Street style)
+- Sorbetes (Dirty Ice Cream)
+- Squid Balls
+- Taho (Original, Strawberry, Ube)
+- Tokneneng
+- Tokwa't Baboy
+
+## Bread and Pastries
+- Araro (Arrowroot Cookies)
+- Barquillos
+- Biscocho
+- Biskotso
+- Empanada (Vigan, Ilocos)
+- Ensaymada
+- Hopia (Hopia Hapon, Hopia Baboy)
+- Kalihim (Pan de Regla)
+- Monay
+- Otap
+- Pan de Coco
+- Pandesal
+- Pastel de Camiguin
+- Polvoron
+- Puto Seko
+- Putok
+- Rosquillos
+- Spanish Bread
+
+## Sweets and Desserts (Kakanin)
+- Banana Cue
+- Baye-baye
+- Bibingka
+- Biko
+- Binignit
+- Bukayo
+- Buko Pie
+- Camote Cue
+- Cassava Cake
+- Cay-cay
+- Crema de Fruta
+- Dodol
+- Espasol
+- Ginanggang
+- Ginataan (Dessert style/Bilo-bilo)
+- Halo-halo
+- Kalamay (Bohol, Araling)
+- Kiping
+- Kutsinta
+- Leche Flan
+- Mais con Yelo
+- Majá Blanca
+- Mango Float
+- Maruya
+- Moron
+- Palitaw
+- Pastillas de Leche
+- Pichi-pichi
+- Puto (Puto Maya, Puto Bumbong)
+- Saba con Yelo
+- Sapin-sapin
+- Suman (Antala, Lihiya, Cassava)
+- Sundot Kulangot
+- Tibok-tibok
+- Turon
+- Ube Halaya
+- Yema
+
+## Regional Specialties (Mindanao & Others)
+- Dinakdakan (Ilocos)
+- Etag (Cordillera)
+- Insarabasab (Ilocos)
+- Kansi (Bacolod)
+- Knickerbocker (Zamboanga)
+- Pancit Batil Patung (Tuguegarao)
+- Piaya (Bacolod)
+- Pinikpikan (Cordillera)
+- Pyanggang Chicken (Tausug)
+- Rendang (Mindanao version)
+- Sambal
+- Satti (Zamboanga)
+- Sinuglaw (Davao)
+- Tiyula Itum (Black Soup)
+
+## Rare and Indigenous Dishes
+- Abuos (Ant Eggs)
+- Adobo sa Puti (Native Adobo)
+- Bagnet (Ilocos)
+- Bakassi (Cebu Eel)
+- Bakassi (Cebu)
+- Balut (Fertilized duck egg)
+- Barquillos (Iloilo)
+- Batac Empanada (Ilocos)
+- Batchoy (Iloilo)
+- Beef Kulma (Mindanao Curry)
+- Betute (Stuffed Frog)
+- Bibingka sa Mandaue (Cebu)
+- Bicol Express
+- Binagol (Leyte)
+- Binaki (Bukidnon)
+- Biryani (Mindanao)
+- Biscocho (Iloilo)
+- Budbod (Visayas)
+- Chicken Binakol (Visayas)
+- Curacha Alavar (Zamboanga)
+- Danggit (Cebu)
+- Dinakdakan (Ilocos)
+- Dinardaraan (Ilocano Dinuguan)
+- Dudul (Mindanao)
+- Etag (Cordillera smoked meat)
+- Galletas de Bago (Cebu)
+- Ginabot (Cebu)
+- Inasal (Bacolod)
+- Insarabasab (Ilocos)
+- KBL (Iloilo)
+- Kamaro (Mole Crickets)
+- Kansi (Ilonggo Bulalo/Sinigang hybrid)
+- Katilapan (Mindanao)
+- Kinalas (Bicol)
+- Kinalas (Bicolano noodle soup)
+- Kinilaw na Hipon
+- Kinilaw na Pagi (Stingray)
+- Kinilaw na Tanigue
+- Kinunot (Bicol)
+- Knickerbocker (Zamboanga)
+- Laing / Pinangat
+- Lechon Cebu
+- Linat-an (Visayan stew)
+- Log-log (Bicol)
+- Lucban Longganisa (Quezon)
+- Masareal (Cebu)
+- Moron (Leyte)
+- Ngohiong (Cebu)
+- Otap (Cebu)
+- Pancit Batil Patung (Cagayan)
+- Pancit Bato (Bicol)
+- Pancit Cabagan (Isabela)
+- Pancit Chami (Quezon)
+- Pancit Estacion (Cavite)
+- Pancit Habhab (Quezon)
+- Pancit Langlang (Cavite)
+- Pancit Marilao
+- Pancit Marilao (Bulacan)
+- Pancit Molo (Iloilo)
+- Pancit Ngohiong (Cebu)
+- Pastil (Maguindanao)
+- Pawa (Mindanao)
+- Penoy (Unfertilized duck egg)
+- Piaya (Bacolod)
+- Pinikpikan (Cordillera chicken)
+- Pintos (Cebu)
+- Poqui Poqui (Ilocos)
+- Puso (Hanging Rice)
+- Pyanggang Chicken (Tausug)
+- Rendang (Mindanao)
+- Rosquillos (Cebu)
+- Salagubang (June Beetle)
+- Sambal (Mindanao)
+- Satti (Zamboanga)
+- Sayongsong (Surigao)
+- Sinanglaw (Ilocos)
+- Sinantol (Bicol)
+- Sinantol (Bicolano Santol dish)
+- Sinuglaw (Sinugba + Kinilaw)
+- Siomai sa Tisa (Cebu)
+- Tagaktak (Cebu)
+- Tamilok (Palawan woodworm)
+- Tilmok (Bicol)
+- Tilmok (Bicolano steamed coconut/shrimp)
+- Tiyula Itum (Tausug)
+- Tuslob Buwa (Cebu)
+- Vigan Empanada (Ilocos)
+
+## Exotic Foods
+- Abuos (Ant Eggs)
+- Betute (Stuffed Frog)
+- Kamaro (Mole Crickets)
+- Salagubang (June Beetles)
+- Tamilok (Woodworm)
+
+## Sauces and Condiments
+- Atchara
+- Bagoong (Alamang, Isda)
+- Banana Ketchup
+- Lechon Sauce
+- Palapa
+- Patis
+- Sawsawan (Vinegar, Soy Sauce, Chili, Calamansi)
+- Toyomansi
+
+## Additional Dishes and Regional Specialties
+- Adobong Dilaw (Batangas)
+- Adobong Ilocano
+- Adobong Puti
+- Bakassi (Cebu Eel)
+- Barquillos (Iloilo)
+- Batchoy (Iloilo)
+- Bibingka sa Mandaue (Cebu)
+- Bicol Express
+- Binagol (Leyte)
+- Binaki (Bukidnon)
+- Biryani (Mindanao Style)
+- Biscocho (Iloilo)
+- Budbod (Visayas Suman)
+- Chicken Binakol (Visayas)
+- Curacha Alavar (Zamboanga)
+- Danggit (Cebu)
+- Dinakdakan
+- Dudul (Mindanao Toffee)
+- Galletas de Bago (Cebu)
+- Ginabot (Cebuano Chicharon Bulaklak)
+- Inasal (Bacolod)
+- Insarabasab
+- KBL (Kadyos, Baboy, Langka - Iloilo)
+- Kansi (Ilonggo Sour Soup)
+- Katilapan (Mindanao Rice Snack)
+- Kinalas (Bicol)
+- Kinunot (Bicol)
+- Knickerbocker (Zamboanga Dessert)
+- Laing / Pinangat
+- Laswa (Ilonggo Vegetable Soup)
+- Lechon Cebu
+- Log-log (Bicol)
+- Masareal (Cebu)
+- Moron (Leyte)
+- Ngohiong (Cebuano Spring Roll)
+- Otap (Cebu)
+- Pancit Batil Patong
+- Pancit Bato (Bicol)
+- Pancit Bihon-Canton (Combo)
+- Pancit Cabagan
+- Pancit Chami (Lucena)
+- Pancit Efuven
+- Pancit Estacion
+- Pancit Habhab
+- Pancit Langlang
+- Pancit Lucban
+- Pancit Luglug
+- Pancit Malabon
+- Pancit Marilao
+- Pancit Miki (Various Regions)
+- Pancit Molo (Iloilo)
+- Pancit Ngohiong (Cebu)
+- Pancit Palabok
+- Pancit Sotanghon-Guisado
+- Pastil (Maguindanao)
+- Pawa (Mindanao Rice Snack)
+- Piaya (Bacolod)
+- Pinakbet Bagnet
+- Pintos (Cebu)
+- Poqui Poqui (Ilocano Eggplant Dish)
+- Puso (Hanging Rice)
+- Pyanggang Chicken (Tausug)
+- Rendang (Mindanao Style)
+- Rosquillos (Cebu)
+- Sambal (Mindanao Style)
+- Satti (Zamboanga)
+- Sayongsong (Surigao)
+- Sinanglaw
+- Sinantol (Bicol)
+- Sinuglaw (Davao)
+- Siomai sa Tisa (Cebu)
+- Tagaktak (Cebu)
+- Tilmok (Bicol)
+- Tiyula Itum (Tausug Black Soup)
+- Tuslob Buwa (Cebu)
+
+## More Sweets and Kakanin
+- Araro
+- Banana Cue
+- Barquillos
+- Barquiron
+- Baye-baye
+- Bibingka Cassava
+- Bibingka Malagkit
+- Bibingkang Abnoy
+- Biko
+- Binagol
+- Binatog
+- Biskotso
+- Bitso-bitso
+- Brazo de Mercedes
+- Broas
+- Buchi
+- Buko Pandan
+- Buko Salad
+- Camote Cue
+- Cascaron
+- Cassava Cake
+- Cassava Suman
+- Crema de Fruta
+- Dudol
+- Ensaymada
+- Espasol
+- Fruit Salad (Filipino Style)
+- Galletas
+- Ginanggang
+- Guinomis
+- Halayang Ube
+- Halo-halo
+- Hopia (Hapon, Baboy, Ube, Custard)
+- Inutak
+- Iskrambol
+- Kalamay (Bohol, Candon, Indang)
+- Kalihim
+- Karioka
+- Kumunoy
+- Kutsinta
+- Leche Flan
+- Lengua de Gato
+- Lubid-lubid
+- Macaroni Salad (Sweet)
+- Mais con Yelo
+- Maja Blanca
+- Maja de Ube
+- Mango Float
+- Maruya
+- Monay
+- Moron
+- Nilupak
+- Otap
+- Pacencia
+- Palitaw
+- Pan de Coco
+- Pandesal
+- Pastillas
+- Pastillas de Leche
+- Pastillas de Ube
+- Patupat
+- Piaya
+- Pichi-pichi
+- Pilipit
+- Polvoron
+- Puto Bumbong
+- Puto Lanson
+- Puto Maya
+- Puto Pao
+- Puto Seko
+- Putok
+- Rosquillos
+- Saba con Yelo
+- Sans Rival
+- Sapin-Sapin
+- Sayongsong
+- Shakoy
+- Silvana
+- Sinukmani
+- Sorbetes
+- Spanish Bread
+- Suman Latik
+- Suman Malagkit
+- Suman Maruecos
+- Suman Pinipig
+- Suman sa Ibus
+- Suman sa Lihiya
+- Taho
+- Tibok-tibok
+- Tupig
+- Turon
+- Wadjit
+- Yema
+- Yema Cake
+

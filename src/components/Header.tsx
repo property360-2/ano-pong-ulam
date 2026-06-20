@@ -143,6 +143,7 @@ export default function Header() {
                   <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.notifications")}</NavLink>
                   <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.profile")}</NavLink>
                   <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.settings")}</NavLink>
+                  <NavLink href="/feedback" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.feedback")}</NavLink>
                   <button
                     onClick={() => { signOut(); closeMenu() }}
                     className="w-full text-left text-stone-500 hover:text-red-600 transition-colors py-3 min-h-[44px] flex items-center"
