@@ -54,8 +54,8 @@
   "meal.suggestions_label": "Mga Mungkahi:",
   "meal.no_recipes": "Walang nahanap na recipe.",
   "meal.select": "Piliin",
-  "meal.tap_to_choose": "I-tap para pumili ng ulam...",
-  "meal.click_to_choose": "Pumili ng ulam...",
+  "meal.tap_to_choose": "I-tap para pumili ng recipe...",
+  "meal.click_to_choose": "Pumili ng recipe...",
   "meal.scheduled_for": "Naka-iskedyul para sa",
   "meal.view_details": "Tingnan ang Detalye ng Recipe",
   "meal.change_recipe": "Palitan ang Recipe",
@@ -85,5 +85,6 @@
   "common.day.sunday": "Linggo",
   "common.meal.breakfast": "Almusal",
   "common.meal.lunch": "Tanghalian",
-  "common.meal.dinner": "Hapunan"
+  "common.meal.dinner": "Hapunan",
+  "common.meal.snacks": "Meryenda"
 }

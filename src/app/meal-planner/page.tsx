@@ -24,16 +24,17 @@ import {
   MdEdit,
   MdLightMode,
   MdWbSunny,
-  MdNightsStay
+  MdNightsStay,
+  MdCookie
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
 import { useLanguage } from "@/lib/i18n"
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-const MEALS = ["breakfast", "lunch", "dinner"] as const
+const MEALS = ["breakfast", "lunch", "dinner", "snacks"] as const
 
-type DayPlan = { breakfast?: number; lunch?: number; dinner?: number }
+type DayPlan = { breakfast?: number; lunch?: number; dinner?: number; snacks?: number }
 type MealPlanData = Record<string, DayPlan | undefined>
 
 interface RecipeItem {
@@ -334,7 +335,9 @@ export default function MealPlannerPage() {
                 ? <MdLightMode className="text-amber-500 text-sm flex-shrink-0" />
                 : meal === "lunch"
                 ? <MdWbSunny className="text-orange-500 text-sm flex-shrink-0" />
-                : <MdNightsStay className="text-indigo-500 text-sm flex-shrink-0" />
+                : meal === "dinner"
+                ? <MdNightsStay className="text-indigo-500 text-sm flex-shrink-0" />
+                : <MdCookie className="text-pink-500 text-sm flex-shrink-0" />
 
               return (
                 <div 
@@ -391,19 +394,19 @@ export default function MealPlannerPage() {
 
           {/* Desktop Week Grid View */}
           <div className="hidden md:flex flex-col bg-white rounded-2xl border border-stone-200 overflow-hidden">
-            <div className="grid grid-cols-4 bg-stone-50 border-b border-stone-200 p-4 font-bold text-stone-500 text-xs uppercase tracking-wider">
+            <div className="grid grid-cols-5 bg-stone-50 border-b border-stone-200 p-4 font-bold text-stone-500 text-xs uppercase tracking-wider">
               <div>Day</div>
-              <div className="col-span-3 grid grid-cols-3 gap-4">
+              <div className="col-span-4 grid grid-cols-4 gap-4">
                 {MEALS.map(meal => <div key={meal}>{t(`common.meal.${meal}`)}</div>)}
               </div>
             </div>
             
             <div className="divide-y divide-stone-100">
               {DAYS.map((day) => (
-                <div key={day} className="grid grid-cols-4 p-4 items-center">
+                <div key={day} className="grid grid-cols-5 p-4 items-center">
                   <div className="font-bold text-stone-700">{t(`common.day.${day.toLowerCase()}`)}</div>
                   
-                  <div className="col-span-3 grid grid-cols-3 gap-4">
+                  <div className="col-span-4 grid grid-cols-4 gap-4">
                     {MEALS.map((meal) => {
                       const recipeId = plan[day]?.[meal]
                       const recipe = recipes.find(r => String(r.id) === String(recipeId))
@@ -411,7 +414,9 @@ export default function MealPlannerPage() {
                         ? <MdLightMode className="text-amber-500 text-[10px] flex-shrink-0" />
                         : meal === "lunch"
                         ? <MdWbSunny className="text-orange-500 text-[10px] flex-shrink-0" />
-                        : <MdNightsStay className="text-indigo-500 text-[10px] flex-shrink-0" />
+                        : meal === "dinner"
+                        ? <MdNightsStay className="text-indigo-500 text-[10px] flex-shrink-0" />
+                        : <MdCookie className="text-pink-500 text-[10px] flex-shrink-0" />
 
                       return (
                         <div

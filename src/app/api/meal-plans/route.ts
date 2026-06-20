@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid plan: must be an object" }, { status: 400 })
     }
     const validDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    const validMeals = ["breakfast", "lunch", "dinner"]
+    const validMeals = ["breakfast", "lunch", "dinner", "snacks"]
     for (const [day, meals] of Object.entries(plan)) {
       if (!validDays.includes(day)) {
         return NextResponse.json({ error: `Invalid day: ${day}` }, { status: 400 })
