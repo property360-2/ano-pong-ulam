@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { MdLock, MdCameraAlt } from "react-icons/md"
+import { MdLock, MdCameraAlt, MdCheckCircle, MdError } from "react-icons/md"
 import Header from "@/components/Header"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { useLanguage } from "@/lib/i18n"
@@ -190,16 +190,20 @@ export default function SettingsPage() {
         <p className="text-stone-500 mb-8">Manage your profile and preferences.</p>
 
         {error && (
-          <div className="bg-amber-50 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">{error}</div>
+          <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm shadow-sm">
+            <MdError className="text-lg flex-shrink-0" />
+            <span>{error}</span>
+          </div>
         )}
         {success && (
-          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm">
-            Profile saved successfully.
+          <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm shadow-sm">
+            <MdCheckCircle className="text-lg flex-shrink-0" />
+            <span>Profile saved successfully.</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <section className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <section className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 space-y-4">
             <h2 className="text-lg font-bold">Profile</h2>
 
             <div>
@@ -275,7 +279,7 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          <section className="bg-white rounded-xl border border-stone-200 p-6">
+          <section className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
             <h2 className="text-lg font-bold mb-4">About You</h2>
 
             <div className="space-y-4">
@@ -344,7 +348,7 @@ export default function SettingsPage() {
           </section>
         </form>
 
-        <section className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 mt-8">
+        <section className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold">{t("settings.language_section")}</h2>
@@ -354,7 +358,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <section className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 mt-8">
+        <section className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 mt-6">
           <h2 className="text-lg font-bold mb-1">Change Password</h2>
           <p className="text-sm text-stone-500 mb-6">Update your account password</p>
 

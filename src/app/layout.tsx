@@ -55,7 +55,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-stone-50 text-stone-900">
         <Providers>
           <HtmlLangSync />
-          <div className="flex-1 pb-16 md:pb-0">{children}</div>
+          <div className="flex-1 pb-20 md:pb-0">{children}</div>
           <BottomNav />
         </Providers>
         <ServiceWorkerRegister />

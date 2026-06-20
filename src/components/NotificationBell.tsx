@@ -1,3 +1,10 @@
+/**
+ * @file NotificationBell.tsx
+ * @description Notification bell icon and dropdown menu component.
+ * Fetches, polls, and displays user notifications (likes, comments, follows, saves).
+ * Includes mark-as-read functionality and links to the full notifications list.
+ */
+
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
@@ -23,6 +30,12 @@ const typeIcons: Record<string, React.ReactNode> = {
   save: <MdBookmark className="text-amber-500" />,
 }
 
+/**
+ * Calculates a relative time string (e.g., '5m', '2h', '3d') from a given timestamp.
+ * 
+ * @param {string} dateStr - The ISO date string to convert.
+ * @returns {string} The relative time representation.
+ */
 function timeAgo(dateStr: string) {
   const now = Date.now()
   const date = new Date(dateStr).getTime()
@@ -37,6 +50,15 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString()
 }
 
+/**
+ * NotificationBell component.
+ * Renders the header notifications icon showing an unread counter badge.
+ * Toggles a dropdown overlay containing recent notifications list.
+ * Adjusts dropdown positioning dynamically (fixed overlay on mobile, absolute popup on desktop)
+ * to avoid rendering cutoff on narrow viewports.
+ * 
+ * @returns {JSX.Element | null} The notification trigger button and its conditional dropdown menu, or null if unauthenticated.
+ */
 export default function NotificationBell() {
   const { data: session } = useSession()
   const { toast } = useToast()

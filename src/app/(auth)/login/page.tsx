@@ -1,3 +1,10 @@
+/**
+ * @file page.tsx
+ * @description Sign In client page component. Users can log in using their registered
+ * email address and password. It integrates with Next-Auth client side credentials provider
+ * to authenticate sessions and redirects to home page on success.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,11 +13,24 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 
+/**
+ * LoginPage component.
+ * Renders a standard credential login form. On submit, it attempts to authenticate the user
+ * via Next-Auth and triggers client-side state/routing updates. Includes a post fallback method
+ * on the form to prevent credentials leak in case JavaScript is not hydrated.
+ * 
+ * @returns {JSX.Element} The login form page view.
+ */
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  /**
+   * Handles submission of the login form using Next-Auth.
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} e - React form submit event object.
+   */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
@@ -43,7 +63,7 @@ export default function LoginPage() {
           <div className="font-bold text-2xl">Ano Pong <span className="text-amber-600">Ulam?</span></div>
         </Link>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
+        <form onSubmit={handleSubmit} method="POST" className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
           <h1 className="text-xl font-bold text-center">Sign In</h1>
 
           {error && (

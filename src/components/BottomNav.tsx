@@ -1,3 +1,10 @@
+/**
+ * @file BottomNav.tsx
+ * @description Bottom navigation bar component for mobile devices. Renders a sticky
+ * bottom tab bar with key application routes (Feed, Recipes, Add Recipe, Meal Planner, Profile)
+ * for screens under MD breakpoint, adjusting route targets dynamically based on session state.
+ */
+
 "use client"
 
 import Link from "next/link"
@@ -22,6 +29,14 @@ const TABS: Tab[] = [
   { href: "/u/profile", labelKey: "nav.profile", icon: MdPerson },
 ]
 
+/**
+ * BottomNav component.
+ * Renders the sticky bottom navigation bar with active states based on current route pathname.
+ * It renders a floating red action button (FAB) in the middle for adding new recipes.
+ * Only rendered on mobile devices (hidden above 'md' breakpoint).
+ * 
+ * @returns {JSX.Element|null} The bottom navigation bar element, or null if user is not authenticated.
+ */
 export default function BottomNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
@@ -33,7 +48,7 @@ export default function BottomNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-stone-200 pb-[env(safe-area-inset-bottom)]">
-      <div className="flex items-center justify-around h-16">
+      <div className="grid grid-cols-5 h-16">
         {TABS.map((tab) => {
           const Icon = tab.icon
           const href = tab.href === "/u/profile" ? profileHref : tab.href
@@ -46,12 +61,11 @@ export default function BottomNav() {
               <Link
                 key={tab.href}
                 href={href}
-                className="flex flex-col items-center justify-center -mt-4"
+                className="flex flex-col items-center justify-center"
               >
-                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg">
-                  <Icon className="text-2xl" />
+                <div className="w-11 h-11 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg -mt-4">
+                  <Icon className="text-xl" />
                 </div>
-                <span className="text-[10px] mt-1 font-medium text-stone-500">{t(tab.labelKey)}</span>
               </Link>
             )
           }
@@ -60,12 +74,12 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={href}
-              className={`flex flex-col items-center justify-center min-w-[60px] py-1 ${
+              className={`flex flex-col items-center justify-center gap-0 ${
                 isActive ? "text-red-600" : "text-stone-400"
               }`}
             >
-              <Icon className="text-xl" />
-              <span className="text-[10px] mt-0.5 font-medium">{t(tab.labelKey)}</span>
+              <Icon className="text-lg" />
+              <span className="text-[9px] mt-0.5 font-medium leading-tight">{t(tab.labelKey)}</span>
             </Link>
           )
         })}

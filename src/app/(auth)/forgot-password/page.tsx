@@ -1,7 +1,8 @@
 /**
  * @file page.tsx
  * @description Forgot password client page component. Users can input their email
- * to request a password reset link.
+ * to request a password reset link. It hits the api/auth/forgot-password route
+ * and sends an email containing the secure password reset token.
  */
 
 "use client"
@@ -13,9 +14,11 @@ import { MdCheck } from "react-icons/md"
 
 /**
  * ForgotPasswordPage component.
- * Renders the forgot password email form.
+ * Renders a form where users submit their email address to request a password reset token.
+ * Prevents native form submission via JavaScript while incorporating a POST fallback
+ * attribute on the form element for added security.
  * 
- * @returns {JSX.Element} The password reset email request interface.
+ * @returns {JSX.Element} The password reset request view.
  */
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -27,7 +30,6 @@ export default function ForgotPasswordPage() {
    * Handles submission of the password reset request.
    * 
    * @param {React.FormEvent} e - React form submit event object.
-   * @returns {Promise<void>} Resolves when request finishes.
    */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -78,7 +80,7 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
+          <form onSubmit={handleSubmit} method="POST" className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
             <h1 className="text-xl font-bold text-center">Forgot Password</h1>
             <p className="text-sm text-stone-500 text-center">
               Enter your email and we&apos;ll send you a reset link.

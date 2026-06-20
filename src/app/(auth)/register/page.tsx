@@ -1,3 +1,10 @@
+/**
+ * @file page.tsx
+ * @description Register client page component. Users can create a new account
+ * by providing a username, email, and password. It handles password length checks,
+ * makes an API request to register, and automatically logs the user in on success.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,11 +13,24 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 
+/**
+ * RegisterPage component.
+ * Renders a user registration form with username, email, and password inputs.
+ * Uses a post fallback method on the form tag to prevent password leaks if hydration is delayed.
+ * 
+ * @returns {JSX.Element} The registration form page view.
+ */
 export default function RegisterPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  /**
+   * Handles submission of the registration form.
+   * Performs client validation, calls register API, and signs the user in.
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} e - React form submit event object.
+   */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
@@ -63,7 +83,7 @@ export default function RegisterPage() {
           <div className="font-bold text-2xl">Ano Pong <span className="text-amber-600">Ulam?</span></div>
         </Link>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
+        <form onSubmit={handleSubmit} method="POST" className="bg-white rounded-xl border border-stone-200 p-6 space-y-4">
           <h1 className="text-xl font-bold text-center">Join the Community</h1>
 
           {error && (

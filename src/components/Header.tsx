@@ -16,7 +16,6 @@ import { useLanguage } from "@/lib/i18n"
 import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
 import UserMenu from "./UserMenu"
-import LanguageSwitcher from "./LanguageSwitcher"
 
 /**
  * NavLink component.
@@ -100,8 +99,6 @@ export default function Header() {
               </Link>
             )}
 
-            <div className="hidden md:block"><LanguageSwitcher /></div>
-
             <div className="flex items-center gap-1.5 min-w-[80px] justify-end">
               {status === "loading" ? (
                 <div className="w-8 h-8 rounded-full bg-stone-200 animate-pulse" />
@@ -167,9 +164,6 @@ export default function Header() {
                   </Link>
                 </div>
               )}
-              <div className="mt-4 pt-4 border-t border-stone-100">
-                <LanguageSwitcher />
-              </div>
             </nav>
           </div>
         </>

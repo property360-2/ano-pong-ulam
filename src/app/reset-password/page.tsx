@@ -14,7 +14,10 @@ import { MdRestaurant, MdCheck, MdLock } from "react-icons/md"
 
 /**
  * ResetForm component.
- * Renders password input elements, verifies validation, and sends request to server.
+ * Renders the password input elements, handles validation constraints (e.g., matching inputs
+ * and minimum length checks), and sends the POST request containing the token and new password
+ * to the `/api/auth/reset-password` endpoint. Incorporates a POST fallback method on the form
+ * tag as a security best practice.
  * 
  * @returns {JSX.Element} The rendered reset form component.
  */
@@ -28,6 +31,11 @@ function ResetForm() {
   const [done, setDone] = useState(false)
   const [error, setError] = useState("")
 
+  /**
+   * Handles submission of the password reset form.
+   * 
+   * @param {React.FormEvent} e - React form submit event object.
+   */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!token) return
@@ -96,7 +104,7 @@ function ResetForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} method="POST" className="space-y-4">
       <h1 className="text-xl font-bold text-center">Set New Password</h1>
 
       {error && (

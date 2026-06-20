@@ -209,7 +209,7 @@ export default function FeedPage() {
                       alt={recipe.title}
                       fill
                       sizes="150px"
-                      className="object-cover opacity-70 group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-red-200 bg-gradient-to-br from-red-800 to-red-950">
