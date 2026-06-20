@@ -136,13 +136,10 @@ export default function Header() {
           />
           <div className="fixed top-16 right-0 w-72 bg-white border-l border-stone-200 shadow-lg z-50 md:hidden min-h-[calc(100vh-4rem)]">
             <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
-              <div className="mb-3 pb-3 border-b border-stone-100">
-                <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.home")}</NavLink>
-              </div>
+              <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.home")}</NavLink>
 
               {session?.user ? (
-                <>
-                  <div className="mt-0 pt-0 border-t border-stone-100" />
+                <div className="mt-2 pt-2 border-t border-stone-100 flex flex-col gap-1">
                   <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.notifications")}</NavLink>
                   <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.profile")}</NavLink>
                   <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.settings")}</NavLink>
@@ -152,9 +149,9 @@ export default function Header() {
                   >
                     {t("nav.sign_out")}
                   </button>
-                </>
+                </div>
               ) : (
-                <div className="mt-3 pt-3 border-t border-stone-100">
+                <div className="mt-2 pt-2 border-t border-stone-100">
                   <Link
                     href="/login"
                     onClick={closeMenu}

@@ -201,7 +201,7 @@ export default function FeedPage() {
                 <Link 
                   key={recipe.slug} 
                   href={`/recipes/${recipe.slug}`}
-                  className="flex-shrink-0 w-36 h-24 relative bg-stone-900 rounded-xl overflow-hidden hover:opacity-90 snap-start shadow-sm border border-stone-200/10"
+                  className="flex-shrink-0 w-36 h-24 relative bg-stone-900 rounded-xl overflow-hidden hover:opacity-90 snap-start shadow-sm border border-stone-200"
                 >
                   {recipe.heroImage ? (
                     <Image
@@ -367,9 +367,9 @@ export default function FeedPage() {
                               userAvatarLetter
                             )}
                           </div>
-                          <div className="text-white text-xs font-semibold shadow-sm">
+                          <div className="text-white text-xs font-semibold drop-shadow flex-1 min-w-0">
                             <span className="font-extrabold">{displayName}</span>
-                            <span className="opacity-80">
+                            <span className="opacity-90">
                               {activity.type === "like" ? t("feed.recommended_this") : t("feed.reviewed_this")}
                             </span>
                           </div>
@@ -383,7 +383,7 @@ export default function FeedPage() {
                           <span className="text-[9px] uppercase font-black text-white bg-red-600 px-2 py-0.5 rounded tracking-wider shadow-sm self-start">
                             {activity.recipe.category || "ulam"}
                           </span>
-                          <h3 className="font-black text-white text-lg leading-tight mt-1.5 drop-shadow-md truncate">
+                          <h3 className="font-black text-white text-lg leading-tight mt-1.5 drop-shadow-md line-clamp-2">
                             {activity.recipe.title}
                           </h3>
                           
@@ -391,7 +391,7 @@ export default function FeedPage() {
                           <div className="flex items-center gap-1 mt-1">
                             <MdFavorite className="text-sm text-red-400 drop-shadow-md" />
                             <span className="text-xs text-white/80 font-semibold">
-                              {activity.recipe._count?.likes ?? 0} likes
+                              {activity.recipe._count?.likes ?? 0} {activity.recipe._count?.likes === 1 ? "like" : "likes"}
                             </span>
                           </div>
                         </div>

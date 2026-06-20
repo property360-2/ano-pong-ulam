@@ -123,14 +123,15 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: number }
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+        className="flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 text-stone-500 hover:text-amber-600"
         title="Add to collection"
       >
-        <MdPlaylistAdd className="text-lg" />
+        <MdPlaylistAdd className="text-xl" />
+        <span>Collect</span>
       </button>
 
       {open && (
-        <div className="absolute z-50 top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-card border border-stone-200 p-3">
+        <div className="absolute z-50 top-full right-0 mt-1 w-64 bg-white rounded-xl shadow-card border border-stone-200 p-3">
           {loading ? (
             <p className="text-sm text-stone-400 text-center py-4">Loading...</p>
           ) : collections.length === 0 ? (

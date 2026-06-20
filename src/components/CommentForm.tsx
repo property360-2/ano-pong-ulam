@@ -67,7 +67,7 @@ export default function CommentForm({ recipeId }: { recipeId: number }) {
       <button
         type="submit"
         disabled={submitting || !content.trim()}
-        className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+        className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-700 disabled:bg-stone-100 disabled:text-stone-400 disabled:border-stone-200 border border-transparent transition-all"
       >
         Post
       </button>

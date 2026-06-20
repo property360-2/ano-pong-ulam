@@ -76,14 +76,15 @@ export default function ShareButton({ slug, title }: { slug: string; title: stri
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-amber-600 transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50"
+        className="flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 text-stone-500 hover:text-amber-600"
         title="Share"
       >
         <MdShare className="text-lg" />
+        <span>Share</span>
       </button>
 
       {open && (
-        <div className="absolute z-50 top-full left-0 mt-1 w-44 bg-white rounded-xl shadow-card border border-stone-200 p-1.5">
+        <div className="absolute z-50 top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-card border border-stone-200 p-1.5">
           <button
             onClick={shareFacebook}
             className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-stone-700 hover:bg-stone-100 rounded-lg transition-colors min-h-[44px]"

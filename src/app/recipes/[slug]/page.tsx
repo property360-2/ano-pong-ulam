@@ -16,7 +16,7 @@ import AddToCollectionButton from "@/components/AddToCollectionButton"
 import ShareButton from "@/components/ShareButton"
 import CommentForm from "@/components/CommentForm"
 import { auth } from "@/lib/auth"
-import { MdRestaurant, MdLocationOn, MdLightbulb, MdEdit } from "react-icons/md"
+import { MdRestaurant, MdLocationOn, MdLightbulb, MdEdit, MdAccessTime, MdPeople } from "react-icons/md"
 import Link from "next/link"
 import type { Metadata } from "next"
 
@@ -209,46 +209,89 @@ export default async function RecipeDetailPage(props: { params: Params }) {
 
           <div className="p-6 md:p-8">
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-medium bg-amber-50 text-amber-700 px-2 py-0.5 rounded capitalize">
+              <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg capitalize border border-amber-200/50">
                 {recipe.category}
               </span>
               {recipe.region && (
-                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded inline-flex items-center gap-0.5">
-                  <MdLocationOn /> {recipe.region}
+                <span className="text-xs bg-stone-100 text-stone-700 px-2.5 py-1 rounded-lg inline-flex items-center gap-1 border border-stone-200/55 capitalize">
+                  <MdLocationOn className="text-stone-500" /> {recipe.region}
                 </span>
               )}
               {recipe.difficulty && (
-                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded capitalize">
+                <span className="text-xs bg-stone-100 text-stone-700 px-2.5 py-1 rounded-lg capitalize border border-stone-200/55">
                   {recipe.difficulty}
                 </span>
               )}
               {recipe.sourceType !== "community" && (
-                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded capitalize">
+                <span className="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg capitalize border border-amber-200/40">
                   {recipe.sourceType}
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{recipe.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-stone-900 tracking-tight">{recipe.title}</h1>
             {recipe.description && (
-              <p className="text-stone-600 mb-4">{recipe.description}</p>
+              <p className="text-stone-600 text-sm md:text-base mb-5 leading-relaxed">{recipe.description}</p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-stone-500 mb-6">
-              {recipe.author && (
-                <span className="flex items-center gap-2">
-                  By @{recipe.author.username}
-                  {session?.user?.id && recipe.author.id !== session.user.id && (
-                    <FollowButton targetUserId={recipe.author.id} initialFollowing={isFollowingAuthor} username={recipe.author.username} />
+            {/* Author Information Row */}
+            {recipe.author && (
+              <div className="flex items-center justify-between py-3 border-y border-stone-100 mb-4 gap-4">
+                <div className="flex items-center gap-3">
+                  {recipe.author.avatarUrl ? (
+                    <Image
+                      src={recipe.author.avatarUrl}
+                      alt={recipe.author.username}
+                      width={36}
+                      height={36}
+                      className="rounded-full object-cover border border-stone-200"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-600 text-xs font-semibold uppercase">
+                      {recipe.author.username.slice(0, 2)}
+                    </div>
                   )}
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-stone-400 font-semibold uppercase tracking-wider">Recipe by</span>
+                    <span className="text-sm font-bold text-stone-850">@{recipe.author.username}</span>
+                  </div>
+                </div>
+                {session?.user?.id && recipe.author.id !== session.user.id && (
+                  <div className="flex-shrink-0">
+                    <FollowButton
+                      targetUserId={recipe.author.id}
+                      initialFollowing={isFollowingAuthor}
+                      username={recipe.author.username}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Structured Stats Grid (Prep, Cook, Servings) */}
+            <div className="grid grid-cols-3 gap-2 border border-stone-200/80 rounded-xl bg-stone-50/50 py-3 mb-6 text-center text-stone-700">
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-[10px] text-stone-400 uppercase tracking-wider font-bold">Prep Time</span>
+                <span className="text-sm font-semibold text-stone-800 mt-1 inline-flex items-center gap-1">
+                  <MdAccessTime className="text-stone-500 text-base" /> {recipe.prepTime || 0}m
                 </span>
-              )}
-              {recipe.prepTime && <span>Prep: {recipe.prepTime}min</span>}
-              {recipe.cookTime && <span>Cook: {recipe.cookTime}min</span>}
-              <span>Serves: {recipe.servings}</span>
+              </div>
+              <div className="flex flex-col items-center justify-center border-x border-stone-200/80">
+                <span className="text-[10px] text-stone-400 uppercase tracking-wider font-bold">Cook Time</span>
+                <span className="text-sm font-semibold text-stone-800 mt-1 inline-flex items-center gap-1">
+                  <MdRestaurant className="text-stone-500 text-base" /> {recipe.cookTime || 0}m
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-[10px] text-stone-400 uppercase tracking-wider font-bold">Servings</span>
+                <span className="text-sm font-semibold text-stone-800 mt-1 inline-flex items-center gap-1">
+                  <MdPeople className="text-stone-500 text-base" /> {recipe.servings}
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-stone-200">
+            {/* Actions Bar (Liking, Saving, Collecting, Sharing) */}
+            <div className="flex items-center gap-1.5 md:gap-4 mb-6 pb-4 border-b border-stone-200">
               <LikeButton recipeId={Number(recipe.id)} initialCount={recipe._count.likes} initialLiked={userLiked} />
               <SaveButton recipeId={Number(recipe.id)} initialSaved={userSaved} />
               <AddToCollectionButton recipeId={Number(recipe.id)} />
@@ -256,29 +299,35 @@ export default async function RecipeDetailPage(props: { params: Params }) {
               {session?.user?.id === recipe.author?.id && (
                 <Link
                   href={`/recipes/${recipe.slug}/edit`}
-                  className="ml-auto flex items-center gap-1 text-sm text-stone-500 hover:text-amber-600 transition-colors"
+                  className="ml-auto flex items-center gap-1 text-sm font-medium text-stone-500 hover:text-amber-600 transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50"
                 >
-                  <MdEdit /> Edit
+                  <MdEdit className="text-lg" /> <span className="hidden sm:inline">Edit</span>
                 </Link>
               )}
             </div>
 
+            {/* Blockquote Story Section */}
             {recipe.story && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-amber-800 italic">&ldquo;{recipe.story}&rdquo;</p>
+              <div className="bg-amber-50/60 border-l-4 border-amber-500 rounded-r-xl p-4 mb-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 text-amber-200/30 text-7xl font-serif pointer-events-none -mt-4 -mr-2 select-none">
+                  &ldquo;
+                </div>
+                <p className="text-sm text-amber-950 italic relative z-10 leading-relaxed font-medium">
+                  &ldquo;{recipe.story}&rdquo;
+                </p>
               </div>
             )}
 
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h2 className="text-xl font-bold mb-4">Ingredients</h2>
+                <h2 className="text-xl font-bold mb-4 text-stone-900 tracking-tight">Ingredients</h2>
                 <ul className="space-y-2">
                   {ingredients.map((ing, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
+                    <li key={i} className="flex items-start gap-2 text-sm text-stone-800">
                       <span className="text-red-500 mt-0.5">•</span>
                       <span>
                         <strong>{ing.amount} {ing.unit}</strong> {ing.name}
-                        {ing.notes && <span className="text-stone-400"> — {ing.notes}</span>}
+                        {ing.notes && <span className="text-stone-600 font-medium"> — {ing.notes}</span>}
                       </span>
                     </li>
                   ))}
@@ -312,7 +361,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
                 {recipe.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded"
+                    className="text-xs bg-stone-50 text-stone-700 border border-stone-200/60 px-2.5 py-1.5 rounded-lg font-medium"
                   >
                     #{tag}
                   </span>
@@ -323,7 +372,7 @@ export default async function RecipeDetailPage(props: { params: Params }) {
         </div>
 
         <section className="mt-8">
-          <h2 className="text-xl font-bold mb-4">
+          <h2 className="text-xl font-bold mb-4 text-stone-900 tracking-tight">
             Comments ({recipe.comments.length})
           </h2>
 
@@ -332,13 +381,28 @@ export default async function RecipeDetailPage(props: { params: Params }) {
           </div>
 
           {recipe.comments.length === 0 ? (
-            <p className="text-stone-400 text-sm">No comments yet.</p>
+            <p className="text-stone-400 text-sm italic">No comments yet.</p>
           ) : (
             <div className="space-y-4">
               {recipe.comments.map((comment) => (
-                <div key={comment.id.toString()} className="bg-white rounded-lg border border-stone-200 p-4">
-                  <p className="text-sm font-medium">@{comment.user.username}</p>
-                  <p className="text-sm mt-1">{comment.content}</p>
+                <div key={comment.id.toString()} className="bg-stone-50/50 rounded-xl border border-stone-200/60 p-4 transition-all hover:bg-stone-50">
+                  <div className="flex items-center gap-2.5">
+                    {comment.user.avatarUrl ? (
+                      <Image
+                        src={comment.user.avatarUrl}
+                        alt={comment.user.username}
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover border border-stone-200"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-stone-200 flex items-center justify-center text-stone-600 text-[10px] font-semibold uppercase">
+                        {comment.user.username.slice(0, 2)}
+                      </div>
+                    )}
+                    <p className="text-xs font-semibold text-stone-800">@{comment.user.username}</p>
+                  </div>
+                  <p className="text-sm mt-2 text-stone-700 pl-8 leading-relaxed">{comment.content}</p>
                 </div>
               ))}
             </div>

@@ -22,7 +22,9 @@ import {
   MdAdd,
   MdVisibility,
   MdEdit,
-  MdShoppingCart
+  MdLightMode,
+  MdWbSunny,
+  MdNightsStay
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
@@ -60,8 +62,6 @@ export default function MealPlannerPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   
-  // Track checked state of smart ingredients list
-  const [checkedIngredients, setCheckedIngredients] = useState<string[]>([])
   
   // Navigation & Search State
   const [activeMobileDay, setActiveMobileDay] = useState("Monday")
@@ -78,9 +78,7 @@ export default function MealPlannerPage() {
     try {
       const planRes = await fetch("/api/meal-plans").then((r) => r.json())
       if (planRes.plan) setPlan(planRes.plan)
-      if (planRes.groceryList && Array.isArray(planRes.groceryList)) {
-        setCheckedIngredients(planRes.groceryList)
-      }
+
     } catch {
       toast.error("Failed to load planner data")
     } finally {
@@ -148,7 +146,7 @@ export default function MealPlannerPage() {
       const res = await fetch("/api/meal-plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, groceryList: checkedIngredients }),
+        body: JSON.stringify({ plan }),
       })
       if (res.ok) {
         toast.success("Meal plan saved successfully!")
@@ -264,54 +262,6 @@ export default function MealPlannerPage() {
     )
   }
 
-  // Generate the smart ingredients checklist dynamically based on active plan recipes
-  const selectedRecipeIds = Object.values(plan)
-    .flatMap((dayPlan) => (dayPlan ? Object.values(dayPlan) : []))
-    .filter(Boolean)
-
-  const selectedRecipes = recipes.filter((r) =>
-    selectedRecipeIds.map(String).includes(String(r.id))
-  )
-
-  const aggregatedIngredients: { name: string; amount: string; unit: string }[] = []
-  
-  selectedRecipes.forEach((recipe) => {
-    const recipeIngs = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
-    recipeIngs.forEach((ing: Record<string, string>) => {
-      const name = ing.name.trim()
-      const existing = aggregatedIngredients.find(
-        (i) => i.name.toLowerCase() === name.toLowerCase()
-      )
-      if (existing) {
-        // Simple merge
-        if (existing.unit === ing.unit && !isNaN(Number(existing.amount)) && !isNaN(Number(ing.amount))) {
-          existing.amount = String(Number(existing.amount) + Number(ing.amount))
-        } else {
-          existing.amount = `${existing.amount} + ${ing.amount}`
-          if (existing.unit !== ing.unit) {
-            existing.unit = `${existing.unit}/${ing.unit}`
-          }
-        }
-      } else {
-        aggregatedIngredients.push({
-          name: ing.name,
-          amount: ing.amount,
-          unit: ing.unit,
-        })
-      }
-    })
-  })
-
-  /**
-   * Toggles the checked status of an ingredient.
-   * 
-   * @param {string} name - Ingredient name.
-   */
-  function toggleIngredient(key: string) {
-    setCheckedIngredients((prev) =>
-      prev.includes(key) ? prev.filter((n) => n !== key) : [...prev, key]
-    )
-  }
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
@@ -321,29 +271,31 @@ export default function MealPlannerPage() {
         {/* Banner Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t("meal.title")}</h1>
-            <p className="text-stone-500">{t("meal.subtitle")}</p>
+            <h1 className="text-3xl font-bold tracking-tight text-stone-900">{t("meal.title")}</h1>
+            <p className="text-stone-500 text-sm mt-1">{t("meal.subtitle")}</p>
           </div>
           
-          <div className="flex items-center gap-1 w-full md:w-auto">
-            <button
-              onClick={loadFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
-            >
-              <MdStar className="text-amber-500 text-base" />
-              {t("meal.quick_fill")}
-            </button>
-            <button
-              onClick={saveAsFavoriteSet}
-              className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
-            >
-              <MdContentCopy className="text-stone-450 text-base" />
-              {t("meal.save_template")}
-            </button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+            <div className="flex gap-2 flex-1 sm:flex-initial">
+              <button
+                onClick={loadFavoriteSet}
+                className="flex-1 flex items-center justify-center gap-1.5 text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 active:scale-[0.98] px-3.5 py-2.5 rounded-xl transition-all font-semibold border border-stone-200/40 shadow-sm cursor-pointer"
+              >
+                <MdStar className="text-amber-500 text-base" />
+                {t("meal.quick_fill")}
+              </button>
+              <button
+                onClick={saveAsFavoriteSet}
+                className="flex-1 flex items-center justify-center gap-1.5 text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 active:scale-[0.98] px-3.5 py-2.5 rounded-xl transition-all font-semibold border border-stone-200/40 shadow-sm cursor-pointer"
+              >
+                <MdContentCopy className="text-stone-500 text-base" />
+                {t("meal.save_template")}
+              </button>
+            </div>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full md:w-auto flex items-center justify-center gap-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm transition-colors text-sm"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-700 active:scale-[0.98] disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm cursor-pointer"
             >
               {saving ? t("meal.saving") : t("meal.save_plan")}
             </button>
@@ -378,6 +330,11 @@ export default function MealPlannerPage() {
             {MEALS.map((meal) => {
               const recipeId = plan[activeMobileDay]?.[meal]
               const recipe = recipes.find(r => String(r.id) === String(recipeId))
+              const mealIcon = meal === "breakfast" 
+                ? <MdLightMode className="text-amber-500 text-sm flex-shrink-0" />
+                : meal === "lunch"
+                ? <MdWbSunny className="text-orange-500 text-sm flex-shrink-0" />
+                : <MdNightsStay className="text-indigo-500 text-sm flex-shrink-0" />
 
               return (
                 <div 
@@ -390,17 +347,24 @@ export default function MealPlannerPage() {
                       setActiveAssignSlot({ day: activeMobileDay, meal })
                     }
                   }}
-                  className="group relative flex flex-col p-4 rounded-xl border border-stone-200 hover:border-amber-300 hover:bg-stone-50/30 transition-all cursor-pointer"
+                  className={`group relative flex flex-col p-4 rounded-xl transition-all cursor-pointer border ${
+                    recipe 
+                      ? "border-stone-200 bg-white hover:border-amber-300 hover:bg-stone-50/30" 
+                      : "border-dashed border-2 border-stone-200/80 bg-stone-50/40 hover:bg-stone-50/80 hover:border-amber-300"
+                  }`}
                 >
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-semibold uppercase text-stone-400 tracking-wider">{t(`common.meal.${meal}`)}</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold uppercase text-stone-600 tracking-wider flex items-center gap-1.5">
+                      {mealIcon}
+                      {t(`common.meal.${meal}`)}
+                    </span>
                     {recipe && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           setSlotRecipe(activeMobileDay, meal, null)
                         }}
-                        className="text-stone-400 hover:text-red-600 p-1"
+                        className="text-stone-400 hover:text-red-600 p-1 transition-colors"
                         title={t("common.remove_recipe")}
                       >
                         <MdDelete className="text-lg" />
@@ -411,13 +375,13 @@ export default function MealPlannerPage() {
                   {recipe ? (
                     <div>
                       <p className="font-bold text-stone-900 leading-tight">{recipe.title}</p>
-                      <span className="inline-block text-[10px] uppercase font-semibold text-amber-700 bg-amber-100 rounded px-1.5 py-0.5 mt-2">
+                      <span className="inline-block text-[10px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-2">
                         {recipe.category}
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 text-stone-400 text-sm italic py-1">
-                      <MdAdd /> {t("meal.tap_to_choose")}
+                    <div className="flex items-center gap-1.5 text-stone-500 font-semibold text-xs py-1">
+                      <MdAdd className="text-stone-400 text-sm" /> {t("meal.tap_to_choose")}
                     </div>
                   )}
                 </div>
@@ -443,6 +407,11 @@ export default function MealPlannerPage() {
                     {MEALS.map((meal) => {
                       const recipeId = plan[day]?.[meal]
                       const recipe = recipes.find(r => String(r.id) === String(recipeId))
+                      const mealIcon = meal === "breakfast" 
+                        ? <MdLightMode className="text-amber-500 text-[10px] flex-shrink-0" />
+                        : meal === "lunch"
+                        ? <MdWbSunny className="text-orange-500 text-[10px] flex-shrink-0" />
+                        : <MdNightsStay className="text-indigo-500 text-[10px] flex-shrink-0" />
 
                       return (
                         <div
@@ -455,11 +424,18 @@ export default function MealPlannerPage() {
                               setActiveAssignSlot({ day, meal })
                             }
                           }}
-                          className="group relative p-3 rounded-xl border border-stone-200 hover:border-amber-300 hover:bg-stone-50/30 text-left transition-all cursor-pointer min-h-[90px] flex flex-col justify-between"
+                          className={`group relative p-3 rounded-xl transition-all cursor-pointer min-h-[90px] flex flex-col justify-between border ${
+                            recipe 
+                              ? "border-stone-200 bg-white hover:border-amber-300 hover:bg-stone-50/30" 
+                              : "border-dashed border-2 border-stone-200/80 bg-stone-50/40 hover:bg-stone-50/80 hover:border-amber-300"
+                          }`}
                         >
                           <div>
                             <div className="flex justify-between items-start mb-1.5">
-                              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t(`common.meal.${meal}`)}</span>
+                              <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wider flex items-center gap-1">
+                                {mealIcon}
+                                {t(`common.meal.${meal}`)}
+                              </span>
                               {recipe && (
                                 <button
                                   onClick={(e) => {
@@ -476,14 +452,14 @@ export default function MealPlannerPage() {
                             {recipe ? (
                               <p className="font-semibold text-stone-850 text-sm leading-snug line-clamp-2">{recipe.title}</p>
                             ) : (
-                              <div className="flex items-center gap-0.5 text-xs text-stone-400 italic py-1">
-                                <MdAdd /> {t("meal.click_to_choose")}
+                              <div className="flex items-center gap-1 text-stone-500 font-semibold text-[11px] py-1">
+                                <MdAdd className="text-stone-400 text-sm" /> {t("meal.click_to_choose")}
                               </div>
                             )}
                           </div>
                           
                           {recipe && (
-                            <span className="self-start text-[9px] uppercase font-bold text-amber-700 bg-amber-100 rounded px-1.5 py-0.5 mt-1.5">
+                            <span className="self-start text-[9px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-1.5">
                               {recipe.category}
                             </span>
                           )}
@@ -501,7 +477,7 @@ export default function MealPlannerPage() {
         {/* Slot Selection & Recommendation Dialog Popover */}
         {activeAssignSlot && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-            <div className="bg-white rounded-2xl border border-stone-200 max-w-md w-full p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-150 flex flex-col h-[520px]">
+            <div className="bg-white rounded-2xl border border-stone-200 max-w-md w-full p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-150 flex flex-col h-[520px] max-h-[85vh] md:max-h-[90vh]">
               <button 
                 onClick={() => setActiveAssignSlot(null)}
                 className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 rounded-full hover:bg-stone-100"
@@ -548,7 +524,7 @@ export default function MealPlannerPage() {
               </div>
 
               {/* Scrollable list inside Modal */}
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">
                 {recipesLoading ? (
                   <div className="space-y-2">
                     {[1,2,3].map((n) => <div key={n} className="h-16 bg-stone-100 rounded-xl animate-pulse" />)}
@@ -563,7 +539,7 @@ export default function MealPlannerPage() {
                         setSlotRecipe(activeAssignSlot.day, activeAssignSlot.meal, recipe.id)
                         setActiveAssignSlot(null)
                       }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-stone-150 hover:border-amber-300 hover:bg-amber-50/20 text-left transition-all cursor-pointer group"
+                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-stone-200 hover:border-amber-300 hover:bg-stone-50/40 text-left transition-all cursor-pointer group bg-white shadow-sm"
                     >
                       <div className="min-w-0 flex-1 mr-2">
                         <p className="font-semibold text-sm text-stone-850 truncate group-hover:text-amber-700">{recipe.title}</p>
@@ -639,67 +615,7 @@ export default function MealPlannerPage() {
             </div>
           </div>
         )}
-        {/* Smart Shopping List Section */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-6 mt-8 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <MdShoppingCart className="text-xl text-amber-600" />
-            <h2 className="text-lg font-bold text-stone-850">{t("meal.smart_list_title")}</h2>
-          </div>
-          <p className="text-xs text-stone-500 mb-6">
-            {t("meal.smart_list_desc")}
-          </p>
 
-          {aggregatedIngredients.length === 0 ? (
-            <p className="text-xs text-stone-400 italic py-4 text-center">
-              {t("meal.empty_grocery")}
-            </p>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-xs font-bold text-stone-450 border-b border-stone-100 pb-2">
-                <span>{t("meal.ingredient_total", { count: aggregatedIngredients.length })}</span>
-                <span>
-                  {t("meal.checked_count", {
-                    checked: aggregatedIngredients.filter((i) => checkedIngredients.includes(i.name)).length,
-                    total: aggregatedIngredients.length,
-                  })}
-                </span>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
-                {aggregatedIngredients.map((ing) => {
-                  const ingKey = `${ing.name}-${ing.unit}`
-                  const isChecked = checkedIngredients.includes(ingKey)
-                  return (
-                    <label
-                      key={ingKey}
-                      onClick={() => toggleIngredient(ingKey)}
-                      className={`flex items-center gap-3 p-2.5 rounded-xl border border-stone-150 hover:border-amber-300 hover:bg-stone-50/50 transition-all cursor-pointer select-none ${
-                        isChecked ? "bg-stone-50/40 border-stone-100 text-stone-400" : ""
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        readOnly
-                        className="rounded border-stone-300 text-amber-600 focus:ring-amber-500 h-4 w-4"
-                      />
-                      <span className={`text-xs font-semibold flex-1 ${isChecked ? "line-through" : "text-stone-700"}`}>
-                        {ing.name}
-                      </span>
-                      {ing.amount && (
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
-                          isChecked ? "bg-stone-100 text-stone-400" : "bg-amber-50 text-amber-700"
-                        }`}>
-                          {ing.amount} {ing.unit}
-                        </span>
-                      )}
-                    </label>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-        </div>
       </main>
     </div>
   )

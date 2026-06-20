@@ -1,3 +1,10 @@
+/**
+ * @file SearchFilters.tsx
+ * @description Component for filtering and sorting recipes.
+ * Renders a search input box and filter dropdowns (category, region, difficulty, sorting).
+ * Manages URL queries dynamically on filter updates.
+ */
+
 "use client"
 
 import { useRouter } from "next/navigation"
@@ -25,6 +32,13 @@ const SORTS = [
   { value: "quickest", label: "Quickest" },
 ]
 
+/**
+ * Builds a search query URL string based on active filters and sorting option.
+ * 
+ * @param {ActiveFilters} filters - The currently active recipe filter parameters.
+ * @param {string | null} sort - The active sort string.
+ * @returns {string} The path and query parameters for Next.js routing.
+ */
 function buildUrl(filters: ActiveFilters, sort: string | null): string {
   const params = new URLSearchParams()
   if (filters.q) params.set("q", filters.q)
@@ -37,6 +51,18 @@ function buildUrl(filters: ActiveFilters, sort: string | null): string {
   return qs ? `/recipes?${qs}` : "/recipes"
 }
 
+/**
+ * SearchFilters component.
+ * Renders the search bar and category dropdown inputs to filter recipe collections.
+ * Leverages URL state syncing for shareable search configurations.
+ * 
+ * @param {Object} props - Component properties.
+ * @param {ActiveFilters} props.currentFilters - The current active filters from URL search params.
+ * @param {string | null} props.currentSort - Active sorting selection.
+ * @param {FilterOption[]} props.categories - List of categories with count of recipes.
+ * @param {FilterOption[]} props.regions - List of regions with count of recipes.
+ * @returns {JSX.Element} The filter interface container.
+ */
 export default function SearchFilters({
   currentFilters,
   currentSort,
@@ -51,17 +77,31 @@ export default function SearchFilters({
   const router = useRouter()
   const [searchInput, setSearchInput] = useState(currentFilters.q ?? "")
 
+  /**
+   * Navigates the router to the newly constructed filter query URL.
+   * 
+   * @param {Partial<ActiveFilters>} updates - Partial filter parameter updates.
+   * @param {string | null} [sort] - Optional sort key update.
+   */
   function navigate(updates: Partial<ActiveFilters>, sort?: string | null) {
     const merged: ActiveFilters = { ...currentFilters, ...updates }
     const s = sort !== undefined ? sort : currentSort
     router.push(buildUrl(merged, s))
   }
 
+  /**
+   * Submits the text search filter.
+   * 
+   * @param {React.FormEvent} e - React form submit event object.
+   */
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault()
     navigate({ q: searchInput || null })
   }
 
+  /**
+   * Resets all search parameters and filters.
+   */
   function clearAll() {
     setSearchInput("")
     router.push("/recipes")
@@ -77,11 +117,11 @@ export default function SearchFilters({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search recipes..."
-          className="flex-1 px-4 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          className="flex-1 min-w-0 px-4 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
         />
         <button
           type="submit"
-          className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
+          className="px-4 sm:px-6 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
         >
           Search
         </button>
