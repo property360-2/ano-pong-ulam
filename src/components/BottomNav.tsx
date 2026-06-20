@@ -4,26 +4,28 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MdRssFeed, MdMenuBook, MdAdd, MdCalendarMonth, MdPerson } from "react-icons/md"
 import { useSession } from "next-auth/react"
+import { useLanguage } from "@/lib/i18n"
 import type { IconType } from "react-icons"
 
 type Tab = {
   href: string
-  label: string
+  labelKey: string
   icon: IconType
   isAdd?: boolean
 }
 
 const TABS: Tab[] = [
-  { href: "/feed", label: "Feed", icon: MdRssFeed },
-  { href: "/recipes", label: "Recipes", icon: MdMenuBook },
-  { href: "/recipes/new", label: "Share", icon: MdAdd, isAdd: true },
-  { href: "/meal-planner", label: "Planner", icon: MdCalendarMonth },
-  { href: "/u/profile", label: "Profile", icon: MdPerson },
+  { href: "/feed", labelKey: "nav.feed", icon: MdRssFeed },
+  { href: "/recipes", labelKey: "nav.recipes", icon: MdMenuBook },
+  { href: "/recipes/new", labelKey: "nav.share_recipe", icon: MdAdd, isAdd: true },
+  { href: "/meal-planner", labelKey: "nav.planner", icon: MdCalendarMonth },
+  { href: "/u/profile", labelKey: "nav.profile", icon: MdPerson },
 ]
 
 export default function BottomNav() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const { t } = useLanguage()
 
   if (!session?.user) return null
 
@@ -49,7 +51,7 @@ export default function BottomNav() {
                 <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg">
                   <Icon className="text-2xl" />
                 </div>
-                <span className="text-[10px] mt-1 font-medium text-stone-500">{tab.label}</span>
+                <span className="text-[10px] mt-1 font-medium text-stone-500">{t(tab.labelKey)}</span>
               </Link>
             )
           }
@@ -63,7 +65,7 @@ export default function BottomNav() {
               }`}
             >
               <Icon className="text-xl" />
-              <span className="text-[10px] mt-0.5 font-medium">{tab.label}</span>
+              <span className="text-[10px] mt-0.5 font-medium">{t(tab.labelKey)}</span>
             </Link>
           )
         })}

@@ -7,6 +7,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { MdLock, MdCameraAlt } from "react-icons/md"
 import Header from "@/components/Header"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
+import { useLanguage } from "@/lib/i18n"
 
 type UserProfile = {
   username: string
@@ -20,6 +22,7 @@ type UserProfile = {
 
 export default function SettingsPage() {
   const { data: session, update: updateSession } = useSession()
+  const { t } = useLanguage()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -155,12 +158,12 @@ export default function SettingsPage() {
         <Header />
         <div className="min-h-screen flex items-center justify-center px-4">
           <div className="text-center">
-            <h1 className="text-xl font-bold mb-2">Sign in to manage settings</h1>
+            <h1 className="text-xl font-bold mb-2">{t("meal.sign_in_prompt")}</h1>
             <Link
               href="/login"
               className="inline-block bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors"
             >
-              Sign In
+              {t("common.sign_in")}
             </Link>
           </div>
         </div>
@@ -183,7 +186,7 @@ export default function SettingsPage() {
     <>
       <Header />
       <main className="flex-1 mx-auto max-w-2xl w-full px-4 py-8">
-        <h1 className="text-3xl font-bold mb-2">Settings</h1>
+        <h1 className="text-3xl font-bold mb-2">{t("nav.settings")}</h1>
         <p className="text-stone-500 mb-8">Manage your profile and preferences.</p>
 
         {error && (
@@ -340,6 +343,16 @@ export default function SettingsPage() {
             </div>
           </section>
         </form>
+
+        <section className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 mt-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold">{t("settings.language_section")}</h2>
+              <p className="text-sm text-stone-500">{t("settings.language_desc")}</p>
+            </div>
+            <LanguageSwitcher />
+          </div>
+        </section>
 
         <section className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 mt-8">
           <h2 className="text-lg font-bold mb-1">Change Password</h2>

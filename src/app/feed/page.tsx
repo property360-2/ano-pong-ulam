@@ -16,16 +16,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { 
   MdFavorite, 
-  MdComment, 
-  MdPersonAdd, 
   MdRssFeed, 
-  MdStar, 
   MdLocalFireDepartment, 
   MdArrowForward,
   MdRestaurantMenu,
-  MdClose
 } from "react-icons/md"
 import Header from "@/components/Header"
+import { useLanguage } from "@/lib/i18n"
 
 interface FeedUser {
   id: string
@@ -63,6 +60,7 @@ interface FeedActivity {
  */
 export default function FeedPage() {
   const { data: session } = useSession()
+  const { t } = useLanguage()
   const [activities, setActivities] = useState<FeedActivity[]>([])
   const [trending, setTrending] = useState<FeedRecipe[]>([])
   const [tab, setTab] = useState<"global" | "following">("global")
@@ -169,15 +167,15 @@ export default function FeedPage() {
           <span className="text-5xl text-amber-600 block mb-4">
             <MdRssFeed className="mx-auto" />
           </span>
-          <h1 className="text-xl font-bold mb-2">Sign in to view your feed</h1>
+          <h1 className="text-xl font-bold mb-2">{t("feed.sign_in_prompt")}</h1>
           <p className="text-stone-500 text-sm mb-6">
-            Follow other home cooks, discover what recipes are trending, and see cooking reviews in real-time.
+            {t("feed.sign_in_desc")}
           </p>
           <Link
             href="/login"
             className="inline-block bg-red-600 text-white px-8 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
           >
-            Sign In
+            {t("common.sign_in")}
           </Link>
         </div>
       </div>
@@ -195,7 +193,7 @@ export default function FeedPage() {
           <div className="mb-6">
             <div className="flex items-center gap-1 mb-2 text-stone-700">
               <MdLocalFireDepartment className="text-amber-500 text-lg animate-pulse" />
-              <h2 className="font-extrabold text-[11px] uppercase tracking-wider">Trending Highlights</h2>
+              <h2 className="font-extrabold text-[11px] uppercase tracking-wider">{t("feed.trending")}</h2>
             </div>
             
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 snap-x">
@@ -241,7 +239,7 @@ export default function FeedPage() {
               tab === "global" ? "text-red-600" : "text-stone-400 hover:text-stone-700"
             }`}
           >
-            Global Activity
+            {t("feed.global_tab")}
             {tab === "global" && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
             )}
@@ -252,7 +250,7 @@ export default function FeedPage() {
               tab === "following" ? "text-red-600" : "text-stone-400 hover:text-stone-700"
             }`}
           >
-            Following Feed
+            {t("feed.following_tab")}
             {tab === "following" && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
             )}
@@ -271,18 +269,18 @@ export default function FeedPage() {
             <span className="text-4xl block mb-3 text-stone-400">
               <MdRestaurantMenu className="mx-auto text-3xl" />
             </span>
-            <h3 className="font-bold text-stone-850 text-base">No updates yet</h3>
+            <h3 className="font-bold text-stone-850 text-base">{t("feed.no_updates")}</h3>
             <p className="text-stone-500 text-xs max-w-xs mx-auto mt-1 leading-relaxed">
               {tab === "following" 
-                ? "Follow other home cooks or explore recipes to start seeing posts."
-                : "No activities registered yet. Start liking and commenting on recipes!"}
+                ? t("feed.empty_following")
+                : t("feed.empty_global")}
             </p>
             {tab === "following" && (
               <Link
                 href="/recipes"
                 className="mt-4 inline-block text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 px-5 py-2.5 rounded-xl transition-colors"
               >
-                Browse Recipes
+                {t("feed.browse_recipes")}
               </Link>
             )}
           </div>
@@ -318,6 +316,7 @@ export default function FeedPage() {
                             {displayName}
                           </Link>{" "}
                           followed{" "}
+                          {/* NOTE: "followed" is not translated — it's part of dynamic activity text */}
                           <Link href={`/u/${activity.targetUser.username}`} className="font-extrabold text-blue-650 hover:underline">
                             @{activity.targetUser.username}
                           </Link>
@@ -330,7 +329,7 @@ export default function FeedPage() {
                       href={`/u/${activity.targetUser.username}`}
                       className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-extrabold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-0.5"
                     >
-                      Profile <MdArrowForward />
+                      {t("feed.profile_link")} <MdArrowForward />
                     </Link>
                   </div>
                 )
@@ -371,7 +370,7 @@ export default function FeedPage() {
                           <div className="text-white text-xs font-semibold shadow-sm">
                             <span className="font-extrabold">{displayName}</span>
                             <span className="opacity-80">
-                              {activity.type === "like" ? " recommended this" : " reviewed this"}
+                              {activity.type === "like" ? t("feed.recommended_this") : t("feed.reviewed_this")}
                             </span>
                           </div>
                         </div>
@@ -399,7 +398,7 @@ export default function FeedPage() {
 
                         {/* Minimal Click Target Overlay Button */}
                         <div className="bg-white hover:bg-amber-50 text-stone-900 text-xs font-black px-4 py-2 rounded-xl flex items-center gap-1 shadow-md transition-colors flex-shrink-0">
-                          View Recipe <MdArrowForward className="text-xs" />
+                          {t("feed.view_recipe")} <MdArrowForward className="text-xs" />
                         </div>
                       </div>
 
@@ -418,7 +417,7 @@ export default function FeedPage() {
                 disabled={loadingMore}
                 className="w-full text-center bg-white hover:bg-stone-50 border border-stone-200 py-3.5 rounded-xl font-extrabold text-xs text-stone-700 transition-all disabled:opacity-50 shadow-sm"
               >
-                {loadingMore ? "Loading more stories..." : "Show More Activities"}
+                {loadingMore ? t("feed.loading_more") : t("feed.load_more")}
               </button>
             )}
           </div>

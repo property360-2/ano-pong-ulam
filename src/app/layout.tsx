@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import Providers from "@/components/Providers"
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"
 import BottomNav from "@/components/BottomNav"
+import HtmlLangSync from "@/components/HtmlLangSync"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -53,6 +54,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-stone-50 text-stone-900">
         <Providers>
+          <HtmlLangSync />
           <div className="flex-1 pb-16 md:pb-0">{children}</div>
           <BottomNav />
         </Providers>

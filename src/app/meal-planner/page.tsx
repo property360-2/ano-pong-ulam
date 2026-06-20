@@ -26,6 +26,7 @@ import {
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
+import { useLanguage } from "@/lib/i18n"
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 const MEALS = ["breakfast", "lunch", "dinner"] as const
@@ -52,6 +53,7 @@ interface RecipeItem {
 export default function MealPlannerPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
+  const { t, language } = useLanguage()
   
   const [plan, setPlan] = useState<MealPlanData>({})
   const [recipes, setRecipes] = useState<RecipeItem[]>([])
@@ -223,13 +225,13 @@ export default function MealPlannerPage() {
       <div className="min-h-screen flex items-center justify-center px-4 bg-stone-50">
         <div className="text-center bg-white border border-stone-200 p-8 rounded-2xl max-w-sm shadow-card">
           <span className="text-5xl text-amber-600 block mb-4"><MdCalendarMonth className="mx-auto" /></span>
-          <h1 className="text-xl font-bold mb-2">Sign in to plan meals</h1>
-          <p className="text-stone-500 text-sm mb-6">Create weekly menus, export shopping lists, and share luto schedules.</p>
+          <h1 className="text-xl font-bold mb-2">{t("meal.sign_in_prompt")}</h1>
+          <p className="text-stone-500 text-sm mb-6">{t("meal.sign_in_desc")}</p>
           <Link
             href="/login"
             className="inline-block bg-red-600 text-white px-8 py-3 rounded-full font-medium hover:bg-red-700 transition-colors"
           >
-            Sign In
+            {t("common.sign_in")}
           </Link>
         </div>
       </div>
@@ -319,8 +321,8 @@ export default function MealPlannerPage() {
         {/* Banner Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Weekly Meal Planner</h1>
-            <p className="text-stone-500">Plan your week&apos;s ulam and organize your kitchen.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t("meal.title")}</h1>
+            <p className="text-stone-500">{t("meal.subtitle")}</p>
           </div>
           
           <div className="flex items-center gap-1 w-full md:w-auto">
@@ -329,21 +331,21 @@ export default function MealPlannerPage() {
               className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
             >
               <MdStar className="text-amber-500 text-base" />
-              Quick-Fill
+              {t("meal.quick_fill")}
             </button>
             <button
               onClick={saveAsFavoriteSet}
               className="flex-1 md:flex-initial flex items-center justify-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-3 py-2 rounded-lg transition-colors border border-transparent hover:bg-stone-100 font-medium"
             >
               <MdContentCopy className="text-stone-450 text-base" />
-              Save Template
+              {t("meal.save_template")}
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
               className="w-full md:w-auto flex items-center justify-center gap-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm transition-colors text-sm"
             >
-              {saving ? "Saving..." : "Save Plan"}
+              {saving ? t("meal.saving") : t("meal.save_plan")}
             </button>
           </div>
         </div>
@@ -356,15 +358,15 @@ export default function MealPlannerPage() {
             <button 
               onClick={() => shiftMobileDay(-1)}
               className="p-3 text-stone-500 hover:bg-stone-100 rounded-xl"
-              aria-label="Previous day"
+              aria-label={t("common.previous_day")}
             >
               <MdChevronLeft className="text-2xl" />
             </button>
-            <span className="font-bold text-lg text-stone-800">{activeMobileDay}</span>
+            <span className="font-bold text-lg text-stone-800">{t(`common.day.${activeMobileDay.toLowerCase()}`)}</span>
             <button 
               onClick={() => shiftMobileDay(1)}
               className="p-3 text-stone-500 hover:bg-stone-100 rounded-xl"
-              aria-label="Next day"
+              aria-label={t("common.next_day")}
             >
               <MdChevronRight className="text-2xl" />
             </button>
@@ -372,7 +374,7 @@ export default function MealPlannerPage() {
 
           {/* Mobile Day Card View */}
           <div className="md:hidden bg-white rounded-2xl border border-stone-200 p-5 space-y-4">
-            <h2 className="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">{activeMobileDay}&apos;s Menu</h2>
+            <h2 className="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">{t(`common.day.${activeMobileDay.toLowerCase()}`)}{t("meal.menu_suffix")}</h2>
             {MEALS.map((meal) => {
               const recipeId = plan[activeMobileDay]?.[meal]
               const recipe = recipes.find(r => String(r.id) === String(recipeId))
@@ -391,7 +393,7 @@ export default function MealPlannerPage() {
                   className="group relative flex flex-col p-4 rounded-xl border border-stone-200 hover:border-amber-300 hover:bg-stone-50/30 transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-semibold uppercase text-stone-400 tracking-wider">{meal}</span>
+                    <span className="text-xs font-semibold uppercase text-stone-400 tracking-wider">{t(`common.meal.${meal}`)}</span>
                     {recipe && (
                       <button
                         onClick={(e) => {
@@ -399,7 +401,7 @@ export default function MealPlannerPage() {
                           setSlotRecipe(activeMobileDay, meal, null)
                         }}
                         className="text-stone-400 hover:text-red-600 p-1"
-                        title="Remove recipe"
+                        title={t("common.remove_recipe")}
                       >
                         <MdDelete className="text-lg" />
                       </button>
@@ -415,7 +417,7 @@ export default function MealPlannerPage() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-1 text-stone-400 text-sm italic py-1">
-                      <MdAdd /> Tap to choose ulam...
+                      <MdAdd /> {t("meal.tap_to_choose")}
                     </div>
                   )}
                 </div>
@@ -428,14 +430,14 @@ export default function MealPlannerPage() {
             <div className="grid grid-cols-4 bg-stone-50 border-b border-stone-200 p-4 font-bold text-stone-500 text-xs uppercase tracking-wider">
               <div>Day</div>
               <div className="col-span-3 grid grid-cols-3 gap-4">
-                {MEALS.map(meal => <div key={meal}>{meal}</div>)}
+                {MEALS.map(meal => <div key={meal}>{t(`common.meal.${meal}`)}</div>)}
               </div>
             </div>
             
             <div className="divide-y divide-stone-100">
               {DAYS.map((day) => (
                 <div key={day} className="grid grid-cols-4 p-4 items-center">
-                  <div className="font-bold text-stone-700">{day}</div>
+                  <div className="font-bold text-stone-700">{t(`common.day.${day.toLowerCase()}`)}</div>
                   
                   <div className="col-span-3 grid grid-cols-3 gap-4">
                     {MEALS.map((meal) => {
@@ -457,7 +459,7 @@ export default function MealPlannerPage() {
                         >
                           <div>
                             <div className="flex justify-between items-start mb-1.5">
-                              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{meal}</span>
+                              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t(`common.meal.${meal}`)}</span>
                               {recipe && (
                                 <button
                                   onClick={(e) => {
@@ -465,7 +467,7 @@ export default function MealPlannerPage() {
                                     setSlotRecipe(day, meal, null)
                                   }}
                                   className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 transition-opacity p-0.5"
-                                  title="Remove recipe"
+                                  title={t("common.remove_recipe")}
                                 >
                                   <MdDelete className="text-base" />
                                 </button>
@@ -475,7 +477,7 @@ export default function MealPlannerPage() {
                               <p className="font-semibold text-stone-850 text-sm leading-snug line-clamp-2">{recipe.title}</p>
                             ) : (
                               <div className="flex items-center gap-0.5 text-xs text-stone-400 italic py-1">
-                                <MdAdd /> Choose ulam...
+                                <MdAdd /> {t("meal.click_to_choose")}
                               </div>
                             )}
                           </div>
@@ -508,10 +510,10 @@ export default function MealPlannerPage() {
               </button>
               
               <h3 className="font-bold text-lg text-stone-900 mb-1">
-                Choose Ulam for {activeAssignSlot.day}
+                {t("meal.choose_ulam_for")} {activeAssignSlot.day}
               </h3>
               <p className="text-sm text-stone-500 mb-4 capitalize">
-                Select a recipe recommendation for {activeAssignSlot.meal}
+                {t("meal.select_for")} {t(`common.meal.${activeAssignSlot.meal}`)}
               </p>
 
               {/* Search Box inside Modal */}
@@ -520,7 +522,7 @@ export default function MealPlannerPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search recipes, categories, or tags..."
+                  placeholder={t("meal.search_placeholder")}
                   autoFocus
                   className="w-full text-sm border border-stone-300 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
@@ -529,7 +531,7 @@ export default function MealPlannerPage() {
 
               {/* Suggested Ulam Chips */}
               <div className="flex flex-wrap gap-1.5 mb-4 items-center">
-                <span className="text-[10px] uppercase font-bold text-stone-400 mr-1">Suggestions:</span>
+                <span className="text-[10px] uppercase font-bold text-stone-400 mr-1">{t("meal.suggestions_label")}</span>
                 {["Adobo", "Sinigang", "Pinakbet", "Breakfast", "Dessert"].map((chip) => (
                   <button
                     key={chip}
@@ -552,7 +554,7 @@ export default function MealPlannerPage() {
                     {[1,2,3].map((n) => <div key={n} className="h-16 bg-stone-100 rounded-xl animate-pulse" />)}
                   </div>
                 ) : filteredRecipes.length === 0 ? (
-                  <p className="text-sm text-stone-400 italic text-center py-8">No matching recipes found.</p>
+                  <p className="text-sm text-stone-400 italic text-center py-8">{t("meal.no_recipes")}</p>
                 ) : (
                   filteredRecipes.map((recipe) => (
                     <div
@@ -567,7 +569,7 @@ export default function MealPlannerPage() {
                         <p className="font-semibold text-sm text-stone-850 truncate group-hover:text-amber-700">{recipe.title}</p>
                         <span className="text-[10px] uppercase font-bold text-stone-400">{recipe.category}</span>
                       </div>
-                      <span className="text-xs text-amber-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Select</span>
+                      <span className="text-xs text-amber-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">{t("meal.select")}</span>
                     </div>
                   ))
                 )}
@@ -596,7 +598,7 @@ export default function MealPlannerPage() {
               </h2>
               
               <p className="text-xs text-stone-500 mb-6 font-medium capitalize">
-                Scheduled for {viewingSlotRecipe.day} • {viewingSlotRecipe.meal}
+                {t("meal.scheduled_for")} {viewingSlotRecipe.day} • {t(`common.meal.${viewingSlotRecipe.meal}`)}
               </p>
 
               <div className="flex flex-col gap-2.5">
@@ -606,7 +608,7 @@ export default function MealPlannerPage() {
                   className="flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 text-white text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-sm"
                 >
                   <MdVisibility className="text-lg" />
-                  View Recipe Details
+                  {t("meal.view_details")}
                 </Link>
 
                 <button
@@ -619,7 +621,7 @@ export default function MealPlannerPage() {
                   className="flex items-center justify-center gap-2 border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
                 >
                   <MdEdit className="text-lg text-stone-500" />
-                  Change Recipe (Edit)
+                  {t("meal.change_recipe")}
                 </button>
 
                 <button
@@ -631,7 +633,7 @@ export default function MealPlannerPage() {
                   className="flex items-center justify-center gap-2 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
                 >
                   <MdDelete className="text-lg text-red-500" />
-                  Remove Recipe (Delete)
+                  {t("meal.remove_recipe")}
                 </button>
               </div>
             </div>
@@ -641,23 +643,25 @@ export default function MealPlannerPage() {
         <div className="bg-white rounded-2xl border border-stone-200 p-6 mt-8 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <MdShoppingCart className="text-xl text-amber-600" />
-            <h2 className="text-lg font-bold text-stone-850">Smart Shopping List</h2>
+            <h2 className="text-lg font-bold text-stone-850">{t("meal.smart_list_title")}</h2>
           </div>
           <p className="text-xs text-stone-500 mb-6">
-            A combined grocery checklist automatically generated from your planned ulam recipes.
+            {t("meal.smart_list_desc")}
           </p>
 
           {aggregatedIngredients.length === 0 ? (
             <p className="text-xs text-stone-400 italic py-4 text-center">
-              Schedule recipes in the planner grid above to automatically compile your grocery list.
+              {t("meal.empty_grocery")}
             </p>
           ) : (
             <div className="space-y-4">
               <div className="flex justify-between items-center text-xs font-bold text-stone-450 border-b border-stone-100 pb-2">
-                <span>Ingredient ({aggregatedIngredients.length} total)</span>
+                <span>{t("meal.ingredient_total", { count: aggregatedIngredients.length })}</span>
                 <span>
-                  {aggregatedIngredients.filter((i) => checkedIngredients.includes(i.name)).length} of{" "}
-                  {aggregatedIngredients.length} checked
+                  {t("meal.checked_count", {
+                    checked: aggregatedIngredients.filter((i) => checkedIngredients.includes(i.name)).length,
+                    total: aggregatedIngredients.length,
+                  })}
                 </span>
               </div>
               

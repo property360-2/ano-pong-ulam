@@ -12,9 +12,11 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { MdClose, MdMenu, MdAdd } from "react-icons/md"
+import { useLanguage } from "@/lib/i18n"
 import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
 import UserMenu from "./UserMenu"
+import LanguageSwitcher from "./LanguageSwitcher"
 
 /**
  * NavLink component.
@@ -54,6 +56,7 @@ function NavLink({ href, children, onClick, className = "" }: { href: string; ch
  */
 export default function Header() {
   const { data: session, status } = useSession()
+  const { t } = useLanguage()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const isNewRecipe = pathname.startsWith("/recipes/new")
@@ -77,25 +80,27 @@ export default function Header() {
             <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
               {session?.user && (
                 <>
-                  <NavLink href="/feed">Feed</NavLink>
-                  <NavLink href="/recipes">Recipes</NavLink>
-                  <NavLink href="/meal-planner">Meal Planner</NavLink>
-                  <NavLink href="/collections">Collections</NavLink>
+                  <NavLink href="/feed">{t("nav.feed")}</NavLink>
+                  <NavLink href="/recipes">{t("nav.recipes")}</NavLink>
+                  <NavLink href="/meal-planner">{t("nav.planner")}</NavLink>
+                  <NavLink href="/collections">{t("nav.collections")}</NavLink>
                 </>
               )}
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {!isNewRecipe && (
               <Link
                 href="/recipes/new"
                 className="hidden md:inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm min-h-[44px]"
               >
                 <MdAdd className="text-base" />
-                Share Recipe
+                {t("nav.share_recipe")}
               </Link>
             )}
+
+            <div className="hidden md:block"><LanguageSwitcher /></div>
 
             <div className="flex items-center gap-1.5 min-w-[80px] justify-end">
               {status === "loading" ? (
@@ -110,7 +115,7 @@ export default function Header() {
                   href="/login"
                   className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors min-h-[44px] flex items-center justify-center"
                 >
-                  Sign In
+                  {t("nav.sign_in")}
                 </Link>
               )}
             </div>
@@ -135,20 +140,20 @@ export default function Header() {
           <div className="fixed top-16 right-0 w-72 bg-white border-l border-stone-200 shadow-lg z-50 md:hidden min-h-[calc(100vh-4rem)]">
             <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
               <div className="mb-3 pb-3 border-b border-stone-100">
-                <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Home</NavLink>
+                <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.home")}</NavLink>
               </div>
 
               {session?.user ? (
                 <>
                   <div className="mt-0 pt-0 border-t border-stone-100" />
-                  <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Notifications</NavLink>
-                  <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Profile</NavLink>
-                  <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">Settings</NavLink>
+                  <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.notifications")}</NavLink>
+                  <NavLink href={`/u/${session.user.name}`} onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.profile")}</NavLink>
+                  <NavLink href="/settings" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.settings")}</NavLink>
                   <button
                     onClick={() => { signOut(); closeMenu() }}
                     className="w-full text-left text-stone-500 hover:text-red-600 transition-colors py-3 min-h-[44px] flex items-center"
                   >
-                    Sign Out
+                    {t("nav.sign_out")}
                   </button>
                 </>
               ) : (
@@ -158,10 +163,13 @@ export default function Header() {
                     onClick={closeMenu}
                     className="block text-center bg-red-600 text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors min-h-[44px]"
                   >
-                    Sign In
+                    {t("nav.sign_in")}
                   </Link>
                 </div>
               )}
+              <div className="mt-4 pt-4 border-t border-stone-100">
+                <LanguageSwitcher />
+              </div>
             </nav>
           </div>
         </>
