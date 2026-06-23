@@ -1735,7 +1735,7 @@ In the Philippines, pork giniling evolved into its own distinct dish. Unlike the
 **Step 3.** Add the chopped tomatoes and cook for 2 minutes until they soften.
 
 **Step 4.** Pour in tomato sauce and water. Add fish sauce. Bring to a boil.
-
+ w
 **Step 5.** Lower heat and simmer for 10 minutes, stirring occasionally.
 
 **Step 6.** Add potatoes, carrots, bell pepper, green peas, and raisins. Continue simmering for 10–15 minutes, until the vegetables are tender.
