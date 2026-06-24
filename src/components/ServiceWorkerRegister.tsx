@@ -24,11 +24,23 @@ export default function ServiceWorkerRegister() {
       "serviceWorker" in navigator &&
       process.env.NODE_ENV === "production"
     ) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {
-          // NOTE: Registration failure is non-fatal — app works without SW
-        })
-      })
+      const registerSW = () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log("Service Worker registered successfully with scope:", registration.scope)
+          })
+          .catch((error) => {
+            console.error("Service Worker registration failed:", error)
+          })
+      }
+
+      if (document.readyState === "complete") {
+        registerSW()
+      } else {
+        window.addEventListener("load", registerSW)
+        return () => window.removeEventListener("load", registerSW)
+      }
     }
   }, [])
 

@@ -111,17 +111,6 @@ export default function Header() {
               </Link>
               )}
 
-            {installable && !isStandalone && !isIOS && (
-              <button
-                onClick={handleInstallApp}
-                title={t("nav.install_app_desc")}
-                className="hidden md:inline-flex items-center justify-center p-2 text-stone-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-colors min-h-[44px] min-w-[44px]"
-                aria-label={t("nav.install_app")}
-              >
-                <MdGetApp className="text-xl" />
-              </button>
-            )}
-
             <div className="flex items-center gap-1.5 min-w-[80px] justify-end">
               {status === "loading" ? (
                 <div className="w-8 h-8 rounded-full bg-stone-200 animate-pulse" />
@@ -139,6 +128,17 @@ export default function Header() {
                 </Link>
               )}
             </div>
+
+            {installable && !isStandalone && !isIOS && (
+              <button
+                onClick={handleInstallApp}
+                title={t("nav.install_app_desc")}
+                className="hidden md:inline-flex items-center justify-center p-2 text-stone-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-colors min-h-[44px] min-w-[44px]"
+                aria-label={t("nav.install_app")}
+              >
+                <MdGetApp className="text-xl" />
+              </button>
+            )}
 
             <button
               onClick={() => setMenuOpen(!menuOpen)}
