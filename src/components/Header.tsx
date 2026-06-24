@@ -11,11 +11,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
-import { MdClose, MdMenu, MdAdd } from "react-icons/md"
+import { MdClose, MdMenu, MdAdd, MdGetApp } from "react-icons/md"
 import { useLanguage } from "@/lib/i18n"
 import InstallPrompt from "./InstallPrompt"
 import NotificationBell from "./NotificationBell"
 import UserMenu from "./UserMenu"
+import { usePwa } from "@/hooks/usePwa"
+import { useToast } from "@/lib/toast"
 
 /**
  * NavLink component.
@@ -59,6 +61,15 @@ export default function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const isNewRecipe = pathname.startsWith("/recipes/new")
+  const { installable, isIOS, isStandalone, triggerInstall } = usePwa()
+  const { toast } = useToast()
+
+  async function handleInstallApp() {
+    const success = await triggerInstall()
+    if (success) {
+      toast.success(t("nav.install_app") + " installed!")
+    }
+  }
 
   function closeMenu() {
     setMenuOpen(false)
@@ -98,6 +109,17 @@ export default function Header() {
                 <MdAdd className="text-base" />
                 {t("nav.share_recipe")}
               </Link>
+              )}
+
+            {installable && !isStandalone && !isIOS && (
+              <button
+                onClick={handleInstallApp}
+                title={t("nav.install_app_desc")}
+                className="hidden md:inline-flex items-center justify-center p-2 text-stone-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-colors min-h-[44px] min-w-[44px]"
+                aria-label={t("nav.install_app")}
+              >
+                <MdGetApp className="text-xl" />
+              </button>
             )}
 
             <div className="flex items-center gap-1.5 min-w-[80px] justify-end">
@@ -146,6 +168,16 @@ export default function Header() {
                   <NavLink href="/meal-planner" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.planner")}</NavLink>
                   <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.collections")}</NavLink>
                 </>
+              )}
+
+              {installable && !isStandalone && !isIOS && (
+                <button
+                  onClick={() => { handleInstallApp(); closeMenu() }}
+                  className="w-full text-left py-3 min-h-[44px] flex items-center gap-3 text-stone-700 hover:bg-stone-50 transition-colors"
+                >
+                  <MdGetApp className="text-lg text-amber-600" />
+                  <span className="font-medium">{t("nav.install_app")}</span>
+                </button>
               )}
 
               {session?.user ? (

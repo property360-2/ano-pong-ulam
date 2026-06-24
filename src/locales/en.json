@@ -11,6 +11,8 @@
   "nav.notifications": "Notifications",
   "nav.home": "Home",
   "nav.feedback": "Feedback",
+  "nav.install_app": "Install App",
+  "nav.install_app_desc": "Add to home screen",
 
   "home.hero_title": "Your lola's recipe deserves to be shared with the world.",
   "home.hero_subtitle": "Ano Pong Ulam? is where Filipino heirloom recipes live forever. Write down the story of your kitchen.",
