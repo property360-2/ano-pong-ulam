@@ -27,7 +27,7 @@ const adapter: Adapter = {
         email: input.email,
         displayName: input.name ?? undefined,
         avatarUrl: input.image ?? undefined,
-        username: input.username,
+        username: input.username ?? `user_${Math.random().toString(36).substring(2, 7)}`,
       },
     }) as unknown as Promise<AdapterUser>
   },
