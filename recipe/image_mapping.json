@@ -4,55 +4,70 @@
     "contents": "Key-value mapping of recipe names to local public asset paths and generation prompts.",
     "systemRole": "Provides image asset resolution for the PWA meal planning and feed interface."
   },
-  "bicol_express": {
-    "dishName": "Bicol Express (Spicy Pork in Coconut Milk)",
-    "localPath": "/images/recipes/bicol_express.png",
-    "prompt": "Professional editorial food photography of Filipino Bicol Express. Diced pork belly chunks cooked in a thick, rich, creamy coconut milk sauce, heavily mixed with sliced green chilies (siling haba), red bird's eye chilies (siling labuyo), and shrimp paste (bagoong). Served in a rustic bowl on a wooden dining table, steam gently rising."
-  },
-  "pork_adobo": {
-    "dishName": "Adobong Baboy (Pork Adobo)",
-    "localPath": "/images/recipes/pork_adobo.png",
-    "prompt": "Professional editorial food photography of Filipino Pork Adobo (Adobong Baboy). Tender, succulent cubes of pork belly with a glossy, dark brown savory soy-vinegar glaze, topped with visible whole black peppercorns, caramelized crushed garlic, and bay leaves. Served in a traditional Filipino clay pot (palayok) lined with a fresh green banana leaf, placed on a rustic dark wooden table."
-  },
-  "halo_halo": {
-    "dishName": "Halo-Halo (Shaved Ice Mix)",
-    "localPath": "/images/recipes/halo_halo.png",
-    "prompt": "Professional editorial food photography of Filipino Halo-Halo. Served in a tall, clear glass showing colorful layers of sweetened bananas, jackfruit (langka), red mung beans, green and red jelly cubes, nata de coco, and tapioca pearls, topped with finely shaved ice, poured evaporated milk, a scoop of purple ube ice cream, a slice of golden leche flan, and a sprinkle of toasted pinipig."
-  },
-  "bistek_tagalog": {
-    "dishName": "Bistek Tagalog (Filipino Beef Steak)",
-    "localPath": "/images/recipes/bistek_tagalog.png",
-    "prompt": "Professional editorial food photography of Bistek Tagalog (Filipino Beef Steak). Tender, thinly sliced beef steaks braised in a savory, dark soy sauce and calamansi citrus glaze, topped with lots of fresh, tender white onion rings. Plated on a clean ceramic dish on a dark wooden table, with garlic fried rice visible in the background."
+  "shrimp_sinigang": {
+    "dishName": "Sinigang na Hipon (Shrimp Sour Soup)",
+    "localPath": "/images/recipes/shrimp_sinigang.png",
+    "prompt": "Professional editorial food photography of Filipino Shrimp Sinigang (Sinigang na Hipon). Large tiger prawns with heads on, cooked in a hot tamarind-based sour broth. Visible vegetables in the broth include kangkong (water spinach) leaves, sliced radish (labanos), long green beans (sitaw), tomatoes, and a whole green finger chili (siling haba). Served in a rustic bowl, steam rising."
   },
   "chicken_tinola": {
     "dishName": "Chicken Tinola (Tinolang Manok)",
     "localPath": "/images/recipes/chicken_tinola.png",
     "prompt": "Professional editorial food photography of Chicken Tinola (Tinolang Manok). A traditional Filipino soup featuring tender chicken pieces in a clear, light ginger-infused broth. Served with wedges of green papaya (or chayote) and fresh green moringa (malunggay) leaves floating on top. Visible ginger slices and garlic cloves. Plated in a deep ceramic bowl, steaming hot, on a rustic background."
   },
-  "rellenong_bangus": {
-    "dishName": "Rellenong Bangus (Stuffed Milkfish)",
-    "localPath": "/images/recipes/rellenong_bangus.png",
-    "prompt": "Professional editorial food photography of Filipino Rellenong Bangus. A whole baked milkfish, crispy golden-brown skin, sliced in the middle to reveal the dense, savory stuffing of flaked fish meat, finely diced carrots, green peas, and raisins. Plated on a banana leaf-lined serving tray, garnished with fresh calamansi halves and sliced red tomatoes."
+  "kare_kare": {
+    "dishName": "Kare-Kare (Oxtail and Beef Stew in Peanut Sauce)",
+    "localPath": "/images/recipes/kare_kare.png",
+    "prompt": "Professional editorial food photography of Filipino Kare-Kare. Tender oxtail and beef tripe simmered in a thick, rich, vibrant golden-orange peanut sauce. Plated with vegetables: sliced eggplant, sitaw (long green beans), bok choy (pechay), and banana blossom (puso ng saging). Served in a traditional clay pot (palayok), with a small side dish of dark red saut\u00e9ed shrimp paste (bagoong) next to it."
   },
   "pinakbet": {
     "dishName": "Pinakbet (Mixed Vegetables in Shrimp Paste)",
     "localPath": "/images/recipes/pinakbet.png",
     "prompt": "Professional editorial food photography of Pinakbet. A colorful mix of classic Filipino vegetables: chunked yellow squash (kalabasa), sliced green bitter melon (ampalaya), eggplant, okra, and long green beans (sitaw), saut\u00e9ed in savory shrimp paste (bagoong). Topped with a few pieces of crispy pork cracklings (chicharon) and grilled pork belly pieces. Plated in a rustic clay bowl on a wooden tabletop, warm side-lighting, shallow depth of field."
   },
-  "shrimp_sinigang": {
-    "dishName": "Sinigang na Hipon (Shrimp Sour Soup)",
-    "localPath": "/images/recipes/shrimp_sinigang.png",
-    "prompt": "Professional editorial food photography of Filipino Shrimp Sinigang (Sinigang na Hipon). Large tiger prawns with heads on, cooked in a hot tamarind-based sour broth. Visible vegetables in the broth include kangkong (water spinach) leaves, sliced radish (labanos), long green beans (sitaw), tomatoes, and a whole green finger chili (siling haba). Served in a rustic bowl, steam rising."
+  "bicol_express": {
+    "dishName": "Bicol Express (Spicy Pork in Coconut Milk)",
+    "localPath": "/images/recipes/bicol_express.png",
+    "prompt": "Professional editorial food photography of Filipino Bicol Express. Diced pork belly chunks cooked in a thick, rich, creamy coconut milk sauce, heavily mixed with sliced green chilies (siling haba), red bird's eye chilies (siling labuyo), and shrimp paste (bagoong). Served in a rustic bowl on a wooden dining table, steam gently rising."
+  },
+  "chicken_inasal": {
+    "dishName": "Chicken Inasal (Grilled Annatto Chicken)",
+    "localPath": "/images/recipes/chicken_inasal.png",
+    "prompt": "Professional editorial food photography of Bacolod-style Chicken Inasal. A grilled chicken quarter (chicken leg and thigh) skewered on a bamboo stick, with a char-grilled, glossy golden-orange skin basted with annatto oil. Served on a fresh green banana leaf on a rustic wooden plate, garnished with fresh calamansi halves and small red chilies (siling labuyo). In the background, a small bowl of garlic fried rice."
+  },
+  "lechon_kawali": {
+    "dishName": "Lechon Kawali (Crispy Deep-Fried Pork Belly)",
+    "localPath": "/images/recipes/lechon_kawali.png",
+    "prompt": "Professional editorial food photography of Filipino Lechon Kawali. Slices of crispy deep-fried pork belly showing layers of juicy meat and fat, topped with bubbly, crunchy golden-brown crackling skin. Plated on a fresh banana leaf over a wooden platter, served with a small bowl of thick brown liver dipping sauce and toyomansi (soy sauce with calamansi)."
+  },
+  "rellenong_bangus": {
+    "dishName": "Rellenong Bangus (Stuffed Milkfish)",
+    "localPath": "/images/recipes/rellenong_bangus.png",
+    "prompt": "Professional editorial food photography of Filipino Rellenong Bangus. A whole baked milkfish, crispy golden-brown skin, sliced in the middle to reveal the dense, savory stuffing of flaked fish meat, finely diced carrots, green peas, and raisins. Plated on a banana leaf-lined serving tray, garnished with fresh calamansi halves and sliced red tomatoes."
+  },
+  "arroz_caldo": {
+    "dishName": "Arroz Caldo (Chicken Rice Porridge)",
+    "localPath": "/images/recipes/arroz_caldo.png",
+    "prompt": "Professional editorial food photography of Filipino Arroz Caldo. A thick, creamy, yellow-tinted ginger rice porridge with tender chicken pieces, topped with crunchy toasted golden garlic bits, finely chopped green onions, and slices of hard-boiled egg. Served in a rustic ceramic bowl with a half calamansi on the side. Close-up shot, steaming hot, warm cozy lighting, shallow depth of field."
+  },
+  "pork_adobo": {
+    "dishName": "Adobong Baboy (Pork Adobo)",
+    "localPath": "/images/recipes/pork_adobo.png",
+    "prompt": "Professional editorial food photography of Filipino Pork Adobo (Adobong Baboy). Tender, succulent cubes of pork belly with a glossy, dark brown savory soy-vinegar glaze, topped with visible whole black peppercorns, caramelized crushed garlic, and bay leaves. Served in a traditional Filipino clay pot (palayok) lined with a fresh green banana leaf, placed on a rustic dark wooden table."
   },
   "lechon_baboy": {
     "dishName": "Lechon Baboy (Whole Roasted Pig)",
     "localPath": "/images/recipes/lechon_baboy.png",
     "prompt": "Professional editorial food photography of Filipino Lechon Baboy. A whole roasted pig with glistening, super crispy, golden-red crackling skin, resting on a bed of fresh green banana leaves on a rustic wooden table. A portion is carved, showing tender, juicy meat inside. Accompanied by a small bowl of thick brown liver dipping sauce."
   },
-  "lechon_kawali": {
-    "dishName": "Lechon Kawali (Crispy Deep-Fried Pork Belly)",
-    "localPath": "/images/recipes/lechon_kawali.png",
-    "prompt": "Professional editorial food photography of Filipino Lechon Kawali. Slices of crispy deep-fried pork belly showing layers of juicy meat and fat, topped with bubbly, crunchy golden-brown crackling skin. Plated on a fresh banana leaf over a wooden platter, served with a small bowl of thick brown liver dipping sauce and toyomansi (soy sauce with calamansi)."
+  "tortang_talong": {
+    "dishName": "Tortang Talong (Eggplant Omelet)",
+    "localPath": "/images/recipes/tortang_talong.png",
+    "prompt": "Professional editorial food photography of Filipino Tortang Talong. A whole char-grilled long eggplant, peeled, flattened, coated in a seasoned beaten egg mixture, and pan-fried until golden-brown with crispy edges. The dark green stem remains attached. Plated on a rustic plate, served with a small dipping dish of red banana ketchup."
+  },
+  "halo_halo": {
+    "dishName": "Halo-Halo (Shaved Ice Mix)",
+    "localPath": "/images/recipes/halo_halo.png",
+    "prompt": "Professional editorial food photography of Filipino Halo-Halo. Served in a tall, clear glass showing colorful layers of sweetened bananas, jackfruit (langka), red mung beans, green and red jelly cubes, nata de coco, and tapioca pearls, topped with finely shaved ice, poured evaporated milk, a scoop of purple ube ice cream, a slice of golden leche flan, and a sprinkle of toasted pinipig."
   },
   "adobong_pusit": {
     "dishName": "Adobong Pusit (Squid Adobo)",
@@ -64,25 +79,10 @@
     "localPath": "/images/recipes/bulalo.png",
     "prompt": "Professional editorial food photography of Filipino Bulalo. A rich, clear beef broth with a large beef shank showing the bone marrow in the center of the cut bone. Served with pieces of sweet corn on the cob, green cabbage leaves, and string beans. Plated in a deep, large bowl, steaming hot, sitting on a rustic wooden table."
   },
-  "tortang_talong": {
-    "dishName": "Tortang Talong (Eggplant Omelet)",
-    "localPath": "/images/recipes/tortang_talong.png",
-    "prompt": "Professional editorial food photography of Filipino Tortang Talong. A whole char-grilled long eggplant, peeled, flattened, coated in a seasoned beaten egg mixture, and pan-fried until golden-brown with crispy edges. The dark green stem remains attached. Plated on a rustic plate, served with a small dipping dish of red banana ketchup."
-  },
-  "kare_kare": {
-    "dishName": "Kare-Kare (Oxtail and Beef Stew in Peanut Sauce)",
-    "localPath": "/images/recipes/kare_kare.png",
-    "prompt": "Professional editorial food photography of Filipino Kare-Kare. Tender oxtail and beef tripe simmered in a thick, rich, vibrant golden-orange peanut sauce. Plated with vegetables: sliced eggplant, sitaw (long green beans), bok choy (pechay), and banana blossom (puso ng saging). Served in a traditional clay pot (palayok), with a small side dish of dark red saut\u00e9ed shrimp paste (bagoong) next to it."
-  },
-  "chicken_inasal": {
-    "dishName": "Chicken Inasal (Grilled Annatto Chicken)",
-    "localPath": "/images/recipes/chicken_inasal.png",
-    "prompt": "Professional editorial food photography of Bacolod-style Chicken Inasal. A grilled chicken quarter (chicken leg and thigh) skewered on a bamboo stick, with a char-grilled, glossy golden-orange skin basted with annatto oil. Served on a fresh green banana leaf on a rustic wooden plate, garnished with fresh calamansi halves and small red chilies (siling labuyo). In the background, a small bowl of garlic fried rice."
-  },
-  "arroz_caldo": {
-    "dishName": "Arroz Caldo (Chicken Rice Porridge)",
-    "localPath": "/images/recipes/arroz_caldo.png",
-    "prompt": "Professional editorial food photography of Filipino Arroz Caldo. A thick, creamy, yellow-tinted ginger rice porridge with tender chicken pieces, topped with crunchy toasted golden garlic bits, finely chopped green onions, and slices of hard-boiled egg. Served in a rustic ceramic bowl with a half calamansi on the side. Close-up shot, steaming hot, warm cozy lighting, shallow depth of field."
+  "bistek_tagalog": {
+    "dishName": "Bistek Tagalog (Filipino Beef Steak)",
+    "localPath": "/images/recipes/bistek_tagalog.png",
+    "prompt": "Professional editorial food photography of Bistek Tagalog (Filipino Beef Steak). Tender, thinly sliced beef steaks braised in a savory, dark soy sauce and calamansi citrus glaze, topped with lots of fresh, tender white onion rings. Plated on a clean ceramic dish on a dark wooden table, with garlic fried rice visible in the background."
   },
   "mani_streetfood": {
     "dishName": "Mani",
@@ -864,6 +864,11 @@
     "localPath": "/images/recipes/Filipino_Fried_Chicken_with_Gravy_202606232059.jpeg",
     "prompt": "Professional editorial food photography of Filipino Style Fried Chicken. Extra crispy, golden-brown deep-fried chicken drumsticks and thighs, plated on a wooden board. Served with a small bowl of brown savory chicken gravy. Crisp macro texture, 8k."
   },
+  "ginataang_manok": {
+    "dishName": "Ginataang Manok",
+    "localPath": "/images/recipes/ginataang_manok.png",
+    "prompt": "Professional editorial food photography of Ginataang Manok. Chicken pieces cooked in rich coconut milk with ginger, garlic, spinach leaves, and green chilies. Served in a traditional clay pot. Soft natural light, warm color scheme, 8k."
+  },
   "pinaupong_manok": {
     "dishName": "Pinaupong Manok",
     "localPath": "/images/recipes/Filipino_Pinaupong_Manok_roasted_202606232059.jpeg",
@@ -888,6 +893,11 @@
     "dishName": "Beef Caldereta",
     "localPath": "/images/recipes/Filipino_Beef_Caldereta_in_clay_202606232100.jpeg",
     "prompt": "Professional editorial food photography of Beef Caldereta. Tender beef chunks stewed in a spicy, rich red tomato-liver sauce, topped with melted cheese, bell pepper slices, green olives, potatoes, and carrots. Served in a clay bowl. Warm side-lighting, 8k."
+  },
+  "beef_giniling": {
+    "dishName": "Beef Giniling",
+    "localPath": "/images/recipes/beef_giniling.png",
+    "prompt": "Professional editorial food photography of Beef Giniling. Ground beef simmered in a savory tomato sauce with small potato cubes, carrots, raisins, and green peas. Served in a white ceramic dish. Bright crisp lighting, 8k."
   },
   "beef_mechado": {
     "dishName": "Beef Mechado",
@@ -938,6 +948,11 @@
     "dishName": "Inihaw na Pusit",
     "localPath": "/images/recipes/Filipino_Inihaw_na_Pusit_grilled_202606232101.jpeg",
     "prompt": "Professional editorial food photography of Inihaw na Pusit. A whole grilled squid with charred score marks, stuffed with diced tomatoes and onions, basted in soy-annatto glaze. Plated on a banana leaf. Close-up, warm grill lighting, 8k."
+  },
+  "inun_unan": {
+    "dishName": "Inun-unan",
+    "localPath": "/images/recipes/inun_unan.png",
+    "prompt": "Professional editorial food photography of Visayan Inun-unan. Whole fish cooked in a clear sour vinegar broth with garlic, ginger, eggplant, and bitter melon slices. Served in a traditional clay pot. Warm rustic setting, 8k."
   },
   "pesang_isda": {
     "dishName": "Pesang Isda",
