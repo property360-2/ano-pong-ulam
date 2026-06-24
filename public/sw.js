@@ -17,7 +17,6 @@ var API_CACHE = "ano-pong-ulam-api-" + CACHE_VERSION
 var PRECACHE_URLS = [
   "/",
   "/recipes",
-  "/challenges",
   "/manifest.json",
   "/icon.svg",
 ]

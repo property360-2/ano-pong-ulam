@@ -41,14 +41,16 @@ export default function RecipeList({ initialRecipes }: { initialRecipes: Recipe[
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [prevInitial, setPrevInitial] = useState<Recipe[]>(initialRecipes)
+  const [prevInitialKeys, setPrevInitialKeys] = useState<string>(() => initialRecipes.map((r) => r.id).join(","))
   const sentinelRef = useRef<HTMLDivElement>(null)
 
+  const currentKeys = initialRecipes.map((r) => r.id).join(",")
+
   // Sync props to state synchronously inside rendering (prevents useEffect render cycle)
-  if (initialRecipes !== prevInitial) {
+  if (currentKeys !== prevInitialKeys) {
     setRecipes(initialRecipes)
     setHasMore(true)
-    setPrevInitial(initialRecipes)
+    setPrevInitialKeys(currentKeys)
   }
 
   const hasInitialData = initialRecipes.length > 0

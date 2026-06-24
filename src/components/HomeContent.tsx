@@ -113,8 +113,8 @@ export default function HomeContent({
         <div className="mx-auto max-w-screen-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-stone-900">Pinaka-Sikat na Ulam</h2>
-              <p className="text-stone-500">Ang mga pinakapaboritong putahe ng bawat pamilyang Pilipino.</p>
+              <h2 className="text-2xl font-bold text-stone-900">{t("home.popular_dishes")}</h2>
+              <p className="text-stone-500">{t("home.popular_dishes_subtitle")}</p>
             </div>
             
             {/* Tabs Selector */}
@@ -128,7 +128,7 @@ export default function HomeContent({
                 }`}
               >
                 <MdFavorite className="text-red-500" />
-                Top 20 Recipes
+                {t("home.top_20_tab")}
               </button>
               <button
                 onClick={() => { setActiveTab("saved"); setShowAll(false); }}
@@ -139,7 +139,7 @@ export default function HomeContent({
                 }`}
               >
                 <MdBookmark className="text-amber-500" />
-                Most Saved/Hearted
+                {t("home.most_saved_tab")}
               </button>
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function HomeContent({
                         </div>
                         <div className="flex items-center gap-1.5 text-stone-600 mt-4 text-xs font-semibold pt-3 border-t border-stone-100">
                           <MdFavorite className="text-red-500 text-sm" />
-                          <span>{likesCount} hearts</span>
+                          <span>{t("home.hearts", { count: likesCount })}</span>
                         </div>
                       </div>
                     </Link>
@@ -205,7 +205,7 @@ export default function HomeContent({
                   onClick={() => setShowAll(!showAll)}
                   className="inline-block text-red-600 font-semibold hover:text-red-700 transition-colors border border-red-300 px-8 py-3 rounded-full hover:bg-red-50"
                 >
-                  {showAll ? "View Less" : "View More (Top 20)"}
+                  {showAll ? t("home.view_less") : `${t("home.view_more")} (Top 20)`}
                 </button>
               </div>
             </div>
@@ -259,7 +259,7 @@ export default function HomeContent({
                             </div>
                             <div className="flex items-center gap-1.5 text-stone-600 mt-4 text-xs font-semibold pt-3 border-t border-stone-100">
                               <MdFavorite className="text-red-500 text-sm" />
-                              <span>{recipe._count.likes} hearts</span>
+                              <span>{t("home.hearts", { count: recipe._count.likes })}</span>
                             </div>
                           </div>
                         </Link>
@@ -272,19 +272,19 @@ export default function HomeContent({
                         onClick={() => setShowAll(!showAll)}
                         className="inline-block text-red-600 font-semibold hover:text-red-700 transition-colors border border-red-300 px-8 py-3 rounded-full hover:bg-red-50"
                       >
-                        {showAll ? "View Less" : `View More (Top ${mostSavedRecipes.length})`}
+                        {showAll ? t("home.view_less") : `${t("home.view_more")} (Top ${mostSavedRecipes.length})`}
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="text-center py-12 bg-white rounded-2xl border border-stone-200">
-                  <p className="text-stone-500">Wala pang nakasave o naka-heart na recipe. Maging una sa pag-heart!</p>
+                  <p className="text-stone-500">{t("home.empty_saved")}</p>
                   <Link
                     href={session?.user ? "/recipes" : "/login"}
                     className="inline-block text-red-600 font-semibold mt-4 hover:underline"
                   >
-                    Mag-browse ng mga Recipe &rarr;
+                    {t("home.browse_recipes_cta")} &rarr;
                   </Link>
                 </div>
               )}
