@@ -100,20 +100,39 @@ export default function MealPlannerPage() {
   const [recipesLoading, setRecipesLoading] = useState(false)
   const recipesFetchedRef = useRef(false)
 
+  const prevSlotRef = useRef<string | null>(null)
+
   useEffect(() => {
     if (!activeAssignSlot) return
-    const shouldFetch = !recipesFetchedRef.current || searchQuery.length >= 2 || searchQuery.length === 0
-    if (!shouldFetch) return
-    recipesFetchedRef.current = true
+    const slotKey = `${activeAssignSlot.day}-${activeAssignSlot.meal}`
+    const isNewSlot = prevSlotRef.current !== slotKey
+    prevSlotRef.current = slotKey
+
     setRecipesLoading(true)
     const params = new URLSearchParams()
-    if (searchQuery) params.set("q", searchQuery)
-    params.set("limit", "20")
+    
+    if (searchQuery) {
+      params.set("q", searchQuery)
+    } else {
+      if (activeAssignSlot.meal === "breakfast") {
+        params.set("category", "breakfast")
+      } else if (activeAssignSlot.meal === "lunch" || activeAssignSlot.meal === "dinner") {
+        params.set("category", "ulam")
+      } else if (activeAssignSlot.meal === "snacks") {
+        params.set("category", "merienda")
+      }
+    }
+    
+    params.set("limit", "50")
+    
     fetch(`/api/recipes?${params.toString()}`)
       .then((r) => r.json())
       .then((data) => {
         const rawList = Array.isArray(data) ? data : (data?.recipes || [])
-        const list = rawList.filter((r: { title: string; slug: string }) => !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug))
+        const list = rawList.filter(
+          (r: { title: string; slug: string }) =>
+            !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug)
+        )
         setRecipes(list)
       })
       .catch(() => toast.error("Failed to load recipes"))
@@ -202,9 +221,36 @@ export default function MealPlannerPage() {
     }
 
     const defaultSet: MealPlanData = {}
-    const sinigang = currentRecipes.find((r) => r.title.toLowerCase().includes("sinigang"))?.id || currentRecipes[0]?.id
-    const adobo = currentRecipes.find((r) => r.title.toLowerCase().includes("adobo"))?.id || currentRecipes[1]?.id || currentRecipes[0]?.id
-    const tapsilog = currentRecipes.find((r) => r.title.toLowerCase().includes("tapsilog"))?.id || currentRecipes[2]?.id || currentRecipes[0]?.id
+    const ulamRecipes = currentRecipes.filter(r => r.category.toLowerCase().includes("ulam"))
+    const breakfastRecipes = currentRecipes.filter(r => 
+      r.category.toLowerCase().includes("breakfast") || 
+      r.category.toLowerCase().includes("almusal") || 
+      r.title.toLowerCase().includes("silog")
+    )
+    const snacksRecipes = currentRecipes.filter(r => 
+      r.category.toLowerCase().includes("merienda") || 
+      r.category.toLowerCase().includes("dessert") ||
+      r.category.toLowerCase().includes("condiment")
+    )
+
+    const sinigang = currentRecipes.find((r) => r.title.toLowerCase().includes("sinigang"))?.id 
+      || ulamRecipes[0]?.id 
+      || currentRecipes[0]?.id
+
+    const adobo = currentRecipes.find((r) => r.title.toLowerCase().includes("adobo"))?.id 
+      || ulamRecipes[1]?.id 
+      || ulamRecipes[0]?.id 
+      || currentRecipes[0]?.id
+
+    const tapsilog = currentRecipes.find((r) => r.title.toLowerCase().includes("tapsilog"))?.id 
+      || breakfastRecipes[0]?.id 
+      || currentRecipes[2]?.id 
+      || currentRecipes[0]?.id
+
+    const haloHalo = currentRecipes.find((r) => r.title.toLowerCase().includes("halo-halo") || r.title.toLowerCase().includes("halohalo"))?.id 
+      || snacksRecipes[0]?.id 
+      || currentRecipes[3]?.id 
+      || currentRecipes[0]?.id
 
     if (!sinigang && !adobo && !tapsilog) {
       toast.error("No recipes available to quick fill")
@@ -216,6 +262,7 @@ export default function MealPlannerPage() {
         breakfast: tapsilog,
         lunch: sinigang,
         dinner: adobo,
+        snacks: haloHalo,
       }
     })
     setPlan(defaultSet)
