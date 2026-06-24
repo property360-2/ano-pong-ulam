@@ -169,35 +169,57 @@ export default function MealPlannerPage() {
     toast.success("Saved as Favorite Weekly Template!")
   }
 
-  /**
-   * Loads template from localStorage or fallback defaults.
-   */
-  function loadFavoriteSet() {
+  async function loadFavoriteSet() {
     const saved = localStorage.getItem("fav_meal_plan_template")
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
+        const parsed = JSON.parse(saved)
         setPlan(parsed)
         toast.success("Loaded Favorite Weekly Template!")
       } catch {
         toast.error("Could not parse template")
       }
-    } else {
-      const defaultSet: MealPlanData = {}
-      const sinigang = recipes.find(r => r.title.toLowerCase().includes("sinigang"))?.id || recipes[0]?.id
-      const adobo = recipes.find(r => r.title.toLowerCase().includes("adobo"))?.id || recipes[1]?.id || recipes[0]?.id
-      const tapsilog = recipes.find(r => r.title.toLowerCase().includes("tapsilog"))?.id || recipes[2]?.id || recipes[0]?.id
-      
-      DAYS.forEach((day) => {
-        defaultSet[day] = {
-          breakfast: tapsilog,
-          lunch: sinigang,
-          dinner: adobo
-        }
-      })
-      setPlan(defaultSet)
-      toast.success("Quick-Filled with Filipino Classics!")
+      return
     }
+
+    let currentRecipes = recipes
+    if (currentRecipes.length === 0) {
+      setLoading(true)
+      try {
+        const data = await fetch("/api/recipes?limit=50").then((r) => r.json())
+        const rawList = Array.isArray(data) ? data : (data?.recipes || [])
+        currentRecipes = rawList.filter(
+          (r: { title: string; slug: string }) =>
+            !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug)
+        )
+        setRecipes(currentRecipes)
+      } catch {
+        toast.error("Failed to load recipes for quick fill")
+        setLoading(false)
+        return
+      }
+      setLoading(false)
+    }
+
+    const defaultSet: MealPlanData = {}
+    const sinigang = currentRecipes.find((r) => r.title.toLowerCase().includes("sinigang"))?.id || currentRecipes[0]?.id
+    const adobo = currentRecipes.find((r) => r.title.toLowerCase().includes("adobo"))?.id || currentRecipes[1]?.id || currentRecipes[0]?.id
+    const tapsilog = currentRecipes.find((r) => r.title.toLowerCase().includes("tapsilog"))?.id || currentRecipes[2]?.id || currentRecipes[0]?.id
+
+    if (!sinigang && !adobo && !tapsilog) {
+      toast.error("No recipes available to quick fill")
+      return
+    }
+
+    DAYS.forEach((day) => {
+      defaultSet[day] = {
+        breakfast: tapsilog,
+        lunch: sinigang,
+        dinner: adobo,
+      }
+    })
+    setPlan(defaultSet)
+    toast.success("Quick-Filled with Filipino Classics!")
   }
 
   /**

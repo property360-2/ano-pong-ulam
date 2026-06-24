@@ -77,6 +77,7 @@ export default function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
+              <NavLink href="/">{t("nav.home")}</NavLink>
               {session?.user && (
                 <>
                   <NavLink href="/feed">{t("nav.feed")}</NavLink>

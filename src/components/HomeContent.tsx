@@ -172,11 +172,6 @@ export default function HomeContent({
                         <div className="absolute top-3 left-3 bg-red-600 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">
                           #{index + 1}
                         </div>
-                        {dbRecipe && (
-                          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-700 font-medium text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-stone-200/50">
-                            Recipe
-                          </div>
-                        )}
                       </div>
                       <div className="p-4 flex-1 flex flex-col justify-between">
                         <div>

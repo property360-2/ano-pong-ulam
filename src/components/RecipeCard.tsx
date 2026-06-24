@@ -60,10 +60,18 @@ export default function RecipeCard({ recipe, priority = false }: { recipe: Recip
         {recipe.description && (
           <p className="text-sm text-stone-500 mt-1 line-clamp-2">{recipe.description}</p>
         )}
-        <div className="flex items-center gap-3 mt-3 text-xs text-stone-400">
+        <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-3 text-xs text-stone-400">
           {recipe.author && <span>by @{recipe.author.username}</span>}
-          {recipe.cookTime && <span className="inline-flex items-center gap-0.5"><MdTimer /> {recipe.cookTime}min</span>}
-          {recipe.region && <span className="inline-flex items-center gap-0.5"><MdLocationOn /> {recipe.region}</span>}
+          {recipe.cookTime ? (
+            <span className="inline-flex items-center gap-0.5">
+              <MdTimer /> {recipe.cookTime}min
+            </span>
+          ) : null}
+          {recipe.region && (
+            <span className="inline-flex items-center gap-0.5">
+              <MdLocationOn /> {recipe.region}
+            </span>
+          )}
         </div>
       </div>
     </Link>
