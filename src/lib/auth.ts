@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import type { Adapter } from "next-auth/adapters"
+import type { Adapter, AdapterUser } from "next-auth/adapters"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
@@ -8,27 +8,45 @@ import { prisma } from "./db"
 
 const prismaAdapter = PrismaAdapter(prisma)
 
+/**
+ * Custom NextAuth Adapter mapping database schema properties (like displayName and avatarUrl)
+ * to NextAuth adapter specifications without losing custom fields (like username).
+ */
 const adapter: Adapter = {
   ...prismaAdapter,
+  /**
+   * Creates a new user in the database, mapping the incoming adapter user details.
+   * 
+   * @param data NextAuth adapter user data configuration.
+   * @returns A promise resolving to the created AdapterUser.
+   */
   createUser: (data) => {
+    const input = data as { email: string; name?: string; image?: string; username?: string }
     return prisma.user.create({
       data: {
-        email: data.email,
-        displayName: data.name ?? undefined,
-        avatarUrl: (data as any).image ?? undefined,
-        username: (data as any).username,
+        email: input.email,
+        displayName: input.name ?? undefined,
+        avatarUrl: input.image ?? undefined,
+        username: input.username,
       },
-    }) as any
+    }) as unknown as Promise<AdapterUser>
   },
+  /**
+   * Updates an existing user's details in the database.
+   * 
+   * @param data NextAuth adapter user data configuration containing the user ID and updating fields.
+   * @returns A promise resolving to the updated AdapterUser.
+   */
   updateUser: (data) => {
+    const input = data as { id: string; email?: string; name?: string; image?: string }
     return prisma.user.update({
-      where: { id: data.id as string },
+      where: { id: input.id },
       data: {
-        email: data.email,
-        displayName: (data as any).name ?? undefined,
-        avatarUrl: (data as any).image ?? undefined,
+        email: input.email,
+        displayName: input.name ?? undefined,
+        avatarUrl: input.image ?? undefined,
       },
-    }) as any
+    }) as unknown as Promise<AdapterUser>
   },
 }
 
