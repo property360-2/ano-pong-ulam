@@ -4,14 +4,11 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { MdRestaurant, MdCheck } from "react-icons/md"
-import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
 
 const REGIONS = ["Luzon", "Visayas", "Mindanao", "Metro Manila", "Ilocos", "Bicol", "Western Visayas", "Central Visayas", "Davao"]
 const COOKING_LEVELS = [
   { value: "beginner", label: "Beginner — Just starting out" },
-  { value: "intermediate", label: "Intermediate — Can follow recipes" },
-  { value: "advanced", label: "Advanced — Confident in the kitchen" },
   { value: "home_cook", label: "Home Cook — Family recipes pro" },
   { value: "lola_tier", label: "Lola Tier — Legendary status" },
 ]
@@ -78,9 +75,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <>
-      <Header />
-      <main className="max-w-lg mx-auto px-4 py-12">
+    <main className="max-w-lg mx-auto px-4 py-12">
         <div className="flex items-center justify-center gap-1 mb-12">
           {steps.map((_, i) => (
             <div key={i} className="flex items-center gap-1">
@@ -209,6 +204,5 @@ export default function OnboardingPage() {
           </div>
         )}
       </main>
-    </>
   )
 }

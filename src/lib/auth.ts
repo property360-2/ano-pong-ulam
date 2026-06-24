@@ -1,12 +1,39 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
+import type { Adapter } from "next-auth/adapters"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
 import { prisma } from "./db"
 
+const prismaAdapter = PrismaAdapter(prisma)
+
+const adapter: Adapter = {
+  ...prismaAdapter,
+  createUser: (data) => {
+    return prisma.user.create({
+      data: {
+        email: data.email,
+        displayName: data.name ?? undefined,
+        avatarUrl: (data as any).image ?? undefined,
+        username: (data as any).username,
+      },
+    }) as any
+  },
+  updateUser: (data) => {
+    return prisma.user.update({
+      where: { id: data.id as string },
+      data: {
+        email: data.email,
+        displayName: (data as any).name ?? undefined,
+        avatarUrl: (data as any).image ?? undefined,
+      },
+    }) as any
+  },
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -39,6 +66,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           Google({
             clientId: process.env.AUTH_GOOGLE_ID,
             clientSecret: process.env.AUTH_GOOGLE_SECRET,
+            profile(profile) {
+              const emailPrefix = profile.email ? profile.email.split("@")[0] : "user"
+              const randomSuffix = Math.random().toString(36).substring(2, 7)
+              return {
+                id: profile.sub,
+                name: profile.name,
+                email: profile.email,
+                image: profile.picture,
+                username: `${emailPrefix}_${randomSuffix}`,
+              }
+            },
           }),
         ]
       : []),

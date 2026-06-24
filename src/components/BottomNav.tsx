@@ -43,6 +43,7 @@ export default function BottomNav() {
   const { t } = useLanguage()
 
   if (!session?.user) return null
+  if (pathname === "/onboarding") return null
 
   const profileHref = `/u/${session.user.name}`
 
