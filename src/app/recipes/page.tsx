@@ -20,7 +20,34 @@ export default async function RecipesPage(props: { searchParams: SearchParams })
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : null
 
   const filters: Prisma.RecipeWhereInput[] = []
-  if (category) filters.push({ category })
+  if (category) {
+    if (category === "breakfast") {
+      filters.push({
+        OR: [
+          { category: { contains: "breakfast", mode: "insensitive" } },
+          { category: { contains: "almusal", mode: "insensitive" } },
+        ]
+      })
+    } else if (category === "fiesta") {
+      filters.push({
+        OR: [
+          { category: { contains: "fiesta", mode: "insensitive" } },
+          { category: { contains: "pampasko", mode: "insensitive" } },
+        ]
+      })
+    } else if (category === "vegetable") {
+      filters.push({
+        OR: [
+          { category: { contains: "gulay", mode: "insensitive" } },
+          { category: { contains: "vegetable", mode: "insensitive" } },
+        ]
+      })
+    } else {
+      filters.push({
+        category: { contains: category, mode: "insensitive" }
+      })
+    }
+  }
   if (region) filters.push({ region })
   if (difficulty) filters.push({ difficulty: difficulty as $Enums.Difficulty })
   if (tag) filters.push({ tags: { has: tag } })

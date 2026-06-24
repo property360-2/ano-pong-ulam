@@ -139,6 +139,15 @@ export default function Header() {
             <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
               <NavLink href="/" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.home")}</NavLink>
 
+              {session?.user && (
+                <>
+                  <NavLink href="/feed" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.feed")}</NavLink>
+                  <NavLink href="/recipes" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.recipes")}</NavLink>
+                  <NavLink href="/meal-planner" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.planner")}</NavLink>
+                  <NavLink href="/collections" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.collections")}</NavLink>
+                </>
+              )}
+
               {session?.user ? (
                 <div className="mt-2 pt-2 border-t border-stone-100 flex flex-col gap-1">
                   <NavLink href="/notifications" onClick={closeMenu} className="py-3 min-h-[44px] flex items-center">{t("nav.notifications")}</NavLink>
