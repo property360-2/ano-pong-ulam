@@ -1,11 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { MdFastfood, MdEmojiFoodBeverage, MdWbSunny, MdCelebration, MdEco, MdCake } from "react-icons/md"
+import { MdFastfood, MdEmojiFoodBeverage, MdWbSunny, MdCelebration, MdEco, MdCake, MdFavorite, MdBookmark } from "react-icons/md"
 import RecipeCard from "./RecipeCard"
 import { useLanguage } from "@/lib/i18n"
 import type { Session } from "next-auth"
+import { STATIC_TOP_20 } from "@/lib/top-recipes-data"
 
 interface RecipeSummary {
   id: bigint
@@ -45,11 +47,17 @@ const CATEGORIES = [
 export default function HomeContent({
   session,
   latestRecipes,
+  dbTopRecipes = [],
+  mostSavedRecipes = [],
 }: {
   session: Session | null
   latestRecipes: RecipeSummary[]
+  dbTopRecipes?: RecipeSummary[]
+  mostSavedRecipes?: RecipeSummary[]
 }) {
   const { t } = useLanguage()
+  const [activeTab, setActiveTab] = useState<"top20" | "saved">("top20")
+  const [showAll, setShowAll] = useState(false)
 
   return (
     <>
@@ -97,6 +105,191 @@ export default function HomeContent({
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Top Recipes & Most Saved Section */}
+      <section className="py-12 md:py-16 px-4 bg-stone-50 border-y border-stone-200">
+        <div className="mx-auto max-w-screen-xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-stone-900">Pinaka-Sikat na Ulam</h2>
+              <p className="text-stone-500">Ang mga pinakapaboritong putahe ng bawat pamilyang Pilipino.</p>
+            </div>
+            
+            {/* Tabs Selector */}
+            <div className="inline-flex rounded-full bg-stone-200 p-1 self-start">
+              <button
+                onClick={() => { setActiveTab("top20"); setShowAll(false); }}
+                className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                  activeTab === "top20"
+                    ? "bg-white text-red-600 shadow-sm"
+                    : "text-stone-600 hover:text-stone-900"
+                }`}
+              >
+                <MdFavorite className="text-red-500" />
+                Top 20 Recipes
+              </button>
+              <button
+                onClick={() => { setActiveTab("saved"); setShowAll(false); }}
+                className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                  activeTab === "saved"
+                    ? "bg-white text-red-600 shadow-sm"
+                    : "text-stone-600 hover:text-stone-900"
+                }`}
+              >
+                <MdBookmark className="text-amber-500" />
+                Most Saved/Hearted
+              </button>
+            </div>
+          </div>
+
+          {/* Render Active Tab */}
+          {activeTab === "top20" ? (
+            <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {(showAll ? STATIC_TOP_20 : STATIC_TOP_20.slice(0, 5)).map((recipe, index) => {
+                  const dbRecipe = dbTopRecipes.find((r) => r.slug === recipe.slug)
+                  const likesCount = dbRecipe ? dbRecipe._count.likes : recipe.likes
+                  const targetHref = session?.user
+                    ? `/recipes/${dbRecipe?.slug || recipe.slug}`
+                    : "/login"
+
+                  return (
+                    <Link
+                      key={recipe.slug}
+                      href={targetHref}
+                      className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-card hover:shadow-card-hover hover:border-red-200 transition-all duration-200 flex flex-col h-full"
+                    >
+                      <div className="aspect-[4/3] relative overflow-hidden bg-stone-100">
+                        <Image
+                          src={recipe.image}
+                          alt={recipe.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute top-3 left-3 bg-red-600 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">
+                          #{index + 1}
+                        </div>
+                        {dbRecipe && (
+                          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-700 font-medium text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-stone-200/50">
+                            Recipe
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-red-600 mb-1 block">
+                            {recipe.category}
+                          </span>
+                          <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-red-600 transition-colors">
+                            {recipe.title}
+                          </h3>
+                          <p className="text-xs text-stone-500 mt-1.5 line-clamp-2 leading-relaxed">
+                            {recipe.desc}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-stone-600 mt-4 text-xs font-semibold pt-3 border-t border-stone-100">
+                          <MdFavorite className="text-red-500 text-sm" />
+                          <span>{likesCount} hearts</span>
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+
+              <div className="text-center mt-10">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="inline-block text-red-600 font-semibold hover:text-red-700 transition-colors border border-red-300 px-8 py-3 rounded-full hover:bg-red-50"
+                >
+                  {showAll ? "View Less" : "View More (Top 20)"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {mostSavedRecipes.length > 0 ? (
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    {(showAll ? mostSavedRecipes : mostSavedRecipes.slice(0, 5)).map((recipe, index) => {
+                      const targetHref = session?.user
+                        ? `/recipes/${recipe.slug}`
+                        : "/login"
+
+                      return (
+                        <Link
+                          key={recipe.id.toString()}
+                          href={targetHref}
+                          className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-card hover:shadow-card-hover hover:border-amber-200 transition-all duration-200 flex flex-col h-full"
+                        >
+                          <div className="aspect-[4/3] relative overflow-hidden bg-stone-100">
+                            {recipe.heroImage ? (
+                              <Image
+                                src={recipe.heroImage}
+                                alt={recipe.title}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw"
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-3xl text-red-500">
+                                <MdFastfood />
+                              </div>
+                            )}
+                            <div className="absolute top-3 left-3 bg-amber-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">
+                              #{index + 1}
+                            </div>
+                          </div>
+                          <div className="p-4 flex-1 flex flex-col justify-between">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-600 mb-1 block">
+                                {recipe.category}
+                              </span>
+                              <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-amber-600 transition-colors">
+                                {recipe.title}
+                              </h3>
+                              {recipe.description && (
+                                <p className="text-xs text-stone-500 mt-1.5 line-clamp-2 leading-relaxed">
+                                  {recipe.description}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-stone-600 mt-4 text-xs font-semibold pt-3 border-t border-stone-100">
+                              <MdFavorite className="text-red-500 text-sm" />
+                              <span>{recipe._count.likes} hearts</span>
+                            </div>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                  {mostSavedRecipes.length > 5 && (
+                    <div className="text-center mt-10">
+                      <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="inline-block text-red-600 font-semibold hover:text-red-700 transition-colors border border-red-300 px-8 py-3 rounded-full hover:bg-red-50"
+                      >
+                        {showAll ? "View Less" : `View More (Top ${mostSavedRecipes.length})`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-white rounded-2xl border border-stone-200">
+                  <p className="text-stone-500">Wala pang nakasave o naka-heart na recipe. Maging una sa pag-heart!</p>
+                  <Link
+                    href={session?.user ? "/recipes" : "/login"}
+                    className="inline-block text-red-600 font-semibold mt-4 hover:underline"
+                  >
+                    Mag-browse ng mga Recipe &rarr;
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

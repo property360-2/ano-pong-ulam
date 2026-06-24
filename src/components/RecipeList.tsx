@@ -92,7 +92,11 @@ export default function RecipeList({ initialRecipes }: { initialRecipes: Recipe[
             const res = await fetch(`/api/recipes?${buildQueryString(offset)}`)
             const data = await res.json()
             if (data.recipes?.length > 0) {
-              setRecipes((prev) => [...prev, ...data.recipes])
+              setRecipes((prev) => {
+                const existingIds = new Set(prev.map((r) => r.id))
+                const newRecipes = data.recipes.filter((r: Recipe) => !existingIds.has(r.id))
+                return [...prev, ...newRecipes]
+              })
             }
             setHasMore(data.hasMore)
           } catch {

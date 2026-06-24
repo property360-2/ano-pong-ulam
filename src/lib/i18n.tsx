@@ -33,6 +33,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLanguageState(getInitialLanguage())
   }, [])
 
