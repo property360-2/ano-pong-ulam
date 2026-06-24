@@ -56,7 +56,7 @@ interface RecipeItem {
 export default function MealPlannerPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
   
   const [plan, setPlan] = useState<MealPlanData>({})
   const [recipes, setRecipes] = useState<RecipeItem[]>([])
@@ -98,17 +98,15 @@ export default function MealPlannerPage() {
 
   // Lazy-load recipes only when the assign slot modal opens
   const [recipesLoading, setRecipesLoading] = useState(false)
-  const recipesFetchedRef = useRef(false)
 
   const prevSlotRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (!activeAssignSlot) return
     const slotKey = `${activeAssignSlot.day}-${activeAssignSlot.meal}`
-    const isNewSlot = prevSlotRef.current !== slotKey
     prevSlotRef.current = slotKey
 
-    setRecipesLoading(true)
+    setTimeout(() => setRecipesLoading(true), 0)
     const params = new URLSearchParams()
     
     if (searchQuery) {
