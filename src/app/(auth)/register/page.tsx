@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   /**
    * Handles submission of the registration form.
@@ -129,9 +130,24 @@ export default function RegisterPage() {
             />
           </div>
 
+          <label className="flex items-start gap-2 text-xs text-stone-500">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              I agree to the{" "}
+              <Link href="/terms" target="_blank" className="text-amber-600 hover:underline font-medium">
+                Terms and Conditions
+              </Link>
+            </span>
+          </label>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={!acceptedTerms || loading}
             className="w-full bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
           >
             {loading ? "Creating account..." : "Create Account"}

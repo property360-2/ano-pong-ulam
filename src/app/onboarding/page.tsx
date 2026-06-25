@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { MdRestaurant, MdCheck } from "react-icons/md"
 import { useToast } from "@/lib/toast"
 
@@ -19,6 +20,7 @@ export default function OnboardingPage() {
   const { toast } = useToast()
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [form, setForm] = useState({ displayName: "", bio: "", region: "", cookingLevel: "" })
 
   const steps = [
@@ -169,7 +171,22 @@ export default function OnboardingPage() {
                 </select>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <label className="flex items-start gap-2 text-xs text-stone-500 pt-2">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="mt-0.5"
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link href="/terms" target="_blank" className="text-amber-600 hover:underline font-medium">
+                    Terms and Conditions
+                  </Link>
+                </span>
+              </label>
+
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setStep(0)}
                   className="flex-1 px-6 py-2.5 text-sm font-medium text-stone-600 border border-stone-300 rounded-xl hover:bg-stone-50 transition-colors"
@@ -178,7 +195,8 @@ export default function OnboardingPage() {
                 </button>
                 <button
                   onClick={() => setStep(2)}
-                  className="flex-1 bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                  disabled={!acceptedTerms}
+                  className="flex-1 bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
                 >
                   Next
                 </button>
