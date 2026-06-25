@@ -9,7 +9,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
 import { MdArrowBack, MdCheckCircle, MdSend } from "react-icons/md"
 import { useToast } from "@/lib/toast"
 
@@ -28,7 +27,6 @@ interface FeedbackFormState {
  */
 export default function FeedbackPage() {
   const router = useRouter()
-  const { data: session } = useSession()
   const { toast } = useToast()
 
   const [form, setForm] = useState<FeedbackFormState>({

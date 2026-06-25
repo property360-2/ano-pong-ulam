@@ -55,7 +55,7 @@ export default function BottomNav() {
           const href = tab.href === "/u/profile" ? profileHref : tab.href
           const isActive = tab.href === "/u/profile"
             ? pathname.startsWith("/u/")
-            : pathname === href || pathname.startsWith(href + "/")
+            : pathname === href || (pathname.startsWith(href + "/") && !pathname.startsWith("/recipes/new"))
 
           if (tab.isAdd) {
             return (

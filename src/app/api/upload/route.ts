@@ -24,6 +24,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin"
 const BUCKET_NAME = "recipe-images"
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+const ALLOWED_FOLDERS = ["recipe-images", "avatars"]
 
 export async function POST(request: Request) {
   try {
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
     const formData = await request.formData()
     const file = formData.get("file") as File | null
     const folder = (formData.get("folder") as string) || "recipe-images"
+
+    if (!ALLOWED_FOLDERS.includes(folder)) {
+      return NextResponse.json({ error: "Invalid upload folder path" }, { status: 400 })
+    }
 
     // NOTE: Validate file presence
     if (!file) {

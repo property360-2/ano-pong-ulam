@@ -40,7 +40,7 @@ interface FeedbackEntry {
  */
 export default function FeedbackListPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const { toast } = useToast()
 
   const [feedbacks, setFeedbacks] = useState<FeedbackEntry[]>([])

@@ -88,6 +88,7 @@ export default function DropZone({ onFile, currentImage, hint }: Props) {
       >
         {showImage ? (
           <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- blob: URL, next/Image doesn't support */}
             <img
               src={showImage}
               alt="Preview"

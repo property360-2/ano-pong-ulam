@@ -255,6 +255,7 @@ export default function SettingsPage() {
                     className="hidden"
                   />
                   {avatarPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- blob: URL, next/Image doesn't support
                     <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
                   ) : profile?.avatarUrl ? (
                     <Image

@@ -90,10 +90,11 @@ export default function MealPlannerPage() {
         
         // Extract all recipe IDs from the meal plan
         const recipeIds = new Set<number>()
-        Object.values(planRes.plan).forEach((dayPlan: any) => {
-          if (dayPlan) {
+        Object.values(planRes.plan).forEach((dayPlan: unknown) => {
+          const typedPlan = dayPlan as DayPlan | undefined
+          if (typedPlan) {
             MEALS.forEach((meal) => {
-              const ids = dayPlan[meal]
+              const ids = typedPlan[meal]
               if (Array.isArray(ids)) {
                 ids.forEach((id: number) => recipeIds.add(Number(id)))
               } else if (ids) {
@@ -248,8 +249,8 @@ export default function MealPlannerPage() {
         fetch("/api/recipes?category=breakfast&limit=50").then((r) => r.json()),
       ])
 
-      const normalize = (data: unknown) => {
-        const list = Array.isArray(data) ? data : ((data as any)?.recipes || [])
+      const normalize = (data: unknown): RecipeItem[] => {
+        const list = Array.isArray(data) ? data : ((data as { recipes?: RecipeItem[] })?.recipes || [])
         return list.filter(
           (r: { title: string; slug: string }) =>
             !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug)

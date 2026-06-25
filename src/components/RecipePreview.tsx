@@ -21,6 +21,7 @@ export default function RecipePreview({ data, heroFile }: Props) {
   return (
     <div>
       {heroSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element -- supports blob: URLs for preview
         <img
           src={heroSrc}
           alt={data.title}

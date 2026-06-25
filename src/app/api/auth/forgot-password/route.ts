@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     })
 
     if (!user) {
-      return NextResponse.json({ error: "If that email exists, a reset link has been sent" })
+      return NextResponse.json({ success: true, message: "If that email exists, a reset link has been sent" })
     }
 
     if (!user.email) {
