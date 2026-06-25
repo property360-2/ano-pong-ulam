@@ -4,6 +4,7 @@ import Providers from "@/components/Providers"
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"
 import BottomNav from "@/components/BottomNav"
 import HtmlLangSync from "@/components/HtmlLangSync"
+import OfflineBanner from "@/components/OfflineBanner"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -53,6 +54,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-stone-50 text-stone-900">
+        <OfflineBanner />
         <Providers>
           <HtmlLangSync />
           <div className="flex-1 pb-20 md:pb-0">{children}</div>

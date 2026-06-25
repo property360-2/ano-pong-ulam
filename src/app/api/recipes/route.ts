@@ -1,8 +1,21 @@
+/**
+ * @file route.ts
+ * @description API route for recipes. Provides GET method to search, filter, and fetch recipes
+ * (including by comma-separated lists of IDs), and POST method to create new recipes.
+ * Fits into the system as the central recipe data endpoint.
+ */
+
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 import { Prisma, $Enums } from "@/generated/prisma/client"
 
+/**
+ * Generates a URL-friendly slug from a text string.
+ * 
+ * @param {string} text - The input text to slugify.
+ * @returns {string} The slugified string.
+ */
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -13,6 +26,13 @@ function slugify(text: string): string {
     .slice(0, 100)
 }
 
+/**
+ * Retrieves a list of published recipes based on optional search query, category, region, difficulty, tag, or specific IDs.
+ * Supports pagination (limit, offset) and sorting (popular, quickest, newest).
+ * 
+ * @param {Request} req - The incoming HTTP request.
+ * @returns {Promise<NextResponse>} JSON response containing the list of matched recipes, total count, and hasMore flag.
+ */
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const q = url.searchParams.get("q")
@@ -21,10 +41,29 @@ export async function GET(req: Request) {
   const difficulty = url.searchParams.get("difficulty")
   const tag = url.searchParams.get("tag")
   const sort = url.searchParams.get("sort")
+  const ids = url.searchParams.get("ids")
   const offset = parseInt(url.searchParams.get("offset") || "0")
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "12"), 50)
 
   const filters: Prisma.RecipeWhereInput[] = []
+  
+  if (ids) {
+    const idList = ids.split(",")
+      .map(id => {
+        try {
+          return BigInt(id.trim())
+        } catch {
+          return null
+        }
+      })
+      .filter((id): id is bigint => id !== null)
+    if (idList.length > 0) {
+      filters.push({
+        id: { in: idList }
+      })
+    }
+  }
+
   if (category) {
     if (category === "breakfast") {
       filters.push({

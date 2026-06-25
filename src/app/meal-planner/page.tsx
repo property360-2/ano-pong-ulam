@@ -16,16 +16,15 @@ import {
   MdClose, 
   MdChevronLeft, 
   MdChevronRight, 
-  MdContentCopy, 
   MdStar, 
   MdDelete,
   MdAdd,
   MdVisibility,
-  MdEdit,
   MdLightMode,
   MdWbSunny,
   MdNightsStay,
-  MdCookie
+  MdCookie,
+  MdCheck
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useToast } from "@/lib/toast"
@@ -34,7 +33,7 @@ import { useLanguage } from "@/lib/i18n"
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 const MEALS = ["breakfast", "lunch", "dinner", "snacks"] as const
 
-type DayPlan = { breakfast?: number; lunch?: number; dinner?: number; snacks?: number }
+type DayPlan = { breakfast?: number[]; lunch?: number[]; dinner?: number[]; snacks?: number[] }
 type MealPlanData = Record<string, DayPlan | undefined>
 
 interface RecipeItem {
@@ -72,14 +71,49 @@ export default function MealPlannerPage() {
   const [activeAssignSlot, setActiveAssignSlot] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" | "snacks" } | null>(null)
   
   // Track selected recipe slot details popover
-  const [viewingSlotRecipe, setViewingSlotRecipe] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" | "snacks"; recipe: RecipeItem } | null>(null)
+  const [viewingSlot, setViewingSlot] = useState<{ day: string; meal: "breakfast" | "lunch" | "dinner" | "snacks" } | null>(null)
 
+  /**
+   * Fetches the user's weekly meal plan from the database.
+   * If a saved plan exists, it updates the local state and fetches full recipe details 
+   * (e.g. titles, categories) for all recipe IDs in the plan from the backend, 
+   * ensuring that recipe names display correctly in the planner grid.
+   * 
+   * @returns {Promise<void>} Resolves when the plan and its recipes are loaded.
+   */
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const planRes = await fetch("/api/meal-plans").then((r) => r.json())
-      if (planRes.plan) setPlan(planRes.plan)
-
+      if (planRes.plan) {
+        setPlan(planRes.plan)
+        
+        // Extract all recipe IDs from the meal plan
+        const recipeIds = new Set<number>()
+        Object.values(planRes.plan).forEach((dayPlan: any) => {
+          if (dayPlan) {
+            MEALS.forEach((meal) => {
+              const ids = dayPlan[meal]
+              if (Array.isArray(ids)) {
+                ids.forEach((id: number) => recipeIds.add(Number(id)))
+              } else if (ids) {
+                recipeIds.add(Number(ids))
+              }
+            })
+          }
+        })
+        
+        const idList = Array.from(recipeIds)
+        if (idList.length > 0) {
+          const data = await fetch(`/api/recipes?ids=${idList.join(",")}&limit=50`).then((r) => r.json())
+          const rawList = Array.isArray(data) ? data : (data?.recipes || [])
+          const list = rawList.filter(
+            (r: { title: string; slug: string }) =>
+              !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug)
+          )
+          setRecipes(list)
+        }
+      }
     } catch {
       toast.error("Failed to load planner data")
     } finally {
@@ -138,21 +172,42 @@ export default function MealPlannerPage() {
   }, [activeAssignSlot, searchQuery, toast])
 
   /**
-   * Updates a specific slot in the active schedule.
-   * 
-   * @param {string} day - Day of the week.
-   * @param {"breakfast" | "lunch" | "dinner" | "snacks"} meal - Meal slot.
-   * @param {number|null} recipeId - Recipe ID to assign or null to clear.
+   * Adds a recipe to a meal slot (appends to array).
    */
-  function setSlotRecipe(day: string, meal: "breakfast" | "lunch" | "dinner" | "snacks", recipeId: number | null) {
+  function addRecipeToSlot(day: string, meal: "breakfast" | "lunch" | "dinner" | "snacks", recipeId: number) {
     setPlan((prev) => ({
       ...prev,
       [day]: {
         ...prev[day],
-        [meal]: recipeId ?? undefined,
+        [meal]: [...(prev[day]?.[meal] || []), recipeId],
       },
     }))
-    toast.success(`Updated ${day} ${meal}`)
+  }
+
+  /**
+   * Removes a specific recipe from a meal slot.
+   */
+  function removeRecipeFromSlot(day: string, meal: "breakfast" | "lunch" | "dinner" | "snacks", recipeId: number) {
+    setPlan((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [meal]: (prev[day]?.[meal] || []).filter((id) => id !== recipeId),
+      },
+    }))
+  }
+
+  /**
+   * Clears all recipes from a meal slot.
+   */
+  function clearSlot(day: string, meal: "breakfast" | "lunch" | "dinner" | "snacks") {
+    setPlan((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [meal]: [],
+      },
+    }))
   }
 
   /**
@@ -179,92 +234,140 @@ export default function MealPlannerPage() {
   }
 
   /**
-   * Saves plan as a favorite weekly template in localStorage.
+   * Quick-fills the weekly planner with Filipino classics.
+   * Fetches recipes per-category from the API to ensure all meal types are covered,
+   * then shuffles and assigns them across the week.
+   * 
+   * @returns {Promise<void>} Resolves when the plan is populated.
    */
-  function saveAsFavoriteSet() {
-    localStorage.setItem("fav_meal_plan_template", JSON.stringify(plan))
-    toast.success("Saved as Favorite Weekly Template!")
-  }
+  async function quickFill() {
+    setLoading(true)
+    try {
+      const [allData, breakfastData] = await Promise.all([
+        fetch("/api/recipes?limit=50").then((r) => r.json()),
+        fetch("/api/recipes?category=breakfast&limit=50").then((r) => r.json()),
+      ])
 
-  async function loadFavoriteSet() {
-    const saved = localStorage.getItem("fav_meal_plan_template")
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setPlan(parsed)
-        toast.success("Loaded Favorite Weekly Template!")
-      } catch {
-        toast.error("Could not parse template")
-      }
-      return
-    }
-
-    let currentRecipes = recipes
-    if (currentRecipes.length === 0) {
-      setLoading(true)
-      try {
-        const data = await fetch("/api/recipes?limit=50").then((r) => r.json())
-        const rawList = Array.isArray(data) ? data : (data?.recipes || [])
-        currentRecipes = rawList.filter(
+      const normalize = (data: unknown) => {
+        const list = Array.isArray(data) ? data : ((data as any)?.recipes || [])
+        return list.filter(
           (r: { title: string; slug: string }) =>
             !/asd|123|test/i.test(r.title) && !/asd|123|test/i.test(r.slug)
         )
-        setRecipes(currentRecipes)
-      } catch {
-        toast.error("Failed to load recipes for quick fill")
-        setLoading(false)
+      }
+
+      const allRecipes: RecipeItem[] = normalize(allData)
+      const breakfastExtra: RecipeItem[] = normalize(breakfastData)
+
+      // Merge and deduplicate breakfast recipes
+      const breakfastRecipes = allRecipes
+        .filter(
+          (r) =>
+            r.category.toLowerCase().includes("breakfast") ||
+            r.category.toLowerCase().includes("almusal") ||
+            r.title.toLowerCase().includes("silog")
+        )
+        .concat(breakfastExtra)
+        .filter(
+          (r, i, arr) => arr.findIndex((x) => x.id === r.id) === i
+        )
+
+      const ulamRecipes = allRecipes.filter((r) =>
+        [
+          "ulam", "soup", "vegetable", "gulay", "fiesta", "pampasko",
+          "pasta", "seafood", "chicken", "beef", "pork", "rice",
+          "noodle", "rice bowl",
+        ].some((s) => r.category.toLowerCase().includes(s))
+      )
+
+      const snacksRecipes = allRecipes.filter((r) =>
+        ["merienda", "dessert", "snacks", "drinks", "beverage"].some((s) =>
+          r.category.toLowerCase().includes(s)
+        )
+      )
+
+      // Merge all loaded recipes (general list + breakfast extra) into the state
+      const combinedRecipes = [...allRecipes, ...breakfastExtra].filter(
+        (r, i, arr) => arr.findIndex((x) => x.id === r.id) === i
+      )
+      setRecipes(combinedRecipes)
+
+      function shuffleArray<T>(arr: T[]): T[] {
+        const shuffled = [...arr]
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+        return shuffled
+      }
+
+      const shuffledUlam = shuffleArray(ulamRecipes)
+      const shuffledBreakfast = shuffleArray(breakfastRecipes)
+      const shuffledSnacks = shuffleArray(snacksRecipes)
+
+      if (ulamRecipes.length === 0 && breakfastRecipes.length === 0 && snacksRecipes.length === 0) {
+        if (allRecipes.length > 0) {
+          const shuffled = shuffleArray(allRecipes)
+          const fallbackSet: MealPlanData = {}
+          DAYS.forEach((day, i) => {
+            fallbackSet[day] = {
+              breakfast: [shuffled[i % shuffled.length].id],
+              lunch: [shuffled[(i + 1) % shuffled.length].id],
+              dinner: [shuffled[(i + 2) % shuffled.length].id],
+              snacks: [shuffled[(i + 3) % shuffled.length].id],
+            }
+          })
+          setPlan(fallbackSet)
+          toast.success("Quick-Filled with Filipino Classics!")
+          return
+        }
+        toast.error("No recipes available to quick fill")
         return
       }
+
+      const defaultSet: MealPlanData = {}
+      DAYS.forEach((day, i) => {
+        const breakfastItems: number[] = []
+        const lunchItems: number[] = []
+        const dinnerItems: number[] = []
+        const snacksItems: number[] = []
+
+        if (shuffledBreakfast.length > 0) {
+          breakfastItems.push(shuffledBreakfast[i % shuffledBreakfast.length].id)
+          if (shuffledBreakfast.length > 1) {
+            breakfastItems.push(shuffledBreakfast[(i + 1) % shuffledBreakfast.length].id)
+          }
+        }
+
+        if (shuffledUlam.length > 0) {
+          lunchItems.push(shuffledUlam[i % shuffledUlam.length].id)
+        }
+
+        if (shuffledUlam.length > 1) {
+          const dinnerOffset = Math.floor(shuffledUlam.length / 2)
+          dinnerItems.push(shuffledUlam[(i + dinnerOffset) % shuffledUlam.length].id)
+        } else if (shuffledUlam.length === 1) {
+          dinnerItems.push(shuffledUlam[0].id)
+        }
+
+        if (shuffledSnacks.length > 0) {
+          snacksItems.push(shuffledSnacks[i % shuffledSnacks.length].id)
+        }
+
+        defaultSet[day] = {
+          breakfast: breakfastItems.length > 0 ? breakfastItems : undefined,
+          lunch: lunchItems.length > 0 ? lunchItems : undefined,
+          dinner: dinnerItems.length > 0 ? dinnerItems : undefined,
+          snacks: snacksItems.length > 0 ? snacksItems : undefined,
+        }
+      })
+      setPlan(defaultSet)
+      toast.success("Quick-Filled with Filipino Classics!")
+    } catch {
+      toast.error("Failed to load recipes for quick fill")
+    } finally {
       setLoading(false)
     }
-
-    const defaultSet: MealPlanData = {}
-    const ulamRecipes = currentRecipes.filter(r => r.category.toLowerCase().includes("ulam"))
-    const breakfastRecipes = currentRecipes.filter(r => 
-      r.category.toLowerCase().includes("breakfast") || 
-      r.category.toLowerCase().includes("almusal") || 
-      r.title.toLowerCase().includes("silog")
-    )
-    const snacksRecipes = currentRecipes.filter(r => 
-      r.category.toLowerCase().includes("merienda") || 
-      r.category.toLowerCase().includes("dessert") ||
-      r.category.toLowerCase().includes("condiment")
-    )
-
-    const sinigang = currentRecipes.find((r) => r.title.toLowerCase().includes("sinigang"))?.id 
-      || ulamRecipes[0]?.id 
-      || currentRecipes[0]?.id
-
-    const adobo = currentRecipes.find((r) => r.title.toLowerCase().includes("adobo"))?.id 
-      || ulamRecipes[1]?.id 
-      || ulamRecipes[0]?.id 
-      || currentRecipes[0]?.id
-
-    const tapsilog = currentRecipes.find((r) => r.title.toLowerCase().includes("tapsilog"))?.id 
-      || breakfastRecipes[0]?.id 
-      || currentRecipes[2]?.id 
-      || currentRecipes[0]?.id
-
-    const haloHalo = currentRecipes.find((r) => r.title.toLowerCase().includes("halo-halo") || r.title.toLowerCase().includes("halohalo"))?.id 
-      || snacksRecipes[0]?.id 
-      || currentRecipes[3]?.id 
-      || currentRecipes[0]?.id
-
-    if (!sinigang && !adobo && !tapsilog) {
-      toast.error("No recipes available to quick fill")
-      return
-    }
-
-    DAYS.forEach((day) => {
-      defaultSet[day] = {
-        breakfast: tapsilog,
-        lunch: sinigang,
-        dinner: adobo,
-        snacks: haloHalo,
-      }
-    })
-    setPlan(defaultSet)
-    toast.success("Quick-Filled with Filipino Classics!")
   }
 
   /**
@@ -344,22 +447,13 @@ export default function MealPlannerPage() {
           </div>
           
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
-            <div className="flex gap-2 flex-1 sm:flex-initial">
-              <button
-                onClick={loadFavoriteSet}
-                className="flex-1 flex items-center justify-center gap-1.5 text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 active:scale-[0.98] px-3.5 py-2.5 rounded-xl transition-all font-semibold border border-stone-200/40 shadow-sm cursor-pointer"
-              >
-                <MdStar className="text-amber-500 text-base" />
-                {t("meal.quick_fill")}
-              </button>
-              <button
-                onClick={saveAsFavoriteSet}
-                className="flex-1 flex items-center justify-center gap-1.5 text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 active:scale-[0.98] px-3.5 py-2.5 rounded-xl transition-all font-semibold border border-stone-200/40 shadow-sm cursor-pointer"
-              >
-                <MdContentCopy className="text-stone-500 text-base" />
-                {t("meal.save_template")}
-              </button>
-            </div>
+            <button
+              onClick={quickFill}
+              className="flex items-center justify-center gap-1.5 text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 active:scale-[0.98] px-3.5 py-2.5 rounded-xl transition-all font-semibold border border-stone-200/40 shadow-sm cursor-pointer"
+            >
+              <MdStar className="text-amber-500 text-base" />
+              {t("meal.quick_fill")}
+            </button>
             <button
               onClick={handleSave}
               disabled={saving}
@@ -396,8 +490,10 @@ export default function MealPlannerPage() {
           <div className="md:hidden bg-white rounded-2xl border border-stone-200 p-5 space-y-4">
             <h2 className="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">{t(`common.day.${activeMobileDay.toLowerCase()}`)}{t("meal.menu_suffix")}</h2>
             {MEALS.map((meal) => {
-              const recipeId = plan[activeMobileDay]?.[meal]
-              const recipe = recipes.find(r => String(r.id) === String(recipeId))
+              const recipeIds = plan[activeMobileDay]?.[meal] || []
+              const slotRecipes = recipeIds.map(id => recipes.find(r => r.id === id)).filter(Boolean) as RecipeItem[]
+              const firstRecipe = slotRecipes[0]
+              const remainingCount = slotRecipes.length - 1
               const mealIcon = meal === "breakfast" 
                 ? <MdLightMode className="text-amber-500 text-sm flex-shrink-0" />
                 : meal === "lunch"
@@ -410,15 +506,15 @@ export default function MealPlannerPage() {
                 <div 
                   key={meal} 
                   onClick={() => {
-                    if (recipe) {
-                      setViewingSlotRecipe({ day: activeMobileDay, meal, recipe })
+                    if (slotRecipes.length > 0) {
+                      setViewingSlot({ day: activeMobileDay, meal })
                     } else {
                       setSearchQuery("")
                       setActiveAssignSlot({ day: activeMobileDay, meal })
                     }
                   }}
                   className={`group relative flex flex-col p-4 rounded-xl transition-all cursor-pointer border ${
-                    recipe 
+                    slotRecipes.length > 0
                       ? "border-stone-200 bg-white hover:border-amber-300 hover:bg-stone-50/30" 
                       : "border-dashed border-2 border-stone-200/80 bg-stone-50/40 hover:bg-stone-50/80 hover:border-amber-300"
                   }`}
@@ -428,11 +524,11 @@ export default function MealPlannerPage() {
                       {mealIcon}
                       {t(`common.meal.${meal}`)}
                     </span>
-                    {recipe && (
+                    {slotRecipes.length > 0 && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setSlotRecipe(activeMobileDay, meal, null)
+                          clearSlot(activeMobileDay, meal)
                         }}
                         className="text-stone-400 hover:text-red-600 p-1 transition-colors"
                         title={t("common.remove_recipe")}
@@ -442,12 +538,18 @@ export default function MealPlannerPage() {
                     )}
                   </div>
                   
-                  {recipe ? (
+                  {slotRecipes.length > 0 ? (
                     <div>
-                      <p className="font-bold text-stone-900 leading-tight">{recipe.title}</p>
-                      <span className="inline-block text-[10px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-2">
-                        {recipe.category}
-                      </span>
+                      <p className="font-bold text-stone-900 leading-tight">{firstRecipe?.title}</p>
+                      {slotRecipes.length === 1 ? (
+                        <span className="inline-block text-[10px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-2">
+                          {firstRecipe?.category}
+                        </span>
+                      ) : (
+                        <span className="inline-block text-[10px] font-bold text-amber-600 mt-1">
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 text-stone-500 font-semibold text-xs py-1">
@@ -475,8 +577,10 @@ export default function MealPlannerPage() {
                   
                   <div className="col-span-4 grid grid-cols-4 gap-4">
                     {MEALS.map((meal) => {
-                      const recipeId = plan[day]?.[meal]
-                      const recipe = recipes.find(r => String(r.id) === String(recipeId))
+                      const recipeIds = plan[day]?.[meal] || []
+                      const slotRecipes = recipeIds.map(id => recipes.find(r => r.id === id)).filter(Boolean) as RecipeItem[]
+                      const firstRecipe = slotRecipes[0]
+                      const remainingCount = slotRecipes.length - 1
                       const mealIcon = meal === "breakfast" 
                         ? <MdLightMode className="text-amber-500 text-[10px] flex-shrink-0" />
                         : meal === "lunch"
@@ -489,15 +593,15 @@ export default function MealPlannerPage() {
                         <div
                           key={meal}
                           onClick={() => {
-                            if (recipe) {
-                              setViewingSlotRecipe({ day, meal, recipe })
+                            if (slotRecipes.length > 0) {
+                              setViewingSlot({ day, meal })
                             } else {
                               setSearchQuery("")
                               setActiveAssignSlot({ day, meal })
                             }
                           }}
                           className={`group relative p-3 rounded-xl transition-all cursor-pointer min-h-[90px] flex flex-col justify-between border ${
-                            recipe 
+                            slotRecipes.length > 0
                               ? "border-stone-200 bg-white hover:border-amber-300 hover:bg-stone-50/30" 
                               : "border-dashed border-2 border-stone-200/80 bg-stone-50/40 hover:bg-stone-50/80 hover:border-amber-300"
                           }`}
@@ -508,11 +612,11 @@ export default function MealPlannerPage() {
                                 {mealIcon}
                                 {t(`common.meal.${meal}`)}
                               </span>
-                              {recipe && (
+                              {slotRecipes.length > 0 && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    setSlotRecipe(day, meal, null)
+                                    clearSlot(day, meal)
                                   }}
                                   className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 transition-opacity p-0.5"
                                   title={t("common.remove_recipe")}
@@ -521,20 +625,23 @@ export default function MealPlannerPage() {
                                 </button>
                               )}
                             </div>
-                            {recipe ? (
-                              <p className="font-semibold text-stone-850 text-sm leading-snug line-clamp-2">{recipe.title}</p>
+                            {slotRecipes.length > 0 ? (
+                              <div>
+                                <p className="font-semibold text-stone-850 text-sm leading-snug line-clamp-2">{firstRecipe?.title}</p>
+                                {slotRecipes.length > 1 ? (
+                                  <span className="text-[10px] font-bold text-amber-600">+{remainingCount} more</span>
+                                ) : (
+                                  <span className="self-start text-[9px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-1.5 inline-block">
+                                    {firstRecipe?.category}
+                                  </span>
+                                )}
+                              </div>
                             ) : (
                               <div className="flex items-center gap-1 text-stone-500 font-semibold text-[11px] py-1">
                                 <MdAdd className="text-stone-400 text-sm" /> {t("meal.click_to_choose")}
                               </div>
                             )}
                           </div>
-                          
-                          {recipe && (
-                            <span className="self-start text-[9px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 mt-1.5">
-                              {recipe.category}
-                            </span>
-                          )}
                         </div>
                       )
                     })}
@@ -595,6 +702,34 @@ export default function MealPlannerPage() {
                 ))}
               </div>
 
+              {/* Currently assigned recipes in modal */}
+              {(() => {
+                const assignedIds = plan[activeAssignSlot.day]?.[activeAssignSlot.meal] || []
+                const assigned = assignedIds.map(id => recipes.find(r => r.id === id)).filter(Boolean) as RecipeItem[]
+                if (assigned.length === 0) return null
+                return (
+                  <div className="mb-3">
+                    <p className="text-[10px] uppercase font-bold text-stone-400 mb-1.5">Assigned:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {assigned.map(r => (
+                        <span key={r.id} className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-100 text-amber-800 rounded-full px-2.5 py-1">
+                          {r.title}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              removeRecipeFromSlot(activeAssignSlot.day, activeAssignSlot.meal, r.id)
+                            }}
+                            className="ml-0.5 text-amber-600 hover:text-red-600"
+                          >
+                            <MdClose className="text-sm" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
+
               {/* Scrollable list inside Modal */}
               <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">
                 {recipesLoading ? (
@@ -604,84 +739,109 @@ export default function MealPlannerPage() {
                 ) : filteredRecipes.length === 0 ? (
                   <p className="text-sm text-stone-400 italic text-center py-8">{t("meal.no_recipes")}</p>
                 ) : (
-                  filteredRecipes.map((recipe) => (
-                    <div
-                      key={recipe.id}
-                      onClick={() => {
-                        setSlotRecipe(activeAssignSlot.day, activeAssignSlot.meal, recipe.id)
-                        setActiveAssignSlot(null)
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-stone-200 hover:border-amber-300 hover:bg-stone-50/40 text-left transition-all cursor-pointer group bg-white shadow-sm"
-                    >
-                      <div className="min-w-0 flex-1 mr-2">
-                        <p className="font-semibold text-sm text-stone-850 truncate group-hover:text-amber-700">{recipe.title}</p>
-                        <span className="text-[10px] uppercase font-bold text-stone-400">{recipe.category}</span>
+                  filteredRecipes.map((recipe) => {
+                    const assignedIds = plan[activeAssignSlot.day]?.[activeAssignSlot.meal] || []
+                    const isAssigned = assignedIds.includes(recipe.id)
+                    return (
+                      <div
+                        key={recipe.id}
+                        onClick={() => {
+                          if (!isAssigned) {
+                            addRecipeToSlot(activeAssignSlot.day, activeAssignSlot.meal, recipe.id)
+                          }
+                        }}
+                        className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer group bg-white shadow-sm ${
+                          isAssigned
+                            ? "border-amber-300 bg-amber-50/50 opacity-60 cursor-default"
+                            : "border-stone-200 hover:border-amber-300 hover:bg-stone-50/40"
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1 mr-2">
+                          <p className="font-semibold text-sm text-stone-850 truncate group-hover:text-amber-700">{recipe.title}</p>
+                          <span className="text-[10px] uppercase font-bold text-stone-400">{recipe.category}</span>
+                        </div>
+                        {isAssigned ? (
+                          <MdCheck className="text-amber-600 text-base" />
+                        ) : (
+                          <MdAdd className="text-amber-600 text-base opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
                       </div>
-                      <span className="text-xs text-amber-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">{t("meal.select")}</span>
-                    </div>
-                  ))
+                    )
+                  })
                 )}
               </div>
             </div>
           </div>
         )}
 
-        {/* Slot Detail Actions Dialog (View, Edit, Delete) */}
-        {viewingSlotRecipe && (
+        {/* Slot Detail Actions Dialog (View all recipes in slot) */}
+        {viewingSlot && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-            <div className="bg-white rounded-2xl border border-stone-200 max-w-sm w-full p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-150">
+            <div className="bg-white rounded-2xl border border-stone-200 max-w-sm w-full p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-150 max-h-[80vh] flex flex-col">
               <button 
-                onClick={() => setViewingSlotRecipe(null)}
+                onClick={() => setViewingSlot(null)}
                 className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 rounded-full hover:bg-stone-100"
               >
                 <MdClose className="text-xl" />
               </button>
               
-              <h3 className="font-bold text-xs uppercase tracking-wider text-amber-700 bg-amber-100 self-start px-2 py-0.5 rounded mb-3 inline-block">
-                {viewingSlotRecipe.recipe.category}
-              </h3>
-              
-              <h2 className="font-extrabold text-2xl text-stone-900 leading-tight mb-1">
-                {viewingSlotRecipe.recipe.title}
-              </h2>
-              
-              <p className="text-xs text-stone-500 mb-6 font-medium capitalize">
-                {t("meal.scheduled_for")} {viewingSlotRecipe.day} • {t(`common.meal.${viewingSlotRecipe.meal}`)}
+              <p className="text-xs text-stone-500 mb-4 font-medium capitalize">
+                {t("meal.scheduled_for")} {viewingSlot.day} • {t(`common.meal.${viewingSlot.meal}`)}
               </p>
 
-              <div className="flex flex-col gap-2.5">
-                <Link
-                  href={`/recipes/${viewingSlotRecipe.recipe.slug}`}
-                  target="_blank"
-                  className="flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 text-white text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-sm"
-                >
-                  <MdVisibility className="text-lg" />
-                  {t("meal.view_details")}
-                </Link>
+              {(() => {
+                const recipeIds = plan[viewingSlot.day]?.[viewingSlot.meal] || []
+                const slotRecipes = recipeIds.map(id => recipes.find(r => r.id === id)).filter(Boolean) as RecipeItem[]
+                
+                if (slotRecipes.length === 0) {
+                  return <p className="text-sm text-stone-400 italic text-center py-8">No recipes assigned</p>
+                }
 
+                return (
+                  <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                    {slotRecipes.map((r) => (
+                      <div key={r.id} className="border border-stone-200 rounded-xl p-4">
+                        <span className="text-[10px] uppercase font-bold text-amber-700 bg-amber-100/70 rounded px-1.5 py-0.5 inline-block mb-2">
+                          {r.category}
+                        </span>
+                        <h3 className="font-bold text-stone-900">{r.title}</h3>
+                        <div className="flex gap-2 mt-3">
+                          <Link
+                            href={`/recipes/${r.slug}`}
+                            target="_blank"
+                            className="flex-1 flex items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold py-2 px-3 rounded-xl transition-all"
+                          >
+                            <MdVisibility className="text-sm" />
+                            View
+                          </Link>
+                          <button
+                            onClick={() => {
+                              removeRecipeFromSlot(viewingSlot.day, viewingSlot.meal, r.id)
+                            }}
+                            className="flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-2 px-3 rounded-xl transition-all"
+                          >
+                            <MdDelete className="text-sm" />
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
+
+              <div className="mt-4 pt-3 border-t border-stone-100">
                 <button
                   onClick={() => {
-                    const { day, meal } = viewingSlotRecipe
-                    setViewingSlotRecipe(null)
+                    const { day, meal } = viewingSlot
+                    setViewingSlot(null)
                     setSearchQuery("")
                     setActiveAssignSlot({ day, meal })
                   }}
-                  className="flex items-center justify-center gap-2 border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
+                  className="w-full flex items-center justify-center gap-2 border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
                 >
-                  <MdEdit className="text-lg text-stone-500" />
-                  {t("meal.change_recipe")}
-                </button>
-
-                <button
-                  onClick={() => {
-                    const { day, meal } = viewingSlotRecipe
-                    setSlotRecipe(day, meal, null)
-                    setViewingSlotRecipe(null)
-                  }}
-                  className="flex items-center justify-center gap-2 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-semibold py-3 px-4 rounded-xl transition-all"
-                >
-                  <MdDelete className="text-lg text-red-500" />
-                  {t("meal.remove_recipe")}
+                  <MdAdd className="text-lg text-stone-500" />
+                  Add Recipe
                 </button>
               </div>
             </div>

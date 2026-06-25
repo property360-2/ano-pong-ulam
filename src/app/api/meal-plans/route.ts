@@ -50,8 +50,16 @@ export async function POST(req: Request) {
           if (!validMeals.includes(meal)) {
             return NextResponse.json({ error: `Invalid meal: ${meal}` }, { status: 400 })
           }
-          if (value !== undefined && value !== null && typeof value !== "number") {
-            return NextResponse.json({ error: `Invalid recipe ID for ${day} ${meal}` }, { status: 400 })
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              for (const id of value) {
+                if (typeof id !== "number") {
+                  return NextResponse.json({ error: `Invalid recipe ID in array for ${day} ${meal}` }, { status: 400 })
+                }
+              }
+            } else if (typeof value !== "number") {
+              return NextResponse.json({ error: `Invalid recipe ID for ${day} ${meal}` }, { status: 400 })
+            }
           }
         }
       }

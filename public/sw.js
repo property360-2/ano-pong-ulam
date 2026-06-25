@@ -9,14 +9,13 @@
  *
  * Bump CACHE_VERSION to force a clean install on returning users after strategy changes.
  */
-var CACHE_VERSION = "v1"
+var CACHE_VERSION = "v2"
 var STATIC_CACHE = "ano-pong-ulam-static-" + CACHE_VERSION
 var IMAGE_CACHE = "ano-pong-ulam-images-" + CACHE_VERSION
 var API_CACHE = "ano-pong-ulam-api-" + CACHE_VERSION
 
 var PRECACHE_URLS = [
-  "/",
-  "/recipes",
+  "/offline.html",
   "/manifest.json",
   "/icon.svg",
 ]
@@ -66,6 +65,19 @@ self.addEventListener("fetch", function (event) {
 
   // Skip non-GET requests
   if (request.method !== "GET") return
+
+  // Navigation requests — serve offline.html on failure
+  // Must check accept header to avoid intercepting RSC fetches (which expect JSON)
+  var acceptHeader = request.headers.get("accept") || ""
+  var isNavigation = request.mode === "navigate" || acceptHeader.indexOf("text/html") !== -1
+  if (isNavigation) {
+    event.respondWith(
+      fetch(request).catch(function () {
+        return caches.match("/offline.html")
+      })
+    )
+    return
+  }
 
   // Supabase images — CacheFirst
   if (
@@ -124,6 +136,13 @@ function networkFirst(request, cacheName, maxAgeSeconds) {
     })
   })
 }
+
+// Listen for skip waiting message from the client
+self.addEventListener("message", function (event) {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting()
+  }
+})
 
 // StaleWhileRevalidate: return cached, update in background
 function staleWhileRevalidate(request, cacheName) {
