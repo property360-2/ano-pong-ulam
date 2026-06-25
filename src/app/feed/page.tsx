@@ -17,7 +17,7 @@ import Image from "next/image"
 import { 
   MdFavorite, 
   MdRssFeed, 
-  MdLocalFireDepartment, 
+  MdShuffle, 
   MdArrowForward,
   MdRestaurantMenu,
 } from "react-icons/md"
@@ -70,17 +70,17 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false)
 
   /**
-   * Fetches popular recipes for the top horizontal highlights container.
+   * Fetches random recipes for the top horizontal highlights container.
    */
   const fetchTrending = useCallback(async () => {
     try {
-      const res = await fetch("/api/recipes?sort=popular&limit=6")
+      const res = await fetch("/api/recipes?sort=random&limit=8")
       if (res.ok) {
         const data = await res.json()
         setTrending(data.recipes || [])
       }
     } catch (err) {
-      console.error("Failed to load trending recipes:", err)
+      console.error("Failed to load random recipes:", err)
     }
   }, [])
 
@@ -192,7 +192,7 @@ export default function FeedPage() {
         {trending.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-1 mb-2 text-stone-700">
-              <MdLocalFireDepartment className="text-amber-500 text-lg animate-pulse" />
+              <MdShuffle className="text-stone-500 text-lg" />
               <h2 className="font-extrabold text-[11px] uppercase tracking-wider">{t("feed.trending")}</h2>
             </div>
             

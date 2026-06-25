@@ -207,6 +207,13 @@ export default async function RecipeDetailPage(props: { params: Params }) {
             </div>
           )}
 
+          {recipe.heroImage && (
+            <p className="text-xs text-stone-400 text-center px-4 py-2 leading-relaxed border-b border-stone-100">
+              This image is for illustration purposes only and may differ from the actual cooked dish.
+              Upload your own recipe and photos to help the community discover authentic Filipino cooking.
+            </p>
+          )}
+
           <div className="p-6 md:p-8">
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg capitalize border border-amber-200/50">

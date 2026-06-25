@@ -107,6 +107,35 @@ export async function GET(req: Request) {
   const where: Prisma.RecipeWhereInput = { isPublished: true }
   if (filters.length > 0) where.AND = filters
 
+  if (sort === "random") {
+    const ids = await prisma.recipe.findMany({
+      where,
+      select: { id: true },
+    })
+    const shuffled = [...ids]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    const selectedIds = shuffled.slice(0, limit).map(r => r.id)
+
+    const recipes = await prisma.recipe.findMany({
+      where: { id: { in: selectedIds } },
+      include: { author: { select: { username: true } } },
+    })
+
+    const recipeMap = new Map(recipes.map(r => [Number(r.id), r]))
+    const ordered = selectedIds
+      .map(id => recipeMap.get(Number(id)))
+      .filter((r): r is NonNullable<typeof r> => r != null)
+
+    return NextResponse.json({
+      recipes: ordered.map((r) => ({ ...r, id: Number(r.id) })),
+      total: ids.length,
+      hasMore: false,
+    })
+  }
+
   let orderBy: Prisma.RecipeOrderByWithRelationInput = { createdAt: "desc" }
   if (sort === "popular") orderBy = { likes: { _count: "desc" } }
   else if (sort === "quickest") orderBy = { cookTime: "asc" }
