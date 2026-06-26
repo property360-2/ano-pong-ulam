@@ -5,12 +5,19 @@ import type { ReactNode } from "react"
 import en from "@/locales/en.json"
 import taglish from "@/locales/taglish.json"
 
+/**
+ * i18n Translation & Localization Provider
+ * Purpose: Handles dictionary lookup, current language state, and translation hooks.
+ * What it contains: LanguageProvider, useLanguage, and translation functions.
+ * How it fits: Wrapped around the root of the app to allow multi-language support.
+ */
+
 type Language = "en" | "taglish"
 type Dict = Record<string, string>
 
 const DICTIONARIES: Record<Language, Dict> = { en, taglish }
 
-const DEFAULT_LANGUAGE: Language = "taglish"
+const DEFAULT_LANGUAGE: Language = "en"
 
 const STORAGE_KEY = "lang"
 

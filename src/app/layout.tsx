@@ -1,3 +1,10 @@
+/**
+ * Root Layout Component
+ * Purpose: Defines the HTML wrapper, global font variables, metadata, and body shell.
+ * What it contains: RootLayout, metadata configuration, and providers wrapping.
+ * How it fits: The entry layout for the entire Next.js application.
+ */
+
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import Providers from "@/components/Providers"
@@ -43,6 +50,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
+/**
+ * RootLayout renders the base HTML skeleton.
+ * @param children The page component to render inside the layout.
+ * @returns Renders the HTML structure.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,7 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="fil"
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-stone-50 text-stone-900">
