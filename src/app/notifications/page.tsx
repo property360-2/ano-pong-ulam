@@ -7,7 +7,7 @@
  * Supports marking all as read, and tab filtering between all or unread notifications.
  */
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { MdLock, MdArrowBack, MdCheck, MdFavorite, MdChat, MdPersonAdd, MdBookmark, MdNotifications } from "react-icons/md"
@@ -95,19 +95,28 @@ export default function NotificationsPage() {
    * 
    * @returns {Promise<void>} Resolves when notifications are marked read.
    */
+  const [optimisticNotifications, addOptimisticNotifications] = useOptimistic(
+    notifications,
+    (state, action: Notification[]) => action
+  )
+  const [, startTransition] = useTransition()
+
   async function markAllRead() {
-    try {
-      await fetch("/api/notifications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ markAll: true }),
-      })
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
-      setUnreadCount(0)
-      toast.success("All notifications marked as read")
-    } catch {
-      toast.error("Failed to mark as read")
-    }
+    startTransition(async () => {
+      addOptimisticNotifications(notifications.map((n) => ({ ...n, isRead: true })))
+      try {
+        await fetch("/api/notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ markAll: true }),
+        })
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+        setUnreadCount(0)
+        toast.success("All notifications marked as read")
+      } catch {
+        toast.error("Failed to mark as read")
+      }
+    })
   }
 
   if (!session) {
@@ -170,7 +179,7 @@ export default function NotificationsPage() {
 
         {loading ? (
           <p className="text-stone-400 text-center py-12">Loading notifications...</p>
-        ) : notifications.length === 0 ? (
+        ) : optimisticNotifications.length === 0 ? (
           <div className="text-center py-12">
             <MdNotifications className="text-5xl text-stone-300 mx-auto mb-3" />
             <p className="text-stone-400">

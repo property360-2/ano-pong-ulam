@@ -20,6 +20,7 @@ import {
   MdShuffle, 
   MdArrowForward,
   MdRestaurantMenu,
+  MdChat,
 } from "react-icons/md"
 import Header from "@/components/Header"
 import { useLanguage } from "@/lib/i18n"
@@ -37,7 +38,7 @@ interface FeedRecipe {
   heroImage: string | null
   category?: string
   difficulty?: string
-  _count?: { likes: number }
+  _count?: { likes: number; comments: number }
 }
 
 interface FeedActivity {
@@ -50,6 +51,55 @@ interface FeedActivity {
   recipe: FeedRecipe | null
   user: FeedUser | null
   targetUser: FeedUser | null
+}
+
+interface AggregatedActivity {
+  id: string
+  recipe: FeedRecipe
+  actions: { user: FeedUser; type: string; createdAt: string }[]
+  latestCreatedAt: string
+}
+
+/**
+ * Aggregates feed activities, grouping likes/comments on the same recipe
+ * within a 24-hour window, and entirely removing follow actions.
+ * 
+ * @param {FeedActivity[]} activities Raw list of activities from backend.
+ * @returns {AggregatedActivity[]} Grouped recipe activities.
+ */
+function aggregateFeed(activities: FeedActivity[]): AggregatedActivity[] {
+  const result: AggregatedActivity[] = []
+  const recipeGroups: Record<string, { recipe: FeedRecipe; actions: { user: FeedUser; type: string; createdAt: string }[]; lastTime: Date }> = {}
+  const timeWindowMs = 24 * 60 * 60 * 1000 // 24 hours
+
+  for (const act of activities) {
+    if (act.type === "follow" || !act.recipe || !act.user) continue
+
+    const actTime = new Date(act.createdAt)
+    const recipeSlug = act.recipe.slug
+    const existing = recipeGroups[recipeSlug]
+
+    if (existing && (existing.lastTime.getTime() - actTime.getTime() < timeWindowMs)) {
+      const hasAction = existing.actions.some(a => a.user.id === act.user!.id && a.type === act.type)
+      if (!hasAction) {
+        existing.actions.push({ user: act.user, type: act.type, createdAt: act.createdAt })
+      }
+    } else {
+      recipeGroups[recipeSlug] = {
+        recipe: act.recipe,
+        actions: [{ user: act.user, type: act.type, createdAt: act.createdAt }],
+        lastTime: actTime
+      }
+      result.push({
+        id: `recipe-group-${act.id}`,
+        recipe: act.recipe,
+        actions: recipeGroups[recipeSlug].actions,
+        latestCreatedAt: act.createdAt
+      })
+    }
+  }
+
+  return result
 }
 
 /**
@@ -189,47 +239,53 @@ export default function FeedPage() {
       <main className="flex-1 max-w-lg w-full mx-auto px-4 py-6">
         
         {/* Compact Story-Style Horizontal Scroll Highlights */}
-        {trending.length > 0 && (
-          <div className="mb-6">
-            <div className="flex items-center gap-1 mb-2 text-stone-700">
-              <MdShuffle className="text-stone-500 text-lg" />
-              <h2 className="font-extrabold text-[11px] uppercase tracking-wider">{t("feed.trending")}</h2>
-            </div>
-            
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 snap-x">
-              {trending.map((recipe) => (
-                <Link 
-                  key={recipe.slug} 
-                  href={`/recipes/${recipe.slug}`}
-                  className="flex-shrink-0 w-36 h-24 relative bg-stone-900 rounded-xl overflow-hidden hover:opacity-90 snap-start shadow-sm border border-stone-200"
-                >
-                  {recipe.heroImage ? (
-                    <Image
-                      src={recipe.heroImage}
-                      alt={recipe.title}
-                      fill
-                      sizes="150px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-red-200 bg-gradient-to-br from-red-800 to-red-950">
-                      <MdRestaurantMenu className="text-2xl" />
+        {(() => {
+          const visibleTrending = trending.filter(
+            (recipe) => !activities.some((act) => act.recipe?.slug === recipe.slug)
+          )
+          if (visibleTrending.length === 0) return null
+          return (
+            <div className="mb-6">
+              <div className="flex items-center gap-1 mb-2 text-stone-700">
+                <MdShuffle className="text-stone-500 text-lg" />
+                <h2 className="font-extrabold text-[11px] uppercase tracking-wider">{t("feed.trending")}</h2>
+              </div>
+              
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 snap-x">
+                {visibleTrending.map((recipe) => (
+                  <Link 
+                    key={recipe.slug} 
+                    href={`/recipes/${recipe.slug}`}
+                    className="flex-shrink-0 w-36 h-24 relative bg-stone-900 rounded-xl overflow-hidden hover:opacity-90 snap-start shadow-sm border border-stone-200"
+                  >
+                    {recipe.heroImage ? (
+                      <Image
+                        src={recipe.heroImage}
+                        alt={recipe.title}
+                        fill
+                        sizes="150px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-red-200 bg-gradient-to-br from-red-800 to-red-950">
+                        <MdRestaurantMenu className="text-2xl" />
+                      </div>
+                    )}
+                    {/* Subtle Dark Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    
+                    {/* Recipe Name Overlay */}
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-[11px] font-extrabold text-white line-clamp-2 leading-tight">
+                        {recipe.title}
+                      </p>
                     </div>
-                  )}
-                  {/* Subtle Dark Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  
-                  {/* Recipe Name Overlay */}
-                  <div className="absolute bottom-2 left-2 right-2">
-                    <p className="text-[11px] font-extrabold text-white line-clamp-2 leading-tight">
-                      {recipe.title}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* Tab Selector */}
         <div className="flex border-b border-stone-200 mb-5 gap-6">
@@ -286,128 +342,130 @@ export default function FeedPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            {activities.map((activity) => {
-              const actUser = activity.user
-              const displayName = actUser?.displayName || actUser?.username || "Someone"
-              const userAvatarLetter = displayName[0]?.toUpperCase()
+            {aggregateFeed(activities).map((activity) => {
+              const recipe = activity.recipe
+              const uniqueUsers = Array.from(new Map(activity.actions.map(a => [a.user.id, a.user])).values())
+              const userNames = uniqueUsers.map(u => u.displayName || u.username)
 
-              // Follow Activity View
-              if (activity.type === "follow" && activity.targetUser) {
-                return (
-                  <div 
-                    key={activity.id} 
-                    className="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between shadow-sm"
-                  >
-                    <div className="flex items-center gap-3">
-                      {/* Actor Avatar */}
-                      <Link href={`/u/${actUser?.username || ""}`}>
-                        <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-sm font-bold text-amber-700 overflow-hidden relative border border-amber-200">
-                          {actUser?.avatarUrl ? (
-                            <Image src={actUser.avatarUrl} alt="" fill sizes="36px" className="object-cover" />
-                          ) : (
-                            userAvatarLetter
-                          )}
-                        </div>
-                      </Link>
-                      
-                      <div className="text-xs">
-                        <p className="text-stone-700">
-                          <Link href={`/u/${actUser?.username || ""}`} className="font-extrabold hover:underline">
-                            {displayName}
-                          </Link>{" "}
-                          followed{" "}
-                          {/* NOTE: "followed" is not translated — it's part of dynamic activity text */}
-                          <Link href={`/u/${activity.targetUser.username}`} className="font-extrabold text-blue-650 hover:underline">
-                            @{activity.targetUser.username}
-                          </Link>
-                        </p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">{formatRelativeTime(activity.createdAt)}</p>
-                      </div>
-                    </div>
-                    
-                    <Link
-                      href={`/u/${activity.targetUser.username}`}
-                      className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-extrabold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-0.5"
-                    >
-                      {t("feed.profile_link")} <MdArrowForward />
-                    </Link>
-                  </div>
-                )
+              const isTaglish = t("feed.recommended_this").trim() === "inirekomenda ito"
+              const actionTypes = Array.from(new Set(activity.actions.map(a => a.type)))
+              const hasLike = actionTypes.includes("like")
+              const hasComment = actionTypes.includes("comment")
+
+              let actionSuffix = ""
+              if (hasLike && hasComment) {
+                actionSuffix = isTaglish ? " inirekomenda at nirebyu ito" : " recommended & reviewed this"
+              } else if (hasLike) {
+                actionSuffix = t("feed.recommended_this")
+              } else {
+                actionSuffix = t("feed.reviewed_this")
               }
 
-              // Visual-First Recipe Activities (Like, Comment)
-              if (activity.recipe) {
-                return (
-                  <Link key={activity.id} href={`/recipes/${activity.recipe.slug}`}>
-                    <div className="group relative w-full h-64 rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-card hover:border-amber-300/40 transition-all cursor-pointer flex flex-col justify-between">
-                      
-                      {/* Absolute Background Image (Visual-First) */}
-                      {activity.recipe.heroImage ? (
-                        <Image
-                          src={activity.recipe.heroImage}
-                          alt={activity.recipe.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 512px"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-red-800 via-red-900 to-stone-950" />
-                      )}
+              let actorText = ""
+              if (isTaglish) {
+                const marker = userNames.length > 1 ? "nina " : ""
+                if (userNames.length === 1) {
+                  actorText = userNames[0]
+                } else if (userNames.length === 2) {
+                  actorText = `${marker}${userNames[0]} at ${userNames[1]}`
+                } else {
+                  actorText = `${marker}${userNames[0]}, ${userNames[1]}, at ${userNames.length - 2} pang iba`
+                }
+              } else {
+                if (userNames.length === 1) {
+                  actorText = userNames[0]
+                } else if (userNames.length === 2) {
+                  actorText = `${userNames[0]} and ${userNames[1]}`
+                } else {
+                  actorText = `${userNames[0]}, ${userNames[1]}, and ${userNames.length - 2} others`
+                }
+              }
 
-                      {/* Top Overlay (Gradient to hide text cleanly) */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-transparent to-black/85 z-10" />
+              const headerText = isTaglish
+                ? `${actionSuffix.trim()} ${actorText}`
+                : `${actorText}${actionSuffix}`
 
-                      {/* Top Bar Contents: Actor Circle Avatar + Action Summary */}
-                      <div className="relative z-20 p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-xs font-bold text-white overflow-hidden relative border border-white/30">
-                            {actUser?.avatarUrl ? (
-                              <Image src={actUser.avatarUrl} alt="" fill sizes="32px" className="object-cover" />
-                            ) : (
-                              userAvatarLetter
-                            )}
-                          </div>
-                          <div className="text-white text-xs font-semibold drop-shadow flex-1 min-w-0">
-                            <span className="font-extrabold">{displayName}</span>
-                            <span className="opacity-90">
-                              {activity.type === "like" ? t("feed.recommended_this") : t("feed.reviewed_this")}
-                            </span>
-                          </div>
+              return (
+                <Link key={activity.id} href={`/recipes/${recipe.slug}`}>
+                  <div className="group relative w-full h-64 rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-card hover:border-amber-300/40 transition-all cursor-pointer flex flex-col justify-between">
+                    
+                    {/* Absolute Background Image (Visual-First) */}
+                    {recipe.heroImage ? (
+                      <Image
+                        src={recipe.heroImage}
+                        alt={recipe.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 512px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-red-800 via-red-900 to-stone-950" />
+                    )}
+
+                    {/* Top Overlay (Gradient to hide text cleanly) */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-transparent to-black/85 z-10" />
+
+                    {/* Top Bar Contents: Actor Stack Avatars + Action Summary */}
+                    <div className="relative z-20 p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                        <div className="flex -space-x-2.5 overflow-hidden flex-shrink-0">
+                          {uniqueUsers.slice(0, 3).map((u, idx) => (
+                            <div 
+                              key={u.id} 
+                              style={{ zIndex: 10 - idx }} 
+                              className="w-8 h-8 rounded-full bg-stone-700/80 backdrop-blur-md flex items-center justify-center text-[10px] font-bold text-white overflow-hidden relative border border-white/20"
+                            >
+                              {u.avatarUrl ? (
+                                <Image src={u.avatarUrl} alt="" fill sizes="32px" className="object-cover" />
+                              ) : (
+                                u.displayName?.[0]?.toUpperCase() || u.username[0].toUpperCase()
+                              )}
+                            </div>
+                          ))}
                         </div>
-                        <span className="text-[10px] text-white/70 font-semibold">{formatRelativeTime(activity.createdAt)}</span>
+                        <div className="text-white text-xs font-semibold drop-shadow flex-1 min-w-0 leading-tight">
+                          <span className="font-extrabold">{headerText}</span>
+                        </div>
                       </div>
+                      <span className="text-[10px] text-white/70 font-semibold flex-shrink-0">{formatRelativeTime(activity.latestCreatedAt)}</span>
+                    </div>
 
-                      {/* Bottom Bar Contents: Title, Category, Rating, and Sleek CTA overlay */}
-                      <div className="relative z-20 p-4 flex items-end justify-between">
-                        <div className="min-w-0 mr-3">
-                          <span className="text-[9px] uppercase font-black text-white bg-red-600 px-2 py-0.5 rounded tracking-wider shadow-sm self-start">
-                            {activity.recipe.category || "ulam"}
-                          </span>
-                          <h3 className="font-black text-white text-lg leading-tight mt-1.5 drop-shadow-md line-clamp-2">
-                            {activity.recipe.title}
-                          </h3>
-                          
-                          {/* Like count badge */}
-                          <div className="flex items-center gap-1 mt-1">
+                    {/* Bottom Bar Contents: Title, Category, Rating, and Sleek CTA overlay */}
+                    <div className="relative z-20 p-4 flex items-end justify-between">
+                      <div className="min-w-0 mr-3">
+                        <span className="text-[9px] uppercase font-black text-white bg-red-600 px-2 py-0.5 rounded tracking-wider shadow-sm self-start">
+                          {recipe.category || "ulam"}
+                        </span>
+                        <h3 className="font-black text-white text-lg leading-tight mt-1.5 drop-shadow-md line-clamp-2">
+                          {recipe.title}
+                        </h3>
+                        
+                        {/* Action count badges */}
+                        <div className="flex items-center gap-3 mt-1 flex-wrap">
+                          <div className="flex items-center gap-1">
                             <MdFavorite className="text-sm text-red-400 drop-shadow-md" />
                             <span className="text-xs text-white/80 font-semibold">
-                              {activity.recipe._count?.likes ?? 0} {activity.recipe._count?.likes === 1 ? "like" : "likes"}
+                              {recipe._count?.likes ?? 0} {recipe._count?.likes === 1 ? "like" : "likes"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MdChat className="text-sm text-amber-400 drop-shadow-md" />
+                            <span className="text-xs text-white/80 font-semibold">
+                              {recipe._count?.comments ?? 0} {recipe._count?.comments === 1 ? "review" : "reviews"}
                             </span>
                           </div>
                         </div>
-
-                        {/* Minimal Click Target Overlay Button */}
-                        <div className="bg-white hover:bg-amber-50 text-stone-900 text-xs font-black px-4 py-2 rounded-xl flex items-center gap-1 shadow-md transition-colors flex-shrink-0">
-                          {t("feed.view_recipe")} <MdArrowForward className="text-xs" />
-                        </div>
                       </div>
 
+                      {/* Minimal Click Target Overlay Button */}
+                      <div className="bg-white hover:bg-amber-50 text-stone-900 text-xs font-black px-4 py-2 rounded-xl flex items-center gap-1 shadow-md transition-colors flex-shrink-0">
+                        {t("feed.view_recipe")} <MdArrowForward className="text-xs" />
+                      </div>
                     </div>
-                  </Link>
-                )
-              }
 
-              return null
+                  </div>
+                </Link>
+              )
             })}
 
             {/* Pagination Load More */}

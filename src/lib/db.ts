@@ -18,22 +18,35 @@ import { Pool } from "pg"
   return this.toString()
 }
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+const globalForPrisma = globalThis as unknown as {
+  prisma?: PrismaClient
+  pgPool?: Pool
+}
 
 /**
  * Creates and configures a new PrismaClient instance.
- * It initializes a pg.Pool connection pool using the DATABASE_URL environment variable,
- * binds it to the PrismaPg adapter, and instantiates the PrismaClient with this adapter.
+ * It initializes or retrieves a cached pg.Pool connection pool using the DATABASE_URL environment variable.
+ * Caching the pg.Pool globally prevents creating new connection pools and leaking database connections
+ * during hot-reloads in development mode.
+ * In development, we also limit the maximum connections to 2 to prevent hitting Supabase's session pooler limits.
+ * It then binds the pool to the PrismaPg adapter and instantiates the PrismaClient.
  * 
  * @returns {PrismaClient} A configured PrismaClient instance.
  */
 function createPrismaClient(): PrismaClient {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL! })
-  const adapter = new PrismaPg(pool)
+  if (!globalForPrisma.pgPool) {
+    globalForPrisma.pgPool = new Pool({
+      connectionString: process.env.DATABASE_URL!,
+      max: process.env.NODE_ENV === "production" ? undefined : 2,
+    })
+  }
+  const adapter = new PrismaPg(globalForPrisma.pgPool)
   return new PrismaClient({ adapter })
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma
+}
 

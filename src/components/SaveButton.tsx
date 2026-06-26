@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { MdBookmark, MdBookmarkBorder } from "react-icons/md"
@@ -27,40 +27,41 @@ export default function SaveButton({ recipeId, initialSaved = false }: { recipeI
   const router = useRouter()
   const { toast } = useToast()
   const [saved, setSaved] = useState(initialSaved)
-  const [loading, setLoading] = useState(false)
+  const [optimisticSaved, addOptimisticSaved] = useOptimistic(saved, (_, next: boolean) => next)
+  const [isPending, startTransition] = useTransition()
 
   async function handleClick() {
     if (!session) {
       router.push("/login")
       return
     }
-    setLoading(true)
-    try {
-      const res = await fetch("/api/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId: Number(recipeId) }),
-      })
-      const data = await res.json()
-      setSaved(data.saved)
-      toast.success(data.saved ? "Recipe saved!" : "Recipe removed from saves")
-    } catch {
-      toast.error("Something went wrong")
-    } finally {
-      setLoading(false)
-    }
+    startTransition(async () => {
+      addOptimisticSaved(!optimisticSaved)
+      try {
+        const res = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipeId: Number(recipeId) }),
+        })
+        const data = await res.json()
+        setSaved(data.saved)
+        toast.success(data.saved ? "Recipe saved!" : "Recipe removed from saves")
+      } catch {
+        toast.error("Something went wrong")
+      }
+    })
   }
 
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
+      disabled={isPending}
       className={`flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 ${
-        saved ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
-      }`}
+        optimisticSaved ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
+      }${isPending ? " opacity-60" : ""}`}
     >
-      <span>{saved ? <MdBookmark /> : <MdBookmarkBorder />}</span>
-      <span>{saved ? "Saved" : "Save"}</span>
+      <span>{optimisticSaved ? <MdBookmark /> : <MdBookmarkBorder />}</span>
+      <span>{optimisticSaved ? "Saved" : "Save"}</span>
     </button>
   )
 }

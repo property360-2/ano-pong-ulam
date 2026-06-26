@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { MdPlaylistAdd, MdCheck, MdAdd } from "react-icons/md"
 import { useToast } from "@/lib/toast"
@@ -70,23 +70,38 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: number }
    * 
    * @param {number} collectionId The collection database ID.
    */
+  const [optimisticCollections, addOptimisticCollections] = useOptimistic(
+    collections,
+    (state, [id, updates]: [number, Partial<{ hasRecipe: boolean; recipeCount: number }>]) =>
+      state.map((c) => (c.id === id ? { ...c, ...updates } : c))
+  )
+  const [, startTransition] = useTransition()
+
   async function toggleRecipe(collectionId: number) {
-    try {
-      const res = await fetch(`/api/collections/${collectionId}/recipes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId: Number(recipeId) }),
-      })
-      const data = await res.json()
-      toast.success(data.added ? "Recipe added to collection" : "Recipe removed from collection")
-      setCollections((prev) =>
-        prev.map((c) =>
-          c.id === collectionId ? { ...c, hasRecipe: data.added, recipeCount: data.recipeCount } : c
+    const collection = collections.find((c) => c.id === collectionId)
+    if (!collection) return
+    const newHasRecipe = !collection.hasRecipe
+    const newCount = collection.recipeCount + (newHasRecipe ? 1 : -1)
+
+    startTransition(async () => {
+      addOptimisticCollections([collectionId, { hasRecipe: newHasRecipe, recipeCount: newCount }])
+      try {
+        const res = await fetch(`/api/collections/${collectionId}/recipes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipeId: Number(recipeId) }),
+        })
+        const data = await res.json()
+        setCollections((prev) =>
+          prev.map((c) =>
+            c.id === collectionId ? { ...c, hasRecipe: data.added, recipeCount: data.recipeCount } : c
+          )
         )
-      )
-    } catch {
-      toast.error("Failed to update collection")
-    }
+        toast.success(data.added ? "Recipe added to collection" : "Recipe removed from collection")
+      } catch {
+        toast.error("Failed to update collection")
+      }
+    })
   }
 
   /**
@@ -134,11 +149,11 @@ export default function AddToCollectionButton({ recipeId }: { recipeId: number }
         <div className="absolute z-50 top-full right-0 mt-1 w-64 bg-white rounded-xl shadow-card border border-stone-200 p-3">
           {loading ? (
             <p className="text-sm text-stone-400 text-center py-4">Loading...</p>
-          ) : collections.length === 0 ? (
+          ) : optimisticCollections.length === 0 ? (
             <p className="text-sm text-stone-400 text-center py-4">No collections yet</p>
           ) : (
             <ul className="space-y-1 max-h-48 overflow-y-auto mb-3">
-              {collections.map((c) => (
+              {optimisticCollections.map((c) => (
                 <li key={c.id}>
                   <button
                     onClick={() => toggleRecipe(c.id)}

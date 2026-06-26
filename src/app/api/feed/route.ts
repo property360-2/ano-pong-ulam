@@ -35,7 +35,7 @@ export async function GET(req: Request) {
       take,
       ...cursorFilter,
       include: {
-        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true } } } },
+        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true, comments: true } } } },
       },
     })
   } else {
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
       take,
       ...cursorFilter,
       include: {
-        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true } } } },
+        recipe: { select: { slug: true, title: true, heroImage: true, _count: { select: { likes: true, comments: true } } } },
       },
     })
   }

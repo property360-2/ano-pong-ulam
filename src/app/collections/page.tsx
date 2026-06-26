@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { MdLock, MdAdd, MdEdit, MdDelete, MdCollectionsBookmark } from "react-icons/md"
@@ -32,6 +32,12 @@ export default function CollectionsPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
   const [collections, setCollections] = useState<CollectionItem[]>([])
+  const [optimisticCollections, addOptimisticCollections] = useOptimistic(
+    collections,
+    (state, action: CollectionItem[] | ((prev: CollectionItem[]) => CollectionItem[])) =>
+      typeof action === "function" ? action(state) : action
+  )
+  const [, startTransition] = useTransition()
   const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [newName, setNewName] = useState("")
@@ -73,28 +79,34 @@ export default function CollectionsPage() {
    */
   async function createCollection() {
     if (!newName.trim()) return
-    setCreating(true)
-    try {
-      const res = await fetch("/api/collections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName.trim() }),
-      })
-      if (res.ok) {
-        const c = await res.json()
-        setCollections((prev) => [...prev, c])
-        setNewName("")
-        setShowCreate(false)
-        toast.success(`Created "${c.name}"`)
-      } else {
-        const err = await res.json()
-        toast.error(err.error || "Failed to create")
+    const name = newName.trim()
+    const temp: CollectionItem = { id: Date.now(), name, emoji: "📁", recipeCount: 0, createdAt: new Date().toISOString() }
+
+    startTransition(async () => {
+      addOptimisticCollections((prev) => [...prev, temp])
+      setCreating(true)
+      try {
+        const res = await fetch("/api/collections", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        })
+        if (res.ok) {
+          const c = await res.json()
+          setCollections((prev) => [...prev, c])
+          setNewName("")
+          setShowCreate(false)
+          toast.success(`Created "${c.name}"`)
+        } else {
+          const err = await res.json()
+          toast.error(err.error || "Failed to create collection")
+        }
+      } catch {
+        toast.error("Failed to create collection")
+      } finally {
+        setCreating(false)
       }
-    } catch {
-      toast.error("Failed to create collection")
-    } finally {
-      setCreating(false)
-    }
+    })
   }
 
   /**
@@ -105,23 +117,30 @@ export default function CollectionsPage() {
    */
   async function renameCollection(id: number) {
     if (!editName.trim()) return
-    try {
-      const res = await fetch(`/api/collections/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editName.trim() }),
-      })
-      if (res.ok) {
-        const updated = await res.json()
-        setCollections((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, name: updated.name } : c))
-        )
-        setEditingId(null)
-        toast.success("Collection renamed")
+    const name = editName.trim()
+
+    startTransition(async () => {
+      addOptimisticCollections((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, name } : c))
+      )
+      try {
+        const res = await fetch(`/api/collections/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        })
+        if (res.ok) {
+          const updated = await res.json()
+          setCollections((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, name: updated.name } : c))
+          )
+          setEditingId(null)
+          toast.success("Collection renamed")
+        }
+      } catch {
+        toast.error("Failed to rename")
       }
-    } catch {
-      toast.error("Failed to rename")
-    }
+    })
   }
 
   /**
@@ -132,15 +151,19 @@ export default function CollectionsPage() {
    */
   async function deleteCollection(id: number) {
     if (!confirm("Delete this collection? Recipes inside won't be affected.")) return
-    try {
-      const res = await fetch(`/api/collections/${id}`, { method: "DELETE" })
-      if (res.ok) {
-        setCollections((prev) => prev.filter((c) => c.id !== id))
-        toast.success("Collection deleted")
+
+    startTransition(async () => {
+      addOptimisticCollections((prev) => prev.filter((c) => c.id !== id))
+      try {
+        const res = await fetch(`/api/collections/${id}`, { method: "DELETE" })
+        if (res.ok) {
+          setCollections((prev) => prev.filter((c) => c.id !== id))
+          toast.success("Collection deleted")
+        }
+      } catch {
+        toast.error("Failed to delete")
       }
-    } catch {
-      toast.error("Failed to delete")
-    }
+    })
   }
 
   if (!session) {
@@ -207,7 +230,7 @@ export default function CollectionsPage() {
 
         {loading ? (
           <p className="text-stone-400 text-center py-12">Loading collections...</p>
-        ) : collections.length === 0 ? (
+        ) : optimisticCollections.length === 0 ? (
           <div className="text-center py-16">
             <MdCollectionsBookmark className="text-6xl text-stone-200 mx-auto mb-4" />
             <p className="text-stone-500 mb-2">No collections yet</p>

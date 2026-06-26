@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md"
@@ -29,41 +29,44 @@ export default function LikeButton({ recipeId, initialCount = 0, initialLiked = 
   const { toast } = useToast()
   const [liked, setLiked] = useState(initialLiked)
   const [count, setCount] = useState(initialCount)
-  const [loading, setLoading] = useState(false)
+  const [optimisticLiked, addOptimisticLiked] = useOptimistic(liked, (_, next: boolean) => next)
+  const [optimisticCount, addOptimisticCount] = useOptimistic(count, (_, next: number) => next)
+  const [isPending, startTransition] = useTransition()
 
   async function handleClick() {
     if (!session) {
       router.push("/login")
       return
     }
-    setLoading(true)
-    try {
-      const res = await fetch("/api/like", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId: Number(recipeId) }),
-      })
-      const data = await res.json()
-      setLiked(data.liked)
-      setCount((c) => data.liked ? c + 1 : c - 1)
-      toast.success(data.liked ? "Recipe liked!" : "Recipe unliked")
-    } catch {
-      toast.error("Something went wrong")
-    } finally {
-      setLoading(false)
-    }
+    startTransition(async () => {
+      addOptimisticLiked(!optimisticLiked)
+      addOptimisticCount(optimisticCount + (optimisticLiked ? -1 : 1))
+      try {
+        const res = await fetch("/api/like", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipeId: Number(recipeId) }),
+        })
+        const data = await res.json()
+        setLiked(data.liked)
+        setCount((c) => data.liked ? c + 1 : c - 1)
+        toast.success(data.liked ? "Recipe liked!" : "Recipe unliked")
+      } catch {
+        toast.error("Something went wrong")
+      }
+    })
   }
 
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
+      disabled={isPending}
       className={`flex items-center gap-1.5 text-sm font-medium transition-colors min-h-[44px] px-2.5 rounded-xl hover:bg-stone-50 ${
-        liked ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
-      }`}
+        optimisticLiked ? "text-amber-600" : "text-stone-500 hover:text-amber-600"
+      }${isPending ? " opacity-60" : ""}`}
     >
-      <span>{liked ? <MdFavorite /> : <MdFavoriteBorder />}</span>
-      <span>{count}</span>
+      <span>{optimisticLiked ? <MdFavorite /> : <MdFavoriteBorder />}</span>
+      <span>{optimisticCount}</span>
     </button>
   )
 }

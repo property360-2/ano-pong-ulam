@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
+import { Prisma } from "@/generated/prisma/client"
 import { createNotification, createActivity } from "@/lib/notifications"
 
 export async function POST(req: Request) {
@@ -8,6 +9,8 @@ export async function POST(req: Request) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
+
+  let existing: Record<string, unknown> | null = null
 
   try {
     const { targetUserId } = await req.json()
@@ -19,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cannot follow yourself" }, { status: 400 })
     }
 
-    const existing = await prisma.follow.findUnique({
+    existing = await prisma.follow.findUnique({
       where: { followerId_followingId: { followerId: session.user.id, followingId: targetUserId } },
     })
 
@@ -49,6 +52,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ following: true })
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2002" || error.code === "P2025")
+    ) {
+      return NextResponse.json({ following: !existing })
+    }
     console.error("Follow error:", error)
     return NextResponse.json({ error: "Failed to follow" }, { status: 500 })
   }

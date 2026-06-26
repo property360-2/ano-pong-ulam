@@ -7,7 +7,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useOptimistic, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { MdNotifications, MdNotificationsNone, MdCheck, MdFavorite, MdChat, MdPersonAdd, MdBookmark } from "react-icons/md"
@@ -121,19 +121,25 @@ export default function NotificationBell() {
     }
   }, [open, session])
 
+  const [optimisticUnread, addOptimisticUnread] = useOptimistic(unreadCount, (_, next: number) => next)
+  const [, startTransition] = useTransition()
+
   async function markAllRead() {
-    try {
-      await fetch("/api/notifications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ markAll: true }),
-      })
-      setUnreadCount(0)
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
-      toast.success("All notifications marked as read")
-    } catch {
-      toast.error("Failed to mark as read")
-    }
+    startTransition(async () => {
+      addOptimisticUnread(0)
+      try {
+        await fetch("/api/notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ markAll: true }),
+        })
+        setUnreadCount(0)
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+        toast.success("All notifications marked as read")
+      } catch {
+        toast.error("Failed to mark as read")
+      }
+    })
   }
 
   if (!session) return null
@@ -145,11 +151,11 @@ export default function NotificationBell() {
         className="relative p-1.5 text-stone-500 hover:text-amber-600 transition-colors"
         title="Notifications"
       >
-        {unreadCount > 0 ? (
+        {optimisticUnread > 0 ? (
           <>
             <MdNotifications className="text-xl" />
             <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-              {unreadCount > 9 ? "9+" : unreadCount}
+              {optimisticUnread > 9 ? "9+" : optimisticUnread}
             </span>
           </>
         ) : (

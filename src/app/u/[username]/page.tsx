@@ -10,6 +10,8 @@ import Image from "next/image"
 import { prisma } from "@/lib/db"
 import Header from "@/components/Header"
 import RecipeCard from "@/components/RecipeCard"
+import FollowButton from "@/components/FollowButton"
+import { auth } from "@/lib/auth"
 import { MdLocationOn } from "react-icons/md"
 
 export const dynamic = "force-dynamic"
@@ -19,7 +21,8 @@ type Params = Promise<{ username: string }>
 /**
  * UserProfilePage server component.
  * Fetches user profile data including published recipes, followers, and following relations,
- * and renders a mobile-friendly profile card with custom stats and recipe grid.
+ * gets the logged-in user session, checks follow status, and renders a mobile-friendly profile card
+ * with custom stats, a follow/unfollow toggle button (if viewing another cook's profile), and a recipe grid.
  * 
  * @param {Object} props Component props.
  * @param {Params} props.params Route parameters containing username.
@@ -27,6 +30,7 @@ type Params = Promise<{ username: string }>
  */
 export default async function UserProfilePage(props: { params: Params }) {
   const { username } = await props.params
+  const session = await auth()
 
   const user = await prisma.user.findUnique({
     where: { username },
@@ -42,6 +46,19 @@ export default async function UserProfilePage(props: { params: Params }) {
   })
 
   if (!user) notFound()
+
+  const isFollowingUser = session?.user?.id
+    ? !!(await prisma.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: session.user.id,
+            followingId: user.id,
+          },
+        },
+      }))
+    : false
+
+  const showFollowButton = !session?.user?.id || session.user.id !== user.id
 
   return (
     <>
@@ -76,6 +93,16 @@ export default async function UserProfilePage(props: { params: Params }) {
                 </span>
               )}
             </div>
+            
+            {showFollowButton && (
+              <div className="flex-shrink-0">
+                <FollowButton
+                  targetUserId={user.id}
+                  initialFollowing={isFollowingUser}
+                  username={user.displayName || user.username}
+                />
+              </div>
+            )}
           </div>
 
           {/* Dedicated Stats Row: horizontal grid spanning full card width on mobile to avoid cutoffs */}

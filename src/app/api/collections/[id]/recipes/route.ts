@@ -33,13 +33,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const rid = BigInt(recipeId)
     const exists = collection.recipeIds.some((r) => r === rid)
 
-    const updated = await prisma.collection.update({
+    if (exists) {
+      await prisma.$queryRaw`
+        UPDATE "Collection"
+        SET "recipeIds" = array_remove("recipeIds", ${rid}::bigint)
+        WHERE id = ${collectionId}
+      `
+    } else {
+      await prisma.collection.update({
+        where: { id: collectionId },
+        data: { recipeIds: { push: rid } },
+      })
+    }
+
+    const updated = await prisma.collection.findUniqueOrThrow({
       where: { id: collectionId },
-      data: {
-        recipeIds: exists
-          ? { set: collection.recipeIds.filter((r) => r !== rid) }
-          : { push: rid },
-      },
+      select: { recipeIds: true },
     })
 
     return NextResponse.json({
